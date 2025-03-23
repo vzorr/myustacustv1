@@ -16,17 +16,22 @@ const CustomButton: React.FC<ButtonProps> = ({ title, onPress, style, textStyle 
 
 const styles = StyleSheet.create({
     button: {
-        padding: 15,
-        borderRadius: 5,
-        alignItems: 'center',
+        width: '90%',
+        height: 44,
+        margin: 8,
+        paddingHorizontal: 16,
         justifyContent: 'center',
-        marginVertical: 10,
-        width: 250,
+        alignItems: 'center',
+        borderRadius: 8,
+        backgroundColor: '#FFC800',
     },
     buttonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#fff',
+        // fontFamily: 'Inter', 
+        fontSize: 14,
+        fontStyle: 'normal',
+        fontWeight: '500',
+        lineHeight: 14,
+        color: '#00203F',
     },
 });
 
