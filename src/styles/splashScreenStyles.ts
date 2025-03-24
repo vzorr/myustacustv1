@@ -1,10 +1,12 @@
 import { StyleSheet } from 'react-native';
+import { COLORS } from '../config/themes/theme';
 
 const splashScreenStyles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingTop: 50,
     },
     backgroundImage: {
         width: '100%',
@@ -16,13 +18,13 @@ const splashScreenStyles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(35, 35, 35, 0.7)',
+        backgroundColor: COLORS.bgImgColor,
     },
-    logoText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#fff',
-    },
+    // logoText: {
+    //     fontSize: 24,
+    //     fontWeight: 'bold',
+    //     color: '#fff',
+    // },
     bottomContainer: {
         position: 'absolute',
         bottom: 20,
@@ -30,10 +32,10 @@ const splashScreenStyles = StyleSheet.create({
         alignItems: 'center',
     },
     primaryButton: {
-        backgroundColor: '#FFF',
+        backgroundColor: COLORS.btnBgWhiteColor,
     },
     secondaryButton: {
-        backgroundColor: '#FFF',
+        backgroundColor: COLORS.btnBgWhiteColor,
     },
     lineContainer: {
         flexDirection: 'row',
@@ -44,10 +46,10 @@ const splashScreenStyles = StyleSheet.create({
     line: {
         flex: 1,
         height: 1,
-        backgroundColor: '#FFF',
+        backgroundColor: COLORS.btnBgWhiteColor,
     },
     orText: {
-        color: '#FFF',
+        color: COLORS.btnBgWhiteColor,
         // fontFamily: 'Inter',
         fontSize: 14,
         fontStyle: 'normal',

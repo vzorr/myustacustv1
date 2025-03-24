@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { COLORS, FONTS } from '../../config/themes/theme';
 
 interface ButtonProps {
     title: string;
@@ -23,15 +24,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 8,
-        backgroundColor: '#FFC800',
+        backgroundColor: COLORS.Yellow,
     },
     buttonText: {
-        // fontFamily: 'Inter', 
+        fontFamily: FONTS.interMedium,
         fontSize: 14,
         fontStyle: 'normal',
         fontWeight: '500',
         lineHeight: 14,
-        color: '#00203F',
+        color: COLORS.Navy,
     },
 });
 

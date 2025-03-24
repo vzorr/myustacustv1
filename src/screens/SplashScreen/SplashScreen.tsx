@@ -4,6 +4,8 @@ import CustomButton from '../../components/Buttons/CustomButton';
 import { imagesPath } from '../../config/constants/imagesPath';
 import splashScreenStyles from '../../styles/splashScreenStyles';
 import OrDivider from '../../components/OrDivider/OrDivider';
+import { SVGIcons } from '../../config/constants/svg';
+
 
 const { height } = Dimensions.get('window');
 
@@ -74,7 +76,7 @@ const SplashToAuthScreen: React.FC = () => {
             </Animated.View>
             <View style={splashScreenStyles.overlay} />
             <Animated.View style={{ transform: [{ translateY }] }}>
-                <Text style={splashScreenStyles.logoText}>My Usta</Text>
+                <SVGIcons.MyUstaLogo />
             </Animated.View>
 
             <Animated.View style={[splashScreenStyles.bottomContainer, { opacity: buttonsOpacity }]}>
