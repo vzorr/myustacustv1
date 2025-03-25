@@ -1,16 +1,21 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { COLORS, FONTS } from '../../config/themes/theme';
+import { SVGIcons } from '../../config/constants/svg';
 
-interface ButtonProps {
+interface socialLoginProps {
     title: string;
-    onPress: () => void;
     style?: ViewStyle;
     textStyle?: TextStyle;
+    loginType?: 'google' | 'Apple';
+}
+const handleOnPress = () => {
+    console.log('Social login pressed');
 }
 
-const CustomButton: React.FC<ButtonProps> = ({ title, onPress, style, textStyle }) => (
-    <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+const SocialLogin: React.FC<socialLoginProps> = ({ title, style, textStyle, loginType }) => (
+    <TouchableOpacity style={[styles.button, style]} onPress={handleOnPress}>
+        {loginType === 'google' ? <SVGIcons.Google /> : <SVGIcons.Apple />}
         <Text style={[styles.buttonText, textStyle]}>{title}</Text>
     </TouchableOpacity>
 );
@@ -21,6 +26,7 @@ const styles = StyleSheet.create({
         height: 44,
         margin: 8,
         paddingHorizontal: 16,
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 8,
@@ -28,12 +34,13 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontFamily: FONTS.interMedium,
-        fontSize: 14,
+        fontSize: 12,
         fontStyle: 'normal',
         fontWeight: '500',
         color: COLORS.Navy,
         textAlignVertical: 'center',
+        marginStart: 8,
     },
 });
 
-export default CustomButton;
+export default SocialLogin;

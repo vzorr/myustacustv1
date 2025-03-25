@@ -1,19 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Animated, Easing, ImageBackground, Text, Dimensions } from 'react-native';
+import { View, Animated, Easing, ImageBackground, Dimensions, StyleSheet } from 'react-native';
 import CustomButton from '../../components/Buttons/CustomButton';
 import { imagesPath } from '../../config/constants/imagesPath';
 import splashScreenStyles from '../../styles/splashScreenStyles';
 import OrDivider from '../../components/OrDivider/OrDivider';
 import { SVGIcons } from '../../config/constants/svg';
-
+import { UserNavigationRootProps } from '../../types/stacksParams';
 
 const { height } = Dimensions.get('window');
 
-const SplashToAuthScreen: React.FC = () => {
+const SplashScreen: React.FC<UserNavigationRootProps<"Splash">> = (props) => {
+    const { navigation } = props;
     const [showButtons, setShowButtons] = useState(false);
     const logoPosition = useRef(new Animated.Value(0)).current;
     const buttonsOpacity = useRef(new Animated.Value(0)).current;
-    const backgroundPosition = useRef(new Animated.Value(0)).current;
+    const backgroundHeight = useRef(new Animated.Value(height * 1.1)).current;
 
     useEffect(() => {
         const delayTimer = setTimeout(() => {
@@ -24,11 +25,11 @@ const SplashToAuthScreen: React.FC = () => {
                     easing: Easing.linear,
                     useNativeDriver: true,
                 }),
-                Animated.timing(backgroundPosition, {
-                    toValue: 1,
+                Animated.timing(backgroundHeight, {
+                    toValue: height,
                     duration: 1000,
                     easing: Easing.linear,
-                    useNativeDriver: true,
+                    useNativeDriver: false,
                 }),
                 Animated.timing(buttonsOpacity, {
                     toValue: 1,
@@ -49,34 +50,37 @@ const SplashToAuthScreen: React.FC = () => {
         outputRange: [0, -300],
     });
 
-    const backgroundTranslateY = backgroundPosition.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, -height * 0.25],
-    });
+    const handleSignIn = () => {
+        navigation.navigate('SignIn');
+    };
+
+    const handleSignUp = () => {
+        navigation.navigate('SignUp');
+    };
 
     return (
-        <View style={splashScreenStyles.container}>
+        <View style={[splashScreenStyles.container, { overflow: 'hidden' }]}>
             <Animated.View
                 style={{
-                    transform: [{ translateY: backgroundTranslateY }],
                     position: 'absolute',
                     top: 0,
                     left: 0,
                     right: 0,
-                    bottom: 0,
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    height: backgroundHeight,
+                    justifyContent: 'flex-end',
                 }}
             >
                 <ImageBackground
-                    source={imagesPath.splash_bg_image}
-                    style={splashScreenStyles.backgroundImage}
+                    source={imagesPath.customer_splash_bg_image}
+                    style={[splashScreenStyles.backgroundImage, { height: '100%' }]}
                     resizeMode="cover"
                 />
             </Animated.View>
+
             <View style={splashScreenStyles.overlay} />
+
             <Animated.View style={{ transform: [{ translateY }] }}>
-                <SVGIcons.MyUstaLogo />
+                <SVGIcons.MyUstaLogo width={160} height={54} />
             </Animated.View>
 
             <Animated.View style={[splashScreenStyles.bottomContainer, { opacity: buttonsOpacity }]}>
@@ -87,12 +91,12 @@ const SplashToAuthScreen: React.FC = () => {
                 <OrDivider />
                 <CustomButton
                     title="Sign-In"
-                    onPress={() => console.log('Sign-In')}
+                    onPress={handleSignIn}
                     style={splashScreenStyles.secondaryButton}
                 />
                 <CustomButton
                     title="Sign-Up"
-                    onPress={() => console.log('Sign-Up')}
+                    onPress={handleSignUp}
                     style={splashScreenStyles.secondaryButton}
                 />
             </Animated.View>
@@ -100,4 +104,4 @@ const SplashToAuthScreen: React.FC = () => {
     );
 };
 
-export default SplashToAuthScreen;
+export default SplashScreen;

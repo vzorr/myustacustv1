@@ -1,49 +1,36 @@
 import React from 'react';
-import { TextInput, StyleSheet, View, Text, TextInputProps } from 'react-native';
+import { TextInput, StyleSheet, View, TextInputProps } from 'react-native';
+import { COLORS, FONTS } from '../../config/themes/theme';
 
-interface InputBoxProps extends TextInputProps {
-    label?: string;
-    error?: string;
-}
-
-const InputBox: React.FC<InputBoxProps> = ({ label, error, ...props }) => {
-    // console.log("propssss", props)
+const CustomTextInput: React.FC<TextInputProps> = (props) => {
     return (
         <View style={styles.container}>
-            {label && <Text style={styles.label}>{label}</Text>}
             <TextInput
-                style={[styles.input, error && styles.errorInput]}
+                style={styles.input}
                 {...props}
             />
-            {error && <Text style={styles.errorText}>{error}</Text>}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 16,
-    },
-    label: {
-        fontSize: 16,
-        marginBottom: 8,
-        color: '#333',
+        width: '90%',
+        height: 44,
+        margin: 8,
+        justifyContent: 'center',
+        borderRadius: 8,
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: COLORS.white,
         borderRadius: 8,
-        padding: 12,
-        fontSize: 16,
-    },
-    errorInput: {
-        borderColor: 'red',
-    },
-    errorText: {
-        marginTop: 4,
         fontSize: 14,
-        color: 'red',
+        fontFamily: FONTS.interRegular,
+        color: COLORS.white,
+        fontWeight: '400',
+        paddingStart: 10,
     },
 });
 
-export default InputBox;
+export default CustomTextInput;

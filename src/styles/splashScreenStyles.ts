@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLORS } from '../config/themes/theme';
+import { COLORS, FONTS } from '../config/themes/theme';
 
 const splashScreenStyles = StyleSheet.create({
     container: {
@@ -20,38 +20,34 @@ const splashScreenStyles = StyleSheet.create({
         bottom: 0,
         backgroundColor: COLORS.bgImgColor,
     },
-    // logoText: {
-    //     fontSize: 24,
-    //     fontWeight: 'bold',
-    //     color: '#fff',
-    // },
     bottomContainer: {
         position: 'absolute',
-        bottom: 20,
+        bottom: 10,
         width: '100%',
         alignItems: 'center',
     },
     primaryButton: {
-        backgroundColor: COLORS.btnBgWhiteColor,
+        backgroundColor: COLORS.white,
     },
     secondaryButton: {
-        backgroundColor: COLORS.btnBgWhiteColor,
+        backgroundColor: COLORS.white,
     },
     lineContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        width: '80%',
-        marginVertical: 8,
+        width: '90%',
+        marginVertical: 4,
+        alignSelf: 'center'
     },
     line: {
         flex: 1,
         height: 1,
-        backgroundColor: COLORS.btnBgWhiteColor,
+        backgroundColor: COLORS.white,
     },
     orText: {
-        color: COLORS.btnBgWhiteColor,
-        // fontFamily: 'Inter',
-        fontSize: 14,
+        color: COLORS.white,
+        fontFamily: FONTS.interRegular,
+        fontSize: 12,
         fontStyle: 'normal',
         fontWeight: '400',
         lineHeight: 14,

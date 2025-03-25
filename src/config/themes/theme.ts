@@ -22,7 +22,8 @@ export const COLORS = {
     UstaBlack: "#232323",
     Gray: "#EEEEEE",
     bgImgColor: "rgba(0, 32, 63, 0.7)",
-    btnBgWhiteColor: "#FFF"
+    white: "#FFF",
+    authBgColor: 'rgba(0, 32, 63, 1)',
 }
 
 export const SIZES = {
