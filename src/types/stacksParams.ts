@@ -4,8 +4,8 @@ import { RouteProp } from "@react-navigation/native";
 export type UserStackParamList = {
     Home: undefined;
     Splash: undefined;
-    SignIn: undefined;
-    SignUp: undefined;
+    SignIn: any;
+    SignUp: any;
 };
 
 export type UserNavigationRootProps<T extends keyof UserStackParamList> = {

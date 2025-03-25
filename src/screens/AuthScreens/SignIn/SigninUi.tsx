@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions, TouchableOpacity } from 'react-native';
 import CustomTextInput from '../../../components/InputField/InputBox';
 import CustomButton from '../../../components/Buttons/CustomButton';
@@ -8,16 +8,24 @@ import AuthOverlay from '../../../components/AuthOverlay/AuthOverlay';
 import { COLORS, FONTS } from '../../../config/themes/theme';
 import OrDivider from '../../../components/OrDivider/OrDivider';
 import SocialLogin from '../../../components/SocialLogin/SocialLogin';
+import { Formik } from 'formik';
+import { logInSchema, SigUpSchema } from '../../../config/constants/errorMessage';
+import ErrorText from '../../../components/ErrorText';
 
 const { width } = Dimensions.get('window');
 
 const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
     const { navigation } = props;
+    const isSignIn = props.route.params?.isLogin
     const screenOpacity = useRef(new Animated.Value(0)).current;
     const logoScale = useRef(new Animated.Value(1)).current;
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
+    const [isLogin, setIsLogin] = useState(isSignIn)
 
+    const handleScreen = () => {
+        setIsLogin(false)
+    }
     useEffect(() => {
         Animated.parallel([
             Animated.timing(screenOpacity, {
@@ -48,54 +56,98 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
         { scale: logoScale },
         { translateY: logoPositionY }
     ];
+    const onSubmit = async (value: any) => {
+        console.log("valuessss", value)
+        let payload = {
+            email: value.email,
+            isEmail: true,
+            password: value.password
 
+        }
+
+    }
     return (
-        <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
-            <AuthOverlay color={COLORS.authBgColor} />
-            <Animated.View style={[styles.logoContainer, { transform: logoTransform }]}>
-                <SVGIcons.MyUstaLogo />
-            </Animated.View>
-            <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
-                <Text style={styles.title}>Sign in to your account</Text>
-                <CustomTextInput
-                    placeholder="Email"
-                    placeholderTextColor={COLORS.white}
-                />
-                <CustomTextInput
-                    placeholder="Enter password"
-                    placeholderTextColor={COLORS.white}
-                    secureTextEntry
-                />
-                <Text style={styles.forgotPassword}>Forgot Password?</Text>
-                <CustomButton
-                    title="Sign In"
-                    onPress={() => { }}
-                    style={styles.signInButton}
-                />
-                <OrDivider />
-                <SocialLogin
-                    title="Sign in with Google"
-                    style={styles.socialButton}
-                    textStyle={styles.socialButtonText}
-                    loginType='google'
-                />
-                <SocialLogin
-                    title="Sign in with Apple"
-                    style={styles.socialButton}
-                    textStyle={styles.socialButtonText}
-                />
+        <Formik
+            initialValues={{
+                email: '',
+                password: ''
+            }}
+            onSubmit={(values, { resetForm }) => {
+                onSubmit(values)
+            }}
+            validationSchema={isLogin ? logInSchema: SigUpSchema}
 
-                <TouchableOpacity style={styles.signUpContainer}>
-                    <Text style={styles.signUpText}>No account? </Text>
-                    <Text
-                        style={styles.signUpLink}
-                    // onPress={() => navigation.navigate('SignUp')}
-                    >
-                        Sign Up
-                    </Text>
-                </TouchableOpacity>
-            </Animated.View>
-        </Animated.View>
+        >
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
+                    <AuthOverlay color={COLORS.authBgColor} />
+                    <Animated.View style={[styles.logoContainer, { transform: logoTransform }]}>
+                        <SVGIcons.MyUstaLogo />
+                    </Animated.View>
+                    <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
+                        <Text style={styles.title}>Sign in to your account</Text>
+                        <CustomTextInput
+                            placeholder="Email"
+                            placeholderTextColor={COLORS.white}
+                            value={values?.email}
+                            onChangeText={handleChange('email')}
+                            onBlur={handleBlur("email")}
+                        />
+                        {errors?.email && touched?.email &&
+                            <ErrorText
+                                error={errors.email}
+                            />
+                        }
+                        {isLogin &&
+                            <>
+                                <CustomTextInput
+                                    placeholder="Enter password"
+                                    placeholderTextColor={COLORS.white}
+                                    secureTextEntry
+                                    onChangeText={handleChange('password')}
+                                    onBlur={handleBlur("password")}
+                                    value={values?.password}
+                                />
+                                {errors?.password && touched?.password &&
+                                    <ErrorText
+                                        error={errors.password}
+                                    />
+                                }
+                                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+                            </>
+                        }
+                        <CustomButton
+                            title={isLogin ?"Sign In" : "Sign Up"}
+                            onPress={handleSubmit}
+                            style={styles.signInButton}
+                        />
+                        <OrDivider />
+                        <SocialLogin
+                            title="Sign in with Google"
+                            style={styles.socialButton}
+                            textStyle={styles.socialButtonText}
+                            loginType='google'
+                        />
+                        <SocialLogin
+                            title="Sign in with Apple"
+                            style={styles.socialButton}
+                            textStyle={styles.socialButtonText}
+                        />
+
+                        <TouchableOpacity style={styles.signUpContainer}>
+                            <Text style={styles.signUpText}>No account? </Text>
+                            <Text
+                                style={styles.signUpLink}
+                                onPress={handleScreen}
+                            >
+                                Sign Up
+                            </Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                </Animated.View>
+
+            )}
+        </Formik>
     );
 };
 

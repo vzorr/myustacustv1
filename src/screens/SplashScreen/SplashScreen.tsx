@@ -51,11 +51,11 @@ const SplashScreen: React.FC<UserNavigationRootProps<"Splash">> = (props) => {
     });
 
     const handleSignIn = () => {
-        navigation.navigate('SignIn');
+        navigation.navigate('SignIn', {isLogin: true});
     };
 
     const handleSignUp = () => {
-        navigation.navigate('SignUp');
+        navigation.navigate('SignIn', {isLogin: false});
     };
 
     return (
