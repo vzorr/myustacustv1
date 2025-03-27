@@ -4,6 +4,10 @@ import { UserStackParamList } from '../../types/stacksParams';
 import HomeScreen from '../../screens/HomeScreen/HomeScreen';
 import SplashScreen from '../../screens/SplashScreen/SplashScreen';
 import SignInScreen from '../../screens/AuthScreens/SignIn/SigninUi';
+import ForgotPasswordScreen from '../../screens/AuthScreens/SignIn/ForgotPasswordScreen';
+import OtpVerficationContainer from '../../screens/AuthScreens/OTP/OtpVerficationContainer';
+import NewPasswordScreen from '../../screens/AuthScreens/SignIn/NewPasswordScreen';
+import SuccessMessage from '../../screens/AuthScreens/SuccessMessage/SuccessMessage';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
@@ -17,6 +21,10 @@ const NavStack: React.FC = () => {
             {/* <Stack.Screen name="Tabs" component={TabStack} /> */}
             <Stack.Screen name="Splash" component={SplashScreen} />
             <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+            <Stack.Screen name="OtpVerfication" component={OtpVerficationContainer} />
+            <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
+            <Stack.Screen name="SuccessMessage" component={SuccessMessage} />
             <Stack.Screen name="Home" component={HomeScreen} />
         </Stack.Navigator>
     )

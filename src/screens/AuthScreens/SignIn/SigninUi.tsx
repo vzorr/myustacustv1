@@ -24,7 +24,8 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
     const [isLogin, setIsLogin] = useState(isSignIn)
 
     const handleScreen = () => {
-        setIsLogin(false)
+        console.log("isLogin", isLogin)
+        setIsLogin(!isLogin)
     }
     useEffect(() => {
         Animated.parallel([
@@ -64,7 +65,9 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
             password: value.password
 
         }
-
+    }
+    const handleForgotPassword = () => {
+        navigation.navigate("ForgotPassword")
     }
     return (
         <Formik
@@ -75,7 +78,7 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
             onSubmit={(values, { resetForm }) => {
                 onSubmit(values)
             }}
-            validationSchema={isLogin ? logInSchema: SigUpSchema}
+            validationSchema={isLogin ? logInSchema : SigUpSchema}
 
         >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
@@ -85,9 +88,9 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                         <SVGIcons.MyUstaLogo />
                     </Animated.View>
                     <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
-                        <Text style={styles.title}>Sign in to your account</Text>
+                        <Text style={styles.title}>{isLogin ? "Sign in to your account." : "Create your account."}</Text>
                         <CustomTextInput
-                            placeholder="Email"
+                            placeholder={isLogin ? "Email" : "Email or phone number"}
                             placeholderTextColor={COLORS.white}
                             value={values?.email}
                             onChangeText={handleChange('email')}
@@ -113,11 +116,13 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                                         error={errors.password}
                                     />
                                 }
-                                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+                                <Text
+                                    onPress={handleForgotPassword}
+                                    style={styles.forgotPassword}>Forgot Password?</Text>
                             </>
                         }
                         <CustomButton
-                            title={isLogin ?"Sign In" : "Sign Up"}
+                            title={isLogin ? "Sign In" : "Create Account"}
                             onPress={handleSubmit}
                             style={styles.signInButton}
                         />
@@ -134,13 +139,14 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                             textStyle={styles.socialButtonText}
                         />
 
-                        <TouchableOpacity style={styles.signUpContainer}>
-                            <Text style={styles.signUpText}>No account? </Text>
+                        <TouchableOpacity
+                            onPress={handleScreen}
+                            style={styles.signUpContainer}>
+                            <Text style={styles.signUpText}>{isLogin ? "No account?" : "Already have an account?"}</Text>
                             <Text
                                 style={styles.signUpLink}
-                                onPress={handleScreen}
                             >
-                                Sign Up
+                                {isLogin ? "Sign Up" : "Sign In"}
                             </Text>
                         </TouchableOpacity>
                     </Animated.View>
@@ -217,6 +223,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         textDecorationLine: 'underline',
         textDecorationColor: COLORS.Yellow,
+        marginStart: 5
     },
 });
 

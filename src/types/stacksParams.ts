@@ -6,6 +6,10 @@ export type UserStackParamList = {
     Splash: undefined;
     SignIn: any;
     SignUp: any;
+    ForgotPassword: any;
+    OtpVerfication: any;
+    NewPassword: any;
+    SuccessMessage: any
 };
 
 export type UserNavigationRootProps<T extends keyof UserStackParamList> = {
