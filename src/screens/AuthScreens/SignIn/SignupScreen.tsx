@@ -15,7 +15,7 @@ import auth from '@react-native-firebase/auth';
 
 const { width } = Dimensions.get('window');
 
-const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
+const SignUpScreen: React.FC<UserNavigationRootProps<"SignUp">> = (props) => {
     const { navigation } = props;
     const screenOpacity = useRef(new Animated.Value(0)).current;
     const logoScale = useRef(new Animated.Value(1)).current;
@@ -23,7 +23,7 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
     const contentAnim = useRef(new Animated.Value(width)).current;
 
     const handleScreen = () => {
-      navigation.navigate('SignUp')
+      navigation.navigate('SignIn')
     }
     useEffect(() => {
         Animated.parallel([
@@ -56,12 +56,23 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
         { translateY: logoPositionY }
     ];
     const onSubmit = async (value: any) => {
+        console.log("valuesssssssss", value, value?.emailOrPhone?.includes('@'));
             if (!value?.emailOrPhone?.includes('@')) {
-            
+                try {
+                    const phoneNo = `+92${value.emailOrPhone}`
+                    const confirmation = await auth().signInWithPhoneNumber(phoneNo);
+                    console.log(confirmation)
+                    // setVerificationId(confirmation.verificationId);
+                    navigation.navigate("OtpVerfication", { verification: confirmation.verificationId })
+                    Alert.alert('OTP has been sent to your phone!');
+                } catch (error) {
+                    console.error(error);
+                    Alert.alert('Failed to send OTP. Please try again.');
+                }
             }else{
-                
+                navigation.navigate("OtpVerfication", { verification: value?.emailOrPhone  }) 
+
             }
-            navigation.navigate("Home")
         console.log("valuessss", value)
         let payload = {
             email: value.emailOrPhone,
@@ -71,7 +82,7 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
         }
     }
     const handleForgotPassword = () => {
-        navigation.navigate("ForgotPassword",{type: 'forgetPassword'})
+        navigation.navigate("ForgotPassword")
     }
     return (
         <Formik
@@ -80,9 +91,10 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                 password: ''
             }}
             onSubmit={async (values, { resetForm }) => {
+                // console.log("valueeeeessssss", values)
                 await onSubmit(values)
             }}
-            validationSchema={logInSchema}
+            validationSchema={SigUpSchema}
 
         >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
@@ -92,9 +104,9 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                         <SVGIcons.MyUstaLogo />
                     </Animated.View>
                     <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
-                        <Text style={styles.title}>{"Sign in to your account."}</Text>
+                        <Text style={styles.title}>{ "Create your account."}</Text>
                         <CustomTextInput
-                            placeholder={ "Email"}
+                            placeholder={"Email or phone number"}
                             placeholderTextColor={COLORS.white}
                             value={values?.emailOrPhone}
                             onChangeText={handleChange('emailOrPhone')}
@@ -105,25 +117,8 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                                 error={errors.emailOrPhone}
                             />
                         }
-                                <CustomTextInput
-                                    placeholder="Enter password"
-                                    placeholderTextColor={COLORS.white}
-                                    secureTextEntry
-                                    onChangeText={handleChange('password')}
-                                    onBlur={handleBlur("password")}
-                                    value={values?.password}
-                                />
-                                {errors?.emailOrPhone && touched?.emailOrPhone &&
-                                    <ErrorText
-                                        error={errors.emailOrPhone}
-                                    />
-                                }
-                            <Text
-                                onPress={handleForgotPassword}
-                                style={styles.forgotPassword}>Forgot Password?</Text>
-
                         <CustomButton
-                            title={"Sign In"}
+                            title={ "Create Account"}
                             onPress={handleSubmit}
                             style={styles.signInButton}
                         />
@@ -143,11 +138,11 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                         <TouchableOpacity
                             onPress={handleScreen}
                             style={styles.signUpContainer}>
-                            <Text style={styles.signUpText}>{"No account?"}</Text>
+                            <Text style={styles.signUpText}>{ "Already have an account?"}</Text>
                             <Text
                                 style={styles.signUpLink}
                             >
-                                {"Sign Up"}
+                                { "Sign In"}
                             </Text>
                         </TouchableOpacity>
                     </Animated.View>
@@ -228,4 +223,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SignInScreen;
+export default SignUpScreen
