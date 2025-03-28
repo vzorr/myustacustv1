@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Animated, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import CustomTextInput from '../../../components/InputField/InputBox';
 import CustomButton from '../../../components/Buttons/CustomButton';
 import { UserNavigationRootProps } from '../../../types/stacksParams';
@@ -11,6 +11,10 @@ import SocialLogin from '../../../components/SocialLogin/SocialLogin';
 import { Formik } from 'formik';
 import { logInSchema, SigUpSchema } from '../../../config/constants/errorMessage';
 import ErrorText from '../../../components/ErrorText';
+import auth from '@react-native-firebase/auth';
+
+import Toast from 'react-native-simple-toast';
+import VisibleLoader from '../../../components/Loader/VisibleLoader';
 
 const { width } = Dimensions.get('window');
 
@@ -20,6 +24,7 @@ const ForgotPasswordScreen: React.FC<UserNavigationRootProps<"ForgotPassword">> 
     const logoScale = useRef(new Animated.Value(1)).current;
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
+    const [isLoading, setIsLoading] = useState(false)
     const type = props.route.params?.type
 
     useEffect(() => {
@@ -49,48 +54,79 @@ const ForgotPasswordScreen: React.FC<UserNavigationRootProps<"ForgotPassword">> 
     }, []);
 
     const onSubmit = async (value: any) => {
-        console.log("valuessss", value)
-        navigation.navigate("OtpVerfication",{type: type})
+        if (!value?.emailOrPhone?.includes('@')) {
+
+            console.log("valuessss", value)
+            navigation.navigate("OtpVerfication", { type: type })
+        } else {
+            try {
+                await auth().sendPasswordResetEmail(value.emailOrPhone);
+                Toast.show('Please check your email and follow the instructions to reset your password.', Toast.SHORT);
+                navigation.navigate('Home')
+                return true
+            } catch (error: any) {
+                console.error(error);
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        Toast.show("Please enter a valid email address.", Toast.SHORT);
+                        break;
+                    case 'auth/user-not-found':
+                        Toast.show('No user found with this email.', Toast.SHORT);
+                        break;
+                    default:
+                        Toast.show(error.message, Toast.SHORT);
+                }
+            }
+        }
     }
     return (
-        <Formik
-            initialValues={{
-                emailOrPhone: '',
-            }}
-            onSubmit={(values, { resetForm }) => {
-                onSubmit(values)
-            }}
-        validationSchema={SigUpSchema}
-
-        >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-                <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
-                    <AuthOverlay color={COLORS.UstaBlack} />
-                    <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
-                        <Text style={styles.title}>Forgot password?</Text>
-                        <Text style={styles.subTitle}>Enter your email below to receive a code to reset your password.</Text>
-                        <CustomTextInput
-                            placeholder={"Email or phone number"}
-                            placeholderTextColor={COLORS.white}
-                            value={values?.emailOrPhone}
-                            onChangeText={handleChange('emailOrPhone')}
-                            onBlur={handleBlur("emailOrPhone")}
-                        />
-                        {errors?.emailOrPhone && touched?.emailOrPhone &&
-                            <ErrorText
-                                error={errors.emailOrPhone}
+        <>
+            <Formik
+                initialValues={{
+                    emailOrPhone: '',
+                }}
+                onSubmit={async (values: any, { resetForm }) => {
+                    setIsLoading(true)
+                    let res = await onSubmit(values)
+                    setIsLoading(false)
+                    if (res) {
+                        resetForm({ values: "" })
+                    }
+                }}
+                validationSchema={SigUpSchema}
+                >
+                {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                    <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
+                        <AuthOverlay color={COLORS.UstaBlack} />
+                        <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
+                            <Text style={styles.title}>Forgot password?</Text>
+                            <Text style={styles.subTitle}>Enter your email below to receive a code to reset your password.</Text>
+                            <CustomTextInput
+                                placeholder={"Email or phone number"}
+                                placeholderTextColor={COLORS.white}
+                                value={values?.emailOrPhone}
+                                onChangeText={handleChange('emailOrPhone')}
+                                onBlur={handleBlur("emailOrPhone")}
                             />
-                        }
-                        <CustomButton
-                            title={"Send Code"}
-                            onPress={handleSubmit}
-                            style={styles.signInButton}
-                        />
+                            {errors?.emailOrPhone && touched?.emailOrPhone &&
+                                <ErrorText
+                                    error={errors.emailOrPhone}
+                                />
+                            }
+                            <CustomButton
+                                title={"Send Code"}
+                                onPress={handleSubmit}
+                                style={styles.signInButton}
+                            />
+                        </Animated.View>
                     </Animated.View>
-                </Animated.View>
 
-            )}
-        </Formik>
+                )}
+            </Formik>
+            {isLoading &&
+                <VisibleLoader />
+            }
+        </>
     );
 };
 

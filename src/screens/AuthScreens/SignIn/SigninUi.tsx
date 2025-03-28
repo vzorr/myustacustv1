@@ -12,18 +12,24 @@ import { Formik } from 'formik';
 import { logInSchema, SigUpSchema } from '../../../config/constants/errorMessage';
 import ErrorText from '../../../components/ErrorText';
 import auth from '@react-native-firebase/auth';
+import { setUserInfo } from '../../../stores/reducer/userInfoReducer';
+import Toast from 'react-native-simple-toast';
+import { useDispatch } from 'react-redux';
+import VisibleLoader from '../../../components/Loader/VisibleLoader';
 
 const { width } = Dimensions.get('window');
 
 const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
     const { navigation } = props;
     const screenOpacity = useRef(new Animated.Value(0)).current;
+    const [isLoading, setIsLoading] = useState(false)
     const logoScale = useRef(new Animated.Value(1)).current;
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
+    const dispatch = useDispatch()
 
     const handleScreen = () => {
-      navigation.navigate('SignUp')
+        navigation.navigate('SignUp')
     }
     useEffect(() => {
         Animated.parallel([
@@ -56,105 +62,133 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
         { translateY: logoPositionY }
     ];
     const onSubmit = async (value: any) => {
-            if (!value?.emailOrPhone?.includes('@')) {
-            
-            }else{
-                
+        if (!value?.emailOrPhone?.includes('@')) {
+            try {
+                const phoneNo = `+92${value.emailOrPhone}`
+                const confirmation = await auth().signInWithPhoneNumber(phoneNo);
+                Toast.show('OTP Sent, Check your phone for the verification code.', Toast.SHORT);
+                navigation.navigate("OtpVerfication", { otpConfirmation :confirmation, type:"logIn" })
+              } catch (error) {
+                console.error('Error sending OTP:', error);
+                Alert.alert('Error', 'Failed to send OTP. Please try again.');
+              }
+        } else {
+            try {
+                const response: any = await auth().signInWithEmailAndPassword(value.emailOrPhone, value.password);
+                if (response?.user) {
+                    const userInfo = response?.user?._user
+                    const storedata: any = {
+                        email: userInfo?.email,
+                        userId: userInfo?.uid,
+                        isLogin: true
+                    }
+                    dispatch(setUserInfo(storedata));
+                }
+                navigation.replace("Home")
+                Toast.show('login successfully', Toast.SHORT);
+                return true
+            } catch (error) {
+                Toast.show("User not found", Toast.SHORT);
+                return false
             }
-            navigation.navigate("Home")
-        console.log("valuessss", value)
-        let payload = {
-            email: value.emailOrPhone,
-            isEmail: true,
-            password: value.password
-
         }
+   
     }
     const handleForgotPassword = () => {
-        navigation.navigate("ForgotPassword",{type: 'forgetPassword'})
+        navigation.navigate("ForgotPassword", { type: 'forgetPassword' })
     }
     return (
-        <Formik
-            initialValues={{
-                emailOrPhone: '',
-                password: ''
-            }}
-            onSubmit={async (values, { resetForm }) => {
-                await onSubmit(values)
-            }}
-            validationSchema={logInSchema}
+        <>
+            <Formik
+                initialValues={{
+                    emailOrPhone: '',
+                    password: ''
+                }}
+                onSubmit={async (values: any, { resetForm }) => {
+                    setIsLoading(true)
+                    let res = await onSubmit(values)
+                    setIsLoading(false)
+                    if (res) {
+                        resetForm({ values: "" })
+                    }
+                }}
+                validationSchema={logInSchema}
 
-        >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-                <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
-                    <AuthOverlay color={COLORS.UstaBlack} />
-                    <Animated.View style={[styles.logoContainer, { transform: logoTransform }]}>
-                        <SVGIcons.MyUstaLogo />
-                    </Animated.View>
-                    <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
-                        <Text style={styles.title}>{"Sign in to your account."}</Text>
-                        <CustomTextInput
-                            placeholder={ "Email"}
-                            placeholderTextColor={COLORS.white}
-                            value={values?.emailOrPhone}
-                            onChangeText={handleChange('emailOrPhone')}
-                            onBlur={handleBlur("emailOrPhone")}
-                        />
-                        {errors?.emailOrPhone && touched?.emailOrPhone &&
-                            <ErrorText
-                                error={errors.emailOrPhone}
+            >
+                {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                    <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
+                        <AuthOverlay color={COLORS.UstaBlack} />
+                        <Animated.View style={[styles.logoContainer, { transform: logoTransform }]}>
+                            <SVGIcons.MyUstaLogo />
+                        </Animated.View>
+                        <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
+                            <Text style={styles.title}>{"Sign in to your account."}</Text>
+                            <CustomTextInput
+                                placeholder={"Email"}
+                                placeholderTextColor={COLORS.white}
+                                value={values?.emailOrPhone}
+                                onChangeText={handleChange('emailOrPhone')}
+                                onBlur={handleBlur("emailOrPhone")}
                             />
-                        }
-                                <CustomTextInput
-                                    placeholder="Enter password"
-                                    placeholderTextColor={COLORS.white}
-                                    secureTextEntry
-                                    onChangeText={handleChange('password')}
-                                    onBlur={handleBlur("password")}
-                                    value={values?.password}
+                            {errors?.emailOrPhone && touched?.emailOrPhone &&
+                                <ErrorText
+                                    error={errors.emailOrPhone}
                                 />
-                                {errors?.emailOrPhone && touched?.emailOrPhone &&
-                                    <ErrorText
-                                        error={errors.emailOrPhone}
-                                    />
-                                }
+                            }
+                            <CustomTextInput
+                                placeholder="Enter password"
+                                placeholderTextColor={COLORS.white}
+                                secureTextEntry
+                                onChangeText={handleChange('password')}
+                                onBlur={handleBlur("password")}
+                                value={values?.password}
+                            />
+                            {errors?.password && touched?.password &&
+                                <ErrorText
+                                    error={errors.password}
+                                />
+                            }
                             <Text
                                 onPress={handleForgotPassword}
                                 style={styles.forgotPassword}>Forgot Password?</Text>
 
-                        <CustomButton
-                            title={"Sign In"}
-                            onPress={handleSubmit}
-                            style={styles.signInButton}
-                        />
-                        <OrDivider />
-                        <SocialLogin
-                            title="Sign in with Google"
-                            style={styles.socialButton}
-                            textStyle={styles.socialButtonText}
-                            loginType='google'
-                        />
-                        <SocialLogin
-                            title="Sign in with Apple"
-                            style={styles.socialButton}
-                            textStyle={styles.socialButtonText}
-                        />
+                            <CustomButton
+                                title={"Sign In"}
+                                onPress={handleSubmit}
+                                style={styles.signInButton}
+                            />
+                            <OrDivider />
+                            <SocialLogin
+                                title="Sign in with Google"
+                                style={styles.socialButton}
+                                textStyle={styles.socialButtonText}
+                                loginType='google'
+                            />
+                            <SocialLogin
+                                title="Sign in with Apple"
+                                style={styles.socialButton}
+                                textStyle={styles.socialButtonText}
+                            />
 
-                        <TouchableOpacity
-                            onPress={handleScreen}
-                            style={styles.signUpContainer}>
-                            <Text style={styles.signUpText}>{"No account?"}</Text>
-                            <Text
-                                style={styles.signUpLink}
-                            >
-                                {"Sign Up"}
-                            </Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={handleScreen}
+                                style={styles.signUpContainer}>
+                                <Text style={styles.signUpText}>{"No account?"}</Text>
+                                <Text
+                                    style={styles.signUpLink}
+                                >
+                                    {"Sign Up"}
+                                </Text>
+                            </TouchableOpacity>
+                        </Animated.View>
                     </Animated.View>
-                </Animated.View>
 
-            )}
-        </Formik>
+                )}
+            </Formik>
+            {isLoading &&
+                <VisibleLoader />
+            }
+        </>
     );
 };
 

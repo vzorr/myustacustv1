@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "640414309022",
+    "project_id": "myusta-80746",
+    "storage_bucket": "myusta-80746.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640414309022:android:f0c2593fdd8b95ca8d798f",
+        "android_client_info": {
+          "package_name": "com.myusta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "640414309022-eagimb5m38dleq3kl6kod7e20n68sijq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKzxjksdZ9H1iWdRXfBQ8-VEA9ku9r5DU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "640414309022-eagimb5m38dleq3kl6kod7e20n68sijq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640414309022:android:569d0c52ea51bcde8d798f",
+        "android_client_info": {
+          "package_name": "com.myustacustomer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "640414309022-eagimb5m38dleq3kl6kod7e20n68sijq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKzxjksdZ9H1iWdRXfBQ8-VEA9ku9r5DU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "640414309022-eagimb5m38dleq3kl6kod7e20n68sijq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
