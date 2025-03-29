@@ -7,6 +7,10 @@ interface CustomTextInputProps extends TextInputProps {
 }
 const CustomTextInput: React.FC<CustomTextInputProps> = ({ isPassword, ...props }) => {
     const [secureText, setSecureText] = useState(isPassword);
+
+    const toggleSecureText = () => {
+        setSecureText(!secureText);
+    };
     return (
         <View style={styles.container}>
             <TextInput
@@ -17,9 +21,10 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({ isPassword, ...props 
             {isPassword && (
                 <TouchableOpacity
                     style={styles.eyeIcon}
-                    onPress={() => setSecureText(!secureText)}
+                    onPress={toggleSecureText}
+                    activeOpacity={0.7}
                 >
-                    <SVGIcons.eyeicon />
+                    <SVGIcons.eyeicon stroke={COLORS.white} />
                 </TouchableOpacity>
             )}
         </View>

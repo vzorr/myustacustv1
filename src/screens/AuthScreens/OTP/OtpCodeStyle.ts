@@ -5,6 +5,7 @@ export const otpCodeStyle = StyleSheet.create({
   otpContainer: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 20
   },
   underlineStyleBase: {
@@ -30,7 +31,7 @@ export const otpCodeStyle = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 10
+    // paddingHorizontal: 10
   },
   box: {
     borderWidth: 1,
@@ -58,7 +59,7 @@ export const otpCodeStyle = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: COLORS.white,
-    width: "90%",
+    width: "70%",
     marginBottom: 10,
     textAlign: 'center',
     fontFamily: FONTS.interRegular,

@@ -146,7 +146,6 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                                     <CustomTextInput
                                         placeholder="Enter password"
                                         placeholderTextColor={COLORS.white}
-                                        secureTextEntry
                                         onChangeText={handleChange('password')}
                                         onBlur={handleBlur("password")}
                                         value={values?.password}

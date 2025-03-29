@@ -62,7 +62,8 @@ const ForgotPasswordScreen: React.FC<UserNavigationRootProps<"ForgotPassword">> 
             try {
                 await auth().sendPasswordResetEmail(value.emailOrPhone);
                 Toast.show('Please check your email and follow the instructions to reset your password.', Toast.SHORT);
-                navigation.navigate('Home')
+                Alert.alert("Please check your email and reset your password")
+                navigation.navigate('SignIn')
                 return true
             } catch (error: any) {
                 console.error(error);
