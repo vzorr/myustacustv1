@@ -1,4 +1,4 @@
-package com.myusta_customer
+package com.myustacustomer
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

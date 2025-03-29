@@ -7,7 +7,7 @@ interface socialLoginProps {
     title: string;
     style?: ViewStyle;
     textStyle?: TextStyle;
-    loginType?: 'google' | 'Apple';
+    loginType?: 'google' | 'facebook';
 }
 const handleOnPress = () => {
     console.log('Social login pressed');
@@ -15,7 +15,7 @@ const handleOnPress = () => {
 
 const SocialLogin: React.FC<socialLoginProps> = ({ title, style, textStyle, loginType }) => (
     <TouchableOpacity style={[styles.button, style]} onPress={handleOnPress}>
-        {loginType === 'google' ? <SVGIcons.Google /> : <SVGIcons.Apple />}
+        {loginType === 'google' ? <SVGIcons.Google /> : <SVGIcons.facebookLogo />}
         <Text style={[styles.buttonText, textStyle]}>{title}</Text>
     </TouchableOpacity>
 );

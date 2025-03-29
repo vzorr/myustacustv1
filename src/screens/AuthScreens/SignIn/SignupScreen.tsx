@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Animated, Dimensions, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import CustomTextInput from '../../../components/InputField/InputBox';
 import CustomButton from '../../../components/Buttons/CustomButton';
 import { UserNavigationRootProps } from '../../../types/stacksParams';
@@ -20,7 +20,7 @@ const { width } = Dimensions.get('window');
 const SignUpScreen: React.FC<UserNavigationRootProps<"SignUp">> = (props) => {
     const { navigation } = props;
     const screenOpacity = useRef(new Animated.Value(0)).current;
-    const logoScale = useRef(new Animated.Value(1)).current;
+    const logoScale = useRef(new Animated.Value(2)).current;
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
     const [isLoading, setIsLoading] = useState(false)
@@ -36,7 +36,7 @@ const SignUpScreen: React.FC<UserNavigationRootProps<"SignUp">> = (props) => {
                 useNativeDriver: true,
             }),
             Animated.timing(logoScale, {
-                toValue: 0.7,
+                toValue: 0.6,
                 duration: 1200,
                 useNativeDriver: true,
             }),
@@ -101,75 +101,85 @@ const SignUpScreen: React.FC<UserNavigationRootProps<"SignUp">> = (props) => {
     }
     return (
         <>
-            <Formik
-                initialValues={{
-                    emailOrPhone: '',
-                    password: '12345678'
-                }}
-                onSubmit={async (values: any, { resetForm }) => {
-                    setIsLoading(true)
-                    let res:any = await onSubmit(values)
-                    setIsLoading(false)
-                    if (res) {
-                        resetForm({ values: "" })
-                    }
-                }}
-                validationSchema={SigUpSchema}
-
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+                style={{ flex: 1 }}
             >
-                {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-                    <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
-                        <AuthOverlay color={COLORS.UstaBlack} />
-                        <Animated.View style={[styles.logoContainer, { transform: logoTransform }]}>
-                            <SVGIcons.MyUstaLogo />
-                        </Animated.View>
-                        <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
-                            <Text style={styles.title}>{"Create your account."}</Text>
-                            <CustomTextInput
-                                placeholder={"Email or phone number"}
-                                placeholderTextColor={COLORS.white}
-                                value={values?.emailOrPhone}
-                                onChangeText={handleChange('emailOrPhone')}
-                                onBlur={handleBlur("emailOrPhone")}
-                            />
-                            {errors?.emailOrPhone && touched?.emailOrPhone &&
-                                <ErrorText
-                                    error={errors.emailOrPhone}
-                                />
+                <ScrollView
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <Formik
+                        initialValues={{
+                            emailOrPhone: '',
+                            password: '12345678'
+                        }}
+                        onSubmit={async (values: any, { resetForm }) => {
+                            setIsLoading(true)
+                            let res: any = await onSubmit(values)
+                            setIsLoading(false)
+                            if (res) {
+                                resetForm({ values: "" })
                             }
-                            <CustomButton
-                                title={"Create Account"}
-                                onPress={handleSubmit}
-                                style={styles.signInButton}
-                            />
-                            <OrDivider />
-                            <SocialLogin
-                                title="Sign in with Google"
-                                style={styles.socialButton}
-                                textStyle={styles.socialButtonText}
-                                loginType='google'
-                            />
-                            <SocialLogin
-                                title="Sign in with Apple"
-                                style={styles.socialButton}
-                                textStyle={styles.socialButtonText}
-                            />
+                        }}
+                        validationSchema={SigUpSchema}
 
-                            <TouchableOpacity
-                                onPress={handleScreen}
-                                style={styles.signUpContainer}>
-                                <Text style={styles.signUpText}>{"Already have an account?"}</Text>
-                                <Text
-                                    style={styles.signUpLink}
-                                >
-                                    {"Sign In"}
-                                </Text>
-                            </TouchableOpacity>
-                        </Animated.View>
-                    </Animated.View>
+                    >
+                        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                            <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
+                                <AuthOverlay color={COLORS.UstaBlack} />
+                                <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
+                                    <Animated.View style={[styles.logoContainer, { transform: logoTransform }]}>
+                                        <SVGIcons.MyUstaLogo />
+                                    </Animated.View>
+                                    <Text style={styles.title}>{"Create your account."}</Text>
+                                    <CustomTextInput
+                                        placeholder={"Email or phone number"}
+                                        placeholderTextColor={COLORS.white}
+                                        value={values?.emailOrPhone}
+                                        onChangeText={handleChange('emailOrPhone')}
+                                        onBlur={handleBlur("emailOrPhone")}
+                                    />
+                                    {errors?.emailOrPhone && touched?.emailOrPhone &&
+                                        <ErrorText
+                                            error={errors.emailOrPhone}
+                                        />
+                                    }
+                                    <CustomButton
+                                        title={"Create Account"}
+                                        onPress={handleSubmit}
+                                        style={styles.signInButton}
+                                    />
+                                    <OrDivider />
+                                    <SocialLogin
+                                        title="Sign in with Google"
+                                        style={styles.socialButton}
+                                        textStyle={styles.socialButtonText}
+                                        loginType='google'
+                                    />
+                                    <SocialLogin
+                                        title="Sign in with Facebook"
+                                        style={styles.socialButton}
+                                        textStyle={styles.socialButtonText}
+                                    />
 
-                )}
-            </Formik>
+                                    <TouchableOpacity
+                                        onPress={handleScreen}
+                                        style={styles.signUpContainer}>
+                                        <Text style={styles.signUpText}>{"Already have an account?"}</Text>
+                                        <Text
+                                            style={styles.signUpLink}
+                                        >
+                                            {"Sign In"}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </Animated.View>
+                            </Animated.View>
+
+                        )}
+                    </Formik>
+                </ScrollView>
+            </KeyboardAvoidingView>
             {isLoading &&
                 <VisibleLoader />
             }

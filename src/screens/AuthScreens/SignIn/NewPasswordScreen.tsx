@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, StyleSheet, Animated, Dimensions } from 'react-native';
+import { Text, StyleSheet, Animated, Dimensions, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import CustomTextInput from '../../../components/InputField/InputBox';
 import CustomButton from '../../../components/Buttons/CustomButton';
 import { UserNavigationRootProps } from '../../../types/stacksParams';
@@ -56,59 +56,69 @@ const NewPasswordScreen: React.FC<UserNavigationRootProps<"NewPassword">> = (pro
         navigation.navigate("SuccessMessage")
     }
     return (
-        <Formik
-            initialValues={{
-                emailOrPhone: verInfo? verInfo :"",
-                password: '',
-            }}
-            onSubmit={(values, { resetForm }) => {
-                onSubmit(values)
-            }}
-        validationSchema={logInSchema }
-           enableReinitialize={true}
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            style={{ flex: 1 }}
         >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-                <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
-                    <AuthOverlay color={COLORS.UstaBlack} />
-                    <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
-                        <Text style={styles.title}>Set Your New Password</Text>
-                        <Text style={styles.subTitle}>Use at least 8 characters with letters, numbers, and symbols.</Text>
-                        <CustomTextInput
-                            placeholder={"Email or phone number"}
-                            placeholderTextColor={COLORS.white}
-                            value={values?.emailOrPhone}
-                            onChangeText={handleChange('emailOrPhone')}
-                            onBlur={handleBlur("emailOrPhone")}
-                            editable={false}
-                        />
-                        {errors?.emailOrPhone && touched?.emailOrPhone &&
-                            <ErrorText
-                                error={errors.emailOrPhone}
-                            />
-                        }
-                        <CustomTextInput
-                            placeholder="Enter password"
-                            placeholderTextColor={COLORS.white}
-                            secureTextEntry
-                            onChangeText={handleChange('password')}
-                            onBlur={handleBlur("password")}
-                            value={values?.password}
-                        />
-                        {errors?.password && touched?.password &&
-                            <ErrorText
-                                error={errors.password}
-                            />
-                        }
-                        <CustomButton
-                            title={"Confirm"}
-                            onPress={handleSubmit}
-                            style={styles.button}
-                        />
-                    </Animated.View>
-                </Animated.View>
+            <ScrollView
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps="handled"
+            >
+                <Formik
+                    initialValues={{
+                        emailOrPhone: verInfo ? verInfo : "",
+                        password: '',
+                    }}
+                    onSubmit={(values, { resetForm }) => {
+                        onSubmit(values)
+                    }}
+                    validationSchema={logInSchema}
+                    enableReinitialize={true}
+                >
+                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                        <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
+                            <AuthOverlay color={COLORS.UstaBlack} />
+                            <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
+                                <Text style={styles.title}>Set Your New Password</Text>
+                                <Text style={styles.subTitle}>Use at least 8 characters with letters, numbers, and symbols.</Text>
+                                <CustomTextInput
+                                    placeholder={"Email or phone number"}
+                                    placeholderTextColor={COLORS.white}
+                                    value={values?.emailOrPhone}
+                                    onChangeText={handleChange('emailOrPhone')}
+                                    onBlur={handleBlur("emailOrPhone")}
+                                    editable={false}
+                                />
+                                {errors?.emailOrPhone && touched?.emailOrPhone &&
+                                    <ErrorText
+                                        error={errors.emailOrPhone}
+                                    />
+                                }
+                                <CustomTextInput
+                                    placeholder="Enter password"
+                                    placeholderTextColor={COLORS.white}
+                                    secureTextEntry
+                                    onChangeText={handleChange('password')}
+                                    onBlur={handleBlur("password")}
+                                    value={values?.password}
+                                />
+                                {errors?.password && touched?.password &&
+                                    <ErrorText
+                                        error={errors.password}
+                                    />
+                                }
+                                <CustomButton
+                                    title={"Confirm"}
+                                    onPress={handleSubmit}
+                                    style={styles.button}
+                                />
+                            </Animated.View>
+                        </Animated.View>
 
-            )}
-        </Formik>
+                    )}
+                </Formik>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 

@@ -1,4 +1,4 @@
-package com.myusta_customer
+package com.myustacustomer
 
 import android.app.Application
 import com.facebook.react.PackageList
