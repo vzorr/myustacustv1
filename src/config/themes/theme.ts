@@ -25,7 +25,8 @@ export const COLORS = {
     bgImgColor: "rgba(0, 32, 63, 0.7)",
     white: "#FFF",
     authBgColor: 'rgba(0, 32, 63, 1)',
-    otpBoxColor: "rgba(128, 143, 159, 1)"
+    otpBoxColor: "rgba(128, 143, 159, 1)",
+    inputBorder: "rgba(0, 0, 0, 0.20)"
 }
 export const fontSize = {
     5: hp(0.7),

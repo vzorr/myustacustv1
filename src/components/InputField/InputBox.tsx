@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
-import { TextInput, StyleSheet, View, TextInputProps, TouchableOpacity } from 'react-native';
+import { TextInput, StyleSheet, View, TextInputProps, TouchableOpacity, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { COLORS, FONTS } from '../../config/themes/theme';
 import { SVGIcons } from '../../config/constants/svg';
 interface CustomTextInputProps extends TextInputProps {
     isPassword?: boolean;
+    containerStyle?: StyleProp<ViewStyle>;
+    inputStyle?: StyleProp<TextStyle>;
 }
-const CustomTextInput: React.FC<CustomTextInputProps> = ({ isPassword, ...props }) => {
+const CustomTextInput: React.FC<CustomTextInputProps> = ({ isPassword, containerStyle, inputStyle, ...props }) => {
     const [secureText, setSecureText] = useState(isPassword);
 
     const toggleSecureText = () => {
         setSecureText(!secureText);
     };
     return (
-        <View style={styles.container}>
+        <View style={StyleSheet.flatten([styles.container, containerStyle])}>
             <TextInput
-                style={styles.input}
+                style={StyleSheet.flatten([styles.input, inputStyle])}
                 secureTextEntry={secureText}
                 {...props}
             />
@@ -35,7 +37,8 @@ const styles = StyleSheet.create({
     container: {
         width: '90%',
         height: 44,
-        margin: 8,
+        // margin: 8,
+        gap: 8,
         justifyContent: 'center',
         borderRadius: 8,
     },

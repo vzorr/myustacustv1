@@ -12,7 +12,7 @@ const OtpVerificationUi = (props: any) => {
 
     const handleResendOTP = () => {
         // navigation.navigate("NewPassword");
-        navigation.replace("SuccessMessage")
+        navigation.replace("SuccessMessage", { screenType: "OtpVerfication" })
     };
 
     const handleKeyPress = (event: any, index: number) => {

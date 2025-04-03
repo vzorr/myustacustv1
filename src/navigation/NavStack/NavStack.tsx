@@ -10,6 +10,7 @@ import NewPasswordScreen from '../../screens/AuthScreens/SignIn/NewPasswordScree
 import SuccessMessage from '../../screens/AuthScreens/SuccessMessage/SuccessMessage';
 import SignUpScreen from '../../screens/AuthScreens/SignIn/SignupScreen';
 import ChangePasswordScreen from '../../screens/AuthScreens/SignIn/ChangePasswordScreen';
+import AccountBasicInfo from '../../screens/AuthScreens/AccountCreation/AccountBasicInfo';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
@@ -30,6 +31,7 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+            <Stack.Screen name="AccountBasicInfo" component={AccountBasicInfo} />
         </Stack.Navigator>
     )
 }

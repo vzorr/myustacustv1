@@ -11,17 +11,20 @@ interface successProps {
 }
 
 const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (props) => {
-    const { navigation } = props;
+    const { navigation, route } = props;
+    const screenType = route?.params?.screenType
+    console.log("scrreeenn", screenType)
     const screenOpacity = useRef(new Animated.Value(0)).current;
     const logoScale = useRef(new Animated.Value(1)).current;
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
-    const screenType = "NewPassword"
+    // const screenType = "NewPassword"
     const handleContinue = () => {
         if (screenType === "NewPassword") {
             navigation.navigate("Home")
         } else {
             console.log("handle Continue")
+            navigation.navigate("AccountBasicInfo")
         }
     }
 
@@ -57,7 +60,7 @@ const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (pro
             <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
                 <SVGIcons.SuccessIcon />
                 <Text style={styles.title}>Success!</Text>
-                <Text style={styles.subTitle}>{screenType ? "Your password has been reset!" : "Your phone number has been successfully verified!"}</Text>
+                <Text style={styles.subTitle}>{screenType !== "OtpVerfication" ? "Your password has been reset!" : "Your phone number has been successfully verified!"}</Text>
                 <CustomButton
                     title={"Conitnue"}
                     onPress={handleContinue}

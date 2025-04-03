@@ -9,8 +9,9 @@ export type UserStackParamList = {
     ForgotPassword: any;
     OtpVerfication: any;
     NewPassword: any;
-    SuccessMessage: any
-    ChangePassword: any
+    SuccessMessage: any;
+    ChangePassword: any;
+    AccountBasicInfo: any;
 };
 
 export type UserNavigationRootProps<T extends keyof UserStackParamList> = {
