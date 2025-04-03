@@ -106,7 +106,7 @@ const ForgotPasswordScreen: React.FC<UserNavigationRootProps<"ForgotPassword">> 
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                             <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
-                                <AuthOverlay color={COLORS.UstaBlack} />
+                                <AuthOverlay color={COLORS.authBgColor} />
                                 <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
                                     <Text style={styles.title}>Forgot password?</Text>
                                     <Text style={styles.subTitle}>Enter your email below to receive a code to reset your password.</Text>

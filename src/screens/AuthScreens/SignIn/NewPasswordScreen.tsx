@@ -77,7 +77,7 @@ const NewPasswordScreen: React.FC<UserNavigationRootProps<"NewPassword">> = (pro
                 >
                     {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                         <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
-                            <AuthOverlay color={COLORS.UstaBlack} />
+                            <AuthOverlay color={COLORS.authBgColor} />
                             <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
                                 <Text style={styles.title}>Set Your New Password</Text>
                                 <Text style={styles.subTitle}>Use at least 8 characters with letters, numbers, and symbols.</Text>

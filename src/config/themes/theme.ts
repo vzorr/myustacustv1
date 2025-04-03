@@ -1,4 +1,5 @@
 import { Dimensions, Platform } from 'react-native';
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 const { width, height } = Dimensions.get('window');
 
 export const COLORS = {
@@ -24,11 +25,47 @@ export const COLORS = {
     bgImgColor: "rgba(0, 32, 63, 0.7)",
     white: "#FFF",
     authBgColor: 'rgba(0, 32, 63, 1)',
+    otpBoxColor: "rgba(128, 143, 159, 1)"
+}
+export const fontSize = {
+    5: hp(0.7),
+    6: hp(0.8),
+    7: hp(1),
+    8: hp(1.1),
+    9: hp(1.25),
+    10: hp(1.36),
+    11: hp(1.49),
+    12: hp(1.63),
+    13: hp(1.76),
+    14: hp(1.9),
+    15: hp(2.04),
+    16: hp(2.2),
+    17: hp(2.35),
+    18: hp(2.5),
+    19: hp(2.6),
+    20: hp(2.75),
+    21: hp(2.9),
+    22: hp(3.05),
+    23: hp(3.15),
+    24: hp(3.3),
+    25: hp(3.45),
+    26: hp(3.6),
+    27: hp(3.7),
+    28: hp(3.85),
+    29: hp(4),
+    30: hp(4.15),
+    31: hp(4.25),
+    32: hp(4.4),
+    33: hp(4.55),
+    34: hp(4.7),
+    35: hp(4.8)
 }
 
 export const SIZES = {
     width,
-    height
+    height,
+    wp,
+    hp
 }
 
 export const FONTS = {

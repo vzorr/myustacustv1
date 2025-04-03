@@ -60,41 +60,42 @@ const SignUpScreen: React.FC<UserNavigationRootProps<"SignUp">> = (props) => {
     ];
     const onSubmit = async (value: any) => {
         console.log("valuesssssssss", value, value?.emailOrPhone?.includes('@'));
-        if (!value?.emailOrPhone?.includes('@')) {
-            try {
-                const phoneNo = `+92${value.emailOrPhone}`
-                const confirmation = await auth().signInWithPhoneNumber(phoneNo);
-                console.log(confirmation)
-                // setVerificationId(confirmation.verificationId);
-                Toast.show('otp sent your phone', Toast.SHORT);
-                navigation.navigate("OtpVerfication", { verification: confirmation.verificationId, phoneOrEmail: value?.emailOrPhone })
+        navigation.navigate("OtpVerfication")
+        // if (!value?.emailOrPhone?.includes('@')) {
+        //     try {
+        //         const phoneNo = `+92${value.emailOrPhone}`
+        //         const confirmation = await auth().signInWithPhoneNumber(phoneNo);
+        //         console.log(confirmation)
+        //         // setVerificationId(confirmation.verificationId);
+        //         Toast.show('otp sent your phone', Toast.SHORT);
+        //         navigation.navigate("OtpVerfication", { verification: confirmation.verificationId, phoneOrEmail: value?.emailOrPhone })
 
-            } catch (error) {
-                console.error(error);
-                Toast.show('Failed to send OTP. Please try again.', Toast.SHORT);
-            }
-        } else {
-            try {
-                const userCredential = await auth().createUserWithEmailAndPassword(value?.emailOrPhone, value.password);
-                const user = userCredential.user;
-                await user.sendEmailVerification();
-                Alert.alert('Verification email sent! Please check your inbox.');
-                auth().signOut();
-                navigation.navigate('SignIn')
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        // navigation.navigate("OtpVerfication", { verification: value?.emailOrPhone  }) 
+        //     } catch (error) {
+        //         console.error(error);
+        //         Toast.show('Failed to send OTP. Please try again.', Toast.SHORT);
+        //     }
+        // } else {
+        //     try {
+        //         const userCredential = await auth().createUserWithEmailAndPassword(value?.emailOrPhone, value.password);
+        //         const user = userCredential.user;
+        //         await user.sendEmailVerification();
+        //         Alert.alert('Verification email sent! Please check your inbox.');
+        //         auth().signOut();
+        //         navigation.navigate('SignIn')
+        //     } catch (error) {
+        //         console.error(error);
+        //     }
+        // };
+        // // navigation.navigate("OtpVerfication", { verification: value?.emailOrPhone  }) 
 
 
-        console.log("valuessss", value)
-        let payload = {
-            email: value.emailOrPhone,
-            isEmail: true,
-            password: value.password
+        // console.log("valuessss", value)
+        // let payload = {
+        //     email: value.emailOrPhone,
+        //     isEmail: true,
+        //     password: value.password
 
-        }
+        // }
     }
     const handleForgotPassword = () => {
         navigation.navigate("ForgotPassword")
@@ -127,7 +128,7 @@ const SignUpScreen: React.FC<UserNavigationRootProps<"SignUp">> = (props) => {
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                             <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
-                                <AuthOverlay color={COLORS.UstaBlack} />
+                                <AuthOverlay color={COLORS.authBgColor} />
                                 <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
                                     <Animated.View style={[styles.logoContainer, { transform: logoTransform }]}>
                                         <SVGIcons.MyUstaLogo />

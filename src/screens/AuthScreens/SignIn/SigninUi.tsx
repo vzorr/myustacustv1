@@ -125,7 +125,7 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                             <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
-                                <AuthOverlay color={COLORS.UstaBlack} />
+                                <AuthOverlay color={COLORS.authBgColor} />
                                 <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
                                     <Animated.View style={[styles.logoContainer, { transform: logoTransform }]}>
                                         <SVGIcons.MyUstaLogo />

@@ -29,55 +29,55 @@ const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (
         }
     };
     const handleSubmit = async () => {
-        const fullCode = otp.join("");
-        const otpParse = Number(fullCode)
-        if (fullCode.length === 6) {
-            try {
-                setIsLoading(true)
-                const credential = auth.PhoneAuthProvider.credential(verInfo, fullCode);
-                await auth().signInWithCredential(credential);
-                setIsLoading(false)
-                Toast.show('Phone number verified! User signed in', Toast.SHORT);
-                navigation.navigate('SignIn')
+        // const fullCode = otp.join("");
+        // const otpParse = Number(fullCode)
+        // if (fullCode.length === 6) {
+        //     try {
+        //         setIsLoading(true)
+        //         const credential = auth.PhoneAuthProvider.credential(verInfo, fullCode);
+        //         await auth().signInWithCredential(credential);
+        //         setIsLoading(false)
+        //         Toast.show('Phone number verified! User signed in', Toast.SHORT);
+        //         navigation.navigate('SignIn')
 
-                //   navigation.navigate("NewPassword", { emailorPhoneNo: verInfo })
-            } catch (error) {
-                setIsLoading(false)
-                Toast.show('Invalid OTP. Please try again.', Toast.SHORT);
-            }
-        }
-        else {
-            setErrorMessage("otp code is not correct")
-        }
+        //         //   navigation.navigate("NewPassword", { emailorPhoneNo: verInfo })
+        //     } catch (error) {
+        //         setIsLoading(false)
+        //         Toast.show('Invalid OTP. Please try again.', Toast.SHORT);
+        //     }
+        // }
+        // else {
+        //     setErrorMessage("otp code is not correct")
+        // }
     }
-    const verifyOtp = async () => {
-        try {
-            const fullCode = otp.join("");
-            setIsLoading(true)
-            await phoneNoConfirmation.confirm(fullCode);
-            setIsLoading(false)
-            Toast.show("Login Successful", Toast.SHORT);
-            navigation.navigate('Home')
-        } catch (error) {
-            setIsLoading(false)
-            Toast.show("Invalid OTP. Please try again", Toast.SHORT);
-            console.error('Error verifying OTP:', error);
-        }
-    };
-    useFocusEffect(
-        useCallback(() => {
-            const fullCode = otp.join("");
-            if (fullCode.length === 6) {
-                if (type === "logIn") {
-                    verifyOtp();
-                } else {
-                    handleSubmit();
-                }
-            }
-            return () => {
-            };
-        }, [otp, type])
-    );
+    // const verifyOtp = async () => {
+    //     try {
+    //         const fullCode = otp.join("");
+    //         setIsLoading(true)
+    //         await phoneNoConfirmation.confirm(fullCode);
+    //         setIsLoading(false)
+    //         Toast.show("Login Successful", Toast.SHORT);
+    //         navigation.navigate('Home')
+    //     } catch (error) {
+    //         setIsLoading(false)
+    //         Toast.show("Invalid OTP. Please try again", Toast.SHORT);
+    //         console.error('Error verifying OTP:', error);
+    //     }
+    // };
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         const fullCode = otp.join("");
+    //         if (fullCode.length === 6) {
+    //             if (type === "logIn") {
+    //                 verifyOtp();
+    //             } else {
+    //                 handleSubmit();
+    //             }
+    //         }
+    //         return () => {
+    //         };
+    //     }, [otp, type])
+    // );
     return (
         <>
             <OtpVerificationUi

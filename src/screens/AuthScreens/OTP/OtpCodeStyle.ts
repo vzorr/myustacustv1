@@ -1,48 +1,35 @@
 import { StyleSheet } from "react-native";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { COLORS, FONTS } from "../../../config/themes/theme";
 export const otpCodeStyle = StyleSheet.create({
-  otpContainer: {
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20
+    alignSelf: 'stretch',
+    padding: 10
   },
-  underlineStyleBase: {
-    width: wp(12),
-    height: hp(6),
-    borderWidth: 2,
-    borderRadius: 5,
-    borderColor: COLORS.GreyedOut,
-    color: COLORS.Gray,
-    fontSize: 16,
-    fontWeight: "600"
+  otpContainer: {
+    width: "100%",
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    gap: 20
   },
-  underlineStyleHighLighted: {
-    borderColor: COLORS.Black
-  },
-  otpInputView: {
-    width: '100%',
-    height: hp(13),
-    paddingHorizontal: 20,
-    alignItems: "center"
-  },
-  container: {
+  boxContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    // paddingHorizontal: 10
+    gap: 8
   },
   box: {
-    borderWidth: 1,
-    borderColor: COLORS.Navy200,
+    borderWidth: 2,
+    borderColor: COLORS.otpBoxColor,
+    color: COLORS.white,
     width: 48,
     height: 48,
-    margin: 5,
     textAlign: 'center',
     fontSize: 20,
-    marginTop: 10,
-    backgroundColor: COLORS.Navy200,
+    backgroundColor: COLORS.otpBoxColor,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: "center"
@@ -51,25 +38,24 @@ export const otpCodeStyle = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: COLORS.white,
-    marginBottom: 10,
     textAlign: 'center',
     fontFamily: FONTS.interSemiBold,
+  },
+  subTitleContainer: {
+    width: "80%",
   },
   subTitle: {
     fontSize: 14,
     fontWeight: '400',
     color: COLORS.white,
-    width: "70%",
-    marginBottom: 10,
     textAlign: 'center',
     fontFamily: FONTS.interRegular,
-    fontStyle: "normal"
+    fontStyle: "normal",
   },
   resendContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
   },
   dontTxt: {
     fontSize: 12,

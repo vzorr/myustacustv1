@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { COLORS, FONTS } from '../../config/themes/theme';
+import { COLORS, FONTS, fontSize, SIZES } from '../../config/themes/theme';
 
 interface ButtonProps {
     title: string;
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontFamily: FONTS.interMedium,
-        fontSize: 14,
+        fontSize: fontSize[14],
         fontStyle: 'normal',
         fontWeight: '500',
         color: COLORS.Navy,
