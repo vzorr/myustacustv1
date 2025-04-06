@@ -1,3 +1,4 @@
+import { StyleSheet } from 'react-native';
 import { Dimensions, Platform } from 'react-native';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 const { width, height } = Dimensions.get('window');
@@ -22,11 +23,13 @@ export const COLORS = {
     SecondaryHover: "#F2F2F2",
     UstaBlack: "#232323",
     Gray: "#EEEEEE",
-    bgImgColor: "rgba(0, 32, 63, 0.7)",
+    statusBarColor: "#E9E9E9",
     white: "#FFF",
+    bgImgColor: "rgba(0, 32, 63, 0.7)",
     authBgColor: 'rgba(0, 32, 63, 1)',
     otpBoxColor: "rgba(128, 143, 159, 1)",
-    inputBorder: "rgba(0, 0, 0, 0.20)"
+    inputBorder: "rgba(0, 0, 0, 0.20)",
+    modalBgColor: "rgba(55, 55, 55, 0.50)"
 }
 export const fontSize = {
     5: hp(0.7),
@@ -77,3 +80,21 @@ export const FONTS = {
     interLight: "Inter-Light",
     interBlack: "Inter-Black",
 }
+
+export const textStyles = StyleSheet.create({
+    title: {
+        fontSize: fontSize[24],
+        fontFamily: FONTS.interSemiBold,
+        fontWeight: '600',
+        fontStyle: 'normal',
+        color: COLORS.Navy,
+    },
+    subTitle: {
+        fontSize: fontSize[14],
+        fontFamily: FONTS.interRegular,
+        fontWeight: '400',
+        fontStyle: 'normal',
+        color: COLORS.Navy200,
+    },
+});
+

@@ -11,6 +11,10 @@ import SuccessMessage from '../../screens/AuthScreens/SuccessMessage/SuccessMess
 import SignUpScreen from '../../screens/AuthScreens/SignIn/SignupScreen';
 import ChangePasswordScreen from '../../screens/AuthScreens/SignIn/ChangePasswordScreen';
 import AccountBasicInfo from '../../screens/AuthScreens/AccountCreation/AccountBasicInfo';
+import LocationsAndPreferences from '../../screens/AuthScreens/AccountCreation/LocationsAndPreferences';
+import LocationPickerScreen from '../../screens/AuthScreens/AccountCreation/LocationScreen';
+import NotificationPreferences from '../../screens/AuthScreens/AccountCreation/NotificationPreferences';
+import TermsAndConditions from '../../screens/AuthScreens/AccountCreation/TermsAndConditions';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
@@ -19,7 +23,7 @@ const NavStack: React.FC = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='Splash'
+            initialRouteName='LocationsAndPreferences'
         >
             {/* <Stack.Screen name="Tabs" component={TabStack} /> */}
             <Stack.Screen name="Splash" component={SplashScreen} />
@@ -32,6 +36,10 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
             <Stack.Screen name="AccountBasicInfo" component={AccountBasicInfo} />
+            <Stack.Screen name="LocationsAndPreferences" component={LocationsAndPreferences} />
+            <Stack.Screen name="LocationScreen" component={LocationPickerScreen} />
+            <Stack.Screen name="NotificationPreferences" component={NotificationPreferences} />
+            <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
         </Stack.Navigator>
     )
 }

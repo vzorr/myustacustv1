@@ -5,6 +5,23 @@ import Apple from "../../assets/myUstaLogo/apple-logo.svg";
 import SuccessIcon from "../../assets/icons/specialVectors/Success.svg";
 import facebookLogo from "../../assets/myUstaLogo/facebook.svg"
 import eyeicon from "../../assets/icons/bx-show.svg"
+import hideEyeIcon from "../../assets/icons/bx-hide.svg"
+import arrowUp from "../../assets/icons/arrow/arrow-up.svg"
+import arrowDown from "../../assets/icons/arrow/arrow-down.svg"
+import uploadIcon from "../../assets/icons/bx-arrow-from-bottom.svg"
+import uploadedIcon from "../../assets/icons/check.svg"
+import leftArrow from "../../assets/icons/chevron/chevron-left.svg"
+import rightArrow from "../../assets/icons/chevron/chevron-right.svg"
+import ArrowUp from "../../assets/icons/chevron/chevron-up.svg"
+import ArrowDown from "../../assets/icons/chevron/chevron-down.svg"
+import unFilledRightButton from "../../assets/icons/UnfillRightButton.svg"
+import filledRightButton from "../../assets/icons/fillRightButton.svg"
+import filledLeftButton from "../../assets/icons/fillLeftButton.svg"
+import plusIcon from "../../assets/icons/bx-plus.svg"
+import searchIcon from "../../assets/icons/bx-search.svg"
+import deleteIcon from "../../assets/icons/bx-trash.svg"
+import locationIcon from "../../assets/icons/bx-map.svg"
+import crossIcon from "../../assets/icons/bx-x.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -12,5 +29,22 @@ export const SVGIcons = {
     Apple,
     facebookLogo,
     SuccessIcon,
-    eyeicon
+    eyeicon,
+    hideEyeIcon,
+    arrowUp,
+    arrowDown,
+    uploadIcon,
+    uploadedIcon,
+    leftArrow,
+    rightArrow,
+    unFilledRightButton,
+    filledRightButton,
+    filledLeftButton,
+    plusIcon,
+    ArrowDown,
+    ArrowUp,
+    searchIcon,
+    deleteIcon,
+    locationIcon,
+    crossIcon
 };

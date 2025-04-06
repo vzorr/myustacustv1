@@ -211,13 +211,14 @@ const styles = StyleSheet.create({
     logoContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 60,
+        // marginTop: 60,
     },
     content: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: -50,
+        gap: 8
+        // marginTop: -50,
     },
     title: {
         fontSize: 20,
@@ -235,7 +236,8 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         textDecorationLine: 'underline',
         textDecorationColor: COLORS.white,
-        marginVertical: 10,
+        marginTop: 2,
+        marginBottom: 10
     },
     signInButton: {
         // backgroundColor: COLORS.primary,

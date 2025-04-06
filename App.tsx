@@ -4,15 +4,15 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from './src/stores/Store/store';
-const App = () => {
+const App: React.FC = () => {
   return (
     <Provider store={store}>
-    <PersistGate persistor={persistor}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-      <MainStack />
-      </GestureHandlerRootView>
-    </PersistGate>
-  </Provider>
+      <PersistGate persistor={persistor}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <MainStack />
+        </GestureHandlerRootView>
+      </PersistGate>
+    </Provider>
   )
 }
 

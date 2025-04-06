@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, StyleSheet, Animated, Dimensions } from 'react-native';
+import { Text, StyleSheet, Animated, Dimensions, Alert } from 'react-native';
 import { UserNavigationRootProps } from '../../../types/stacksParams';
 import AuthOverlay from '../../../components/AuthOverlay/AuthOverlay';
 import { COLORS, FONTS } from '../../../config/themes/theme';
@@ -20,13 +20,27 @@ const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (pro
     const contentAnim = useRef(new Animated.Value(width)).current;
     // const screenType = "NewPassword"
     const handleContinue = () => {
-        if (screenType === "NewPassword") {
-            navigation.navigate("Home")
-        } else {
-            console.log("handle Continue")
-            navigation.navigate("AccountBasicInfo")
+        switch (screenType) {
+            case "NewPassword":
+                navigation.navigate("Home");
+                break;
+
+            case "OtpVerfication":
+                navigation.navigate("AccountBasicInfo");
+                break;
+            case "NotificationPreferences":
+                navigation.navigate("Home");
+                break;
+
+            default:
+                Alert.alert(
+                    "Unknown Screen Type",
+                    `The screen type "${screenType}" is not recognized.`,
+                    [{ text: "OK" }]
+                );
+                break;
         }
-    }
+    };
 
     useEffect(() => {
         Animated.parallel([
@@ -56,11 +70,18 @@ const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (pro
 
     return (
         <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
-            <AuthOverlay color={COLORS.UstaBlack} />
+            <AuthOverlay color={screenType === "NotificationPreferences" ? COLORS.white : COLORS.authBgColor} />
             <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
                 <SVGIcons.SuccessIcon />
-                <Text style={styles.title}>Success!</Text>
-                <Text style={styles.subTitle}>{screenType !== "OtpVerfication" ? "Your password has been reset!" : "Your phone number has been successfully verified!"}</Text>
+                <Text style={[styles.title, { color: screenType === "NotificationPreferences" ? COLORS.Navy : COLORS.white }]}>Success!</Text>
+                <Text style={[styles.subTitle, { color: screenType === "NotificationPreferences" ? COLORS.GreyedOut : COLORS.white }]}>
+                    {screenType === "OtpVerfication"
+                        ? "Your phone number has been successfully verified!"
+                        : screenType === "NotificationPreferences"
+                            ? "Your account has been setup."
+                            : "Your password has been reset!"}
+                </Text>
+
                 <CustomButton
                     title={"Conitnue"}
                     onPress={handleContinue}

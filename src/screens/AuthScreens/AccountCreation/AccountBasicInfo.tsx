@@ -5,7 +5,9 @@ import AccountBasicInfoUi from './AccountBasicInfoUi'
 
 const AccountBasicInfo: React.FC<UserNavigationRootProps<"AccountBasicInfo">> = (props) => {
     return (
-        <AccountBasicInfoUi />
+        <AccountBasicInfoUi
+            navigation={props.navigation}
+        />
     )
 }
 
