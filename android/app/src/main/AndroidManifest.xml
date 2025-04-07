@@ -14,9 +14,10 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme"
       android:supportsRtl="true">
-       <!-- <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_GOOGLE_MAPS_API_KEY" /> -->
+       <!-- meta-data from Cello App -->
+      <meta-data 
+            android:name="com.google.android.geo.API_KEY" 
+            android:value="AIzaSyCJ3zCSI5ylVSseLBE_WCDdbfwQAdAvhu4"/>
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
