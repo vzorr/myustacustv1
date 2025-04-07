@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextInput, StyleSheet, View, TextInputProps, TouchableOpacity, StyleProp, ViewStyle, TextStyle } from 'react-native';
-import { COLORS, FONTS } from '../../config/themes/theme';
+import { COLORS, FONTS, SIZES } from '../../config/themes/theme';
 import { SVGIcons } from '../../config/constants/svg';
 interface CustomTextInputProps extends TextInputProps {
     isPassword?: boolean;
@@ -36,8 +36,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({ isPassword, container
 const styles = StyleSheet.create({
     container: {
         width: '90%',
-        height: 44,
-        // margin: 8,
+        height: SIZES.hp(6.1),
         gap: 8,
         justifyContent: 'center',
         borderRadius: 8,
@@ -50,7 +49,8 @@ const styles = StyleSheet.create({
         fontFamily: FONTS.interRegular,
         color: COLORS.white,
         fontWeight: '400',
-        paddingStart: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
     },
     eyeIcon: {
         position: 'absolute',

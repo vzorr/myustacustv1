@@ -12,6 +12,10 @@ export type UserStackParamList = {
     SuccessMessage: any;
     ChangePassword: any;
     AccountBasicInfo: any;
+    LocationsAndPreferences: any;
+    LocationScreen: any;
+    NotificationPreferences: any;
+    TermsAndConditions: any;
 };
 
 export type UserNavigationRootProps<T extends keyof UserStackParamList> = {
