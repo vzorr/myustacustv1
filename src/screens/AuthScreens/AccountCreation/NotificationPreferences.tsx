@@ -1,5 +1,5 @@
 import { SafeAreaView, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { UserNavigationRootProps } from '../../../types/stacksParams';
 import accountScreensStyles from '../../../styles/accountScreensStyles';
 import { SVGIcons } from '../../../config/constants/svg';
@@ -8,14 +8,12 @@ import ProgressBar from '../../../components/ProgressBar/ProgressBar';
 import CustomSelector from '../../../components/Selector/CustomSelector';
 import AccountHeader from '../../../components/AccountHeader/AccountHeader';
 import CustomDropDown from '../../../components/DropDown/CustomDropDown';
-import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal';
 import CustomButton from '../../../components/Buttons/CustomButton';
 
 const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPreferences">> = (props) => {
     const { route, navigation } = props
     const isTermsAndConditionsAccepted = route?.params?.isTermsAndConditionsAccepted
     const [selectedNotiiType, setSelectedNotiType] = useState<string[]>([]);
-    // const isTermsAndConditionsAccepted = true
 
     const notiiType = [
         { key: '1', value: 'App' },

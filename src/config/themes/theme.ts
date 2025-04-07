@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 import { Dimensions, Platform } from 'react-native';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 const { width, height } = Dimensions.get('window');
@@ -80,21 +79,3 @@ export const FONTS = {
     interLight: "Inter-Light",
     interBlack: "Inter-Black",
 }
-
-export const textStyles = StyleSheet.create({
-    title: {
-        fontSize: fontSize[24],
-        fontFamily: FONTS.interSemiBold,
-        fontWeight: '600',
-        fontStyle: 'normal',
-        color: COLORS.Navy,
-    },
-    subTitle: {
-        fontSize: fontSize[14],
-        fontFamily: FONTS.interRegular,
-        fontWeight: '400',
-        fontStyle: 'normal',
-        color: COLORS.Navy200,
-    },
-});
-

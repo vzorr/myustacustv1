@@ -9,9 +9,10 @@ import {
     Pressable,
 } from 'react-native';
 import { UserNavigationRootProps } from '../../../types/stacksParams';
-import { COLORS, FONTS, fontSize, textStyles, } from '../../../config/themes/theme';
+import { COLORS, FONTS, fontSize, } from '../../../config/themes/theme';
 import { SVGIcons } from '../../../config/constants/svg';
 import CustomButton from '../../../components/Buttons/CustomButton';
+import { reuseableTextStyles } from '../../../styles/reuseableTextStyles';
 
 const TermsAndConditions: React.FC<UserNavigationRootProps<'TermsAndConditions'>> = (props) => {
     const scrollRef = useRef<ScrollView>(null);
@@ -37,7 +38,7 @@ const TermsAndConditions: React.FC<UserNavigationRootProps<'TermsAndConditions'>
                     <Text style={styles.title}>Notifications</Text>
                 </View>
                 <View>
-                    <Text style={textStyles.title}>Terms & Conditions</Text>
+                    <Text style={reuseableTextStyles.title}>Terms & Conditions</Text>
                 </View>
 
                 {/* Scrollable Content */}

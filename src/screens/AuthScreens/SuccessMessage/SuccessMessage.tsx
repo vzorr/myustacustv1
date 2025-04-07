@@ -18,7 +18,6 @@ const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (pro
     const logoScale = useRef(new Animated.Value(1)).current;
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
-    // const screenType = "NewPassword"
     const handleContinue = () => {
         switch (screenType) {
             case "NewPassword":
