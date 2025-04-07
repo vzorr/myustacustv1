@@ -39,6 +39,13 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
         { key: '13', value: 'Vegetables' },
         { key: '14', value: 'Diary Products' },
         { key: '15', value: 'Drinks' },
+        { key: '16', value: 'Vegetables' },
+        { key: '17', value: 'Diary Products' },
+        { key: '18', value: 'Drinks' },
+        { key: '19', value: 'Computers' },
+        { key: '20', value: 'Vegetables' },
+        { key: '21', value: 'Diary Products' },
+        { key: '22', value: 'Drinks' },
     ];
 
     console.log("selectedItems", selectedCategories)

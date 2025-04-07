@@ -28,8 +28,10 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [dropdownPosition, setDropdownPosition] = useState(0);
     const animation = useRef(new Animated.Value(0)).current;
     const dropdownRef = useRef<View>(null);
+    const headerRef = useRef<View>(null);
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -52,14 +54,35 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
         item.value.toLowerCase().includes(searchText.toLowerCase())
     );
 
-    // Calculate dynamic height based on number of items
-    const calculateDropdownHeight = () => {
-        const ITEM_HEIGHT = 44; // Height of each item
-        const SEARCH_HEIGHT = isSearch ? 44 : 0; // Height of search bar if present
-        const MAX_HEIGHT = SCREEN_HEIGHT * 0.42; // Maximum height (50% of screen)
+    // Calculate available space below the dropdown
+    const calculateAvailableSpace = () => {
+        const BOTTOM_PADDING = 120; // Space to keep from bottom of screen
+        return SCREEN_HEIGHT - dropdownPosition - BOTTOM_PADDING;
+    };
 
-        const contentHeight = filteredData.length * ITEM_HEIGHT + SEARCH_HEIGHT + 16; // +16 for padding
-        return Math.min(contentHeight, MAX_HEIGHT);
+    // Calculate dynamic height based on number of items and available space
+    const calculateDropdownHeight = () => {
+        const ITEM_HEIGHT = SIZES.hp(6); // Responsive item height
+        const SEARCH_HEIGHT = isSearch ? SIZES.hp(6) : 0; // Responsive search height
+        const PADDING = SIZES.hp(1); // Small padding
+
+        // Calculate needed height
+        const contentHeight = filteredData.length * ITEM_HEIGHT + SEARCH_HEIGHT + PADDING;
+
+        // Get available space
+        const availableSpace = calculateAvailableSpace();
+
+        // Return the smaller of content height or available space
+        return Math.min(contentHeight, availableSpace);
+    };
+
+    // Measure dropdown position when layout changes
+    const handleHeaderLayout = () => {
+        if (headerRef.current) {
+            headerRef.current.measureInWindow((x, y, width, height) => {
+                setDropdownPosition(y + height);
+            });
+        }
     };
 
     useEffect(() => {
@@ -68,7 +91,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
             duration: 200,
             useNativeDriver: false,
         }).start();
-    }, [isOpen]);
+    }, [isOpen, filteredData.length, dropdownPosition]); // Add dependencies
 
     const heightInterpolation = animation.interpolate({
         inputRange: [0, 1],
@@ -94,6 +117,8 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
     return (
         <View style={[styles.container, boxStyles]} ref={dropdownRef}>
             <Animated.View
+                ref={headerRef}
+                onLayout={handleHeaderLayout}
                 style={[
                     styles.header,
                     {
@@ -107,8 +132,8 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                     onPress={toggleDropdown}
                     activeOpacity={0.8}
                 >
-                    <Text style={styles.placeholder}>
-                        {placeholder}
+                    <Text style={styles.placeholder} numberOfLines={1} ellipsizeMode="tail">
+                        {selectedItems.length > 0 ? selectedItems.join(', ') : placeholder}
                     </Text>
                     {isOpen ? <SVGIcons.ArrowUp /> : <SVGIcons.ArrowDown />}
                 </TouchableOpacity>
@@ -128,7 +153,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                         dropdownStyles
                     ]}
                 >
-                    {isSearch &&
+                    {isSearch && (
                         <View style={styles.searchContainer}>
                             <SVGIcons.searchIcon />
                             <TextInput
@@ -138,7 +163,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                                 onChangeText={setSearchText}
                             />
                         </View>
-                    }
+                    )}
 
                     <FlatList
                         data={filteredData}
@@ -153,15 +178,20 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                                         <View style={styles.checkboxSelected} />
                                     )}
                                 </View>
-                                <Text style={styles.itemText}>{item.value}</Text>
+                                <Text style={styles.itemText} numberOfLines={1} ellipsizeMode="tail">
+                                    {item.value}
+                                </Text>
                             </TouchableOpacity>
                         )}
                         ItemSeparatorComponent={() => <View style={styles.separator} />}
                         getItemLayout={(data, index) => ({
-                            length: 44, // Same as ITEM_HEIGHT
-                            offset: 44 * index,
+                            length: SIZES.hp(6),
+                            offset: SIZES.hp(6) * index,
                             index,
                         })}
+                        initialNumToRender={10}
+                        maxToRenderPerBatch={10}
+                        windowSize={5}
                     />
                 </Animated.View>
             )}
@@ -172,7 +202,6 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        // marginBottom: 16,
     },
     header: {
         width: '100%',
@@ -180,7 +209,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: COLORS.white,
         overflow: 'hidden',
-        gap: 8,
         borderWidth: 1,
         borderColor: COLORS.inputBorder,
         paddingHorizontal: 12,
@@ -192,13 +220,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        zIndex: 2
     },
     placeholder: {
+        flex: 1,
         fontFamily: FONTS.interMedium,
         fontSize: fontSize[14],
         fontWeight: '500',
         color: COLORS.Navy,
+        marginRight: 8,
     },
     dropdown: {
         position: 'absolute',
@@ -250,9 +279,9 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.Navy,
     },
     itemText: {
+        flex: 1,
         fontFamily: FONTS.interMedium,
         fontSize: fontSize[14],
-        fontStyle: 'normal',
         fontWeight: '400',
         color: COLORS.Navy,
     },
