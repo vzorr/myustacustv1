@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
-
+import React, { useEffect, useState } from 'react'
 import { Text, View, SafeAreaView, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
 import { otpCodeStyle } from './OtpCodeStyle';
 import ErrorText from '../../../components/ErrorText';
-import CustomButton from '../../../components/Buttons/CustomButton';
 import { COLORS } from '../../../config/themes/theme';
 import AuthOverlay from '../../../components/AuthOverlay/AuthOverlay';
+
 const OtpVerificationUi = (props: any) => {
     const { onSubmit, handleOtpChange, otp, inputs, errorMessage, navigation, verInfo } = props
     const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+
+    useEffect(() => {
+        // Autofocus first input on mount
+        inputs[0]?.focus();
+        setFocusedIndex(0);
+    }, []);
 
     const handleResendOTP = () => {
         // navigation.navigate("NewPassword");
@@ -31,6 +36,7 @@ const OtpVerificationUi = (props: any) => {
             }
         }
     };
+
 
     return (
         <SafeAreaView style={otpCodeStyle.container}>
@@ -56,12 +62,41 @@ const OtpVerificationUi = (props: any) => {
                                 maxLength={1}
                                 keyboardType="numeric"
                                 cursorColor={COLORS.white}
-                                onChangeText={(value) => handleOtpChange(value, index)}
+                                onChangeText={(value) => {
+                                    if (value.length > 1) {
+                                        const newOtp = value.split('').slice(0, otp.length);
+                                        newOtp.forEach((char, i) => {
+                                            handleOtpChange(char, i);
+                                        });
+                                        const nextIndex = newOtp.length < otp.length ? newOtp.length : otp.length - 1;
+                                        inputs[nextIndex]?.focus();
+                                        setFocusedIndex(nextIndex);
+                                    } else {
+                                        handleOtpChange(value, index);
+                                        if (value && index < otp.length - 1) {
+                                            inputs[index + 1]?.focus();
+                                            setFocusedIndex(index + 1);
+                                        }
+                                    }
+                                }}
                                 value={digit}
                                 ref={(input) => {
                                     inputs[index] = input;
                                 }}
-                                onFocus={() => setFocusedIndex(index)}
+                                onFocus={() => {
+                                    const allPrevFilled = otp.slice(0, index).every((val: string) => val !== '');
+                                    if (index === 0 || allPrevFilled) {
+                                        setFocusedIndex(index);
+                                    } else {
+                                        // Refocus to the first empty input before this
+                                        const firstEmptyIndex = otp.findIndex((val: string, i: number) => i < index && val === '');
+                                        if (firstEmptyIndex !== -1) {
+                                            inputs[firstEmptyIndex]?.focus();
+                                            setFocusedIndex(firstEmptyIndex);
+                                        }
+                                    }
+                                }}
+
                                 onBlur={() => setFocusedIndex(null)}
                                 onKeyPress={(event) => handleKeyPress(event, index)}
                             />
@@ -89,6 +124,3 @@ const OtpVerificationUi = (props: any) => {
 }
 
 export default OtpVerificationUi
-
-
-
