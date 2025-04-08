@@ -14,8 +14,8 @@ interface AccountBasicInfoUiProps {
     navigation: any; // Replace with your navigation type if needed
 }
 
-const AccountBasicInfoUi: React.FC<AccountBasicInfoUiProps> = (props) => {
-    const { navigation } = props;
+const AccountBasicInfoUi = (props:any) => {
+    const { navigation, handleChange, handleBlur, handleSubmit, values, errors, touched} = props;
     const [phoneNumber, setPhoneNumber] = useState('');
     const [formattedNumber, setFormattedNumber] = useState('');
     const [image, setImage] = useState<string | null>(null);
