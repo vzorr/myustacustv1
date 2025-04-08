@@ -24,11 +24,14 @@ const AccountBasicInfo: React.FC<UserNavigationRootProps<"AccountBasicInfo">> = 
                 password: "",
                 confirmPassword: "",
                 profileImg: {
-                    path: "",
+                    path: ""
                 },
                 location: [],
                 category: [],
-                termsAndCondition: false
+                notificationViaEmail: false,
+                notificationViaSMS: false,
+                notificationViaApp: false,
+                termsAndConditions: false
             }}
             onSubmit={async (values: any, { resetForm }) => {
                 setIsLoading(true)
@@ -36,9 +39,7 @@ const AccountBasicInfo: React.FC<UserNavigationRootProps<"AccountBasicInfo">> = 
                 setIsLoading(false)
 
             }}
-            validationSchema={accountCreationSchema}
-
-        >
+            validationSchema={accountCreationSchema}>
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
                 <AccountBasicInfoUi
                     navigation={props.navigation}

@@ -18,7 +18,12 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
     const { accountCreation }: any = useSelector((state: any) => state?.accountCreation)
     const dispatch = useDispatch()
     const handleConfirmLocation = () => {
-        const newLocation = [...accountCreation.location, "Shkodër, Albania"];
+        let location = {
+            latitude: 34.0522,
+            longitude: -118.2437,
+            address: "456 Elm St, Los Angeles, CA 90001"
+        }
+        const newLocation = [...accountCreation.location, location];
         const updateLocationData = {
             ...accountCreation,
             location: newLocation

@@ -14,6 +14,7 @@ interface CustomDropDownProps {
     dropdownStyles?: object;
     itemStyles?: object;
     isSearch?: boolean;
+    getValue?: any
 }
 
 const CustomDropDown: React.FC<CustomDropDownProps> = ({
@@ -25,6 +26,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
     boxStyles = {},
     dropdownStyles = {},
     itemStyles = {},
+    getValue
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
@@ -169,7 +171,12 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 style={[styles.item, itemStyles]}
-                                onPress={() => handleItemPress(item.value)}
+                                onPress={() => {
+                                    if (getValue) {
+                                        getValue(item.value)
+                                    }
+                                    handleItemPress(item.value)
+                                }}
                             >
                                 <View style={styles.checkbox}>
                                     {selectedItems.includes(item.value) && (

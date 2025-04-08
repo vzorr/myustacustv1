@@ -94,7 +94,7 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
                                 setLocationDelIndex(index);
                                 setShowDeleteModal(true);
                             }}
-                            title={location}
+                            title={location?.address}
                             iconName="deleteIcon"
                         />
                     ))}
