@@ -37,14 +37,14 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
         setIsOpen(!isOpen);
     };
 
-    const handleItemPress = (itemValue: string) => {
+    const handleItemPress = (itemKey: string) => {
         const newSelectedItems = [...selectedItems];
-        const index = newSelectedItems.indexOf(itemValue);
+        const index = newSelectedItems.indexOf(itemKey);
 
         if (index > -1) {
             newSelectedItems.splice(index, 1);
         } else {
-            newSelectedItems.push(itemValue);
+            newSelectedItems.push(itemKey);
         }
 
         onSelectionChange(newSelectedItems);
@@ -54,29 +54,22 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
         item.value.toLowerCase().includes(searchText.toLowerCase())
     );
 
-    // Calculate available space below the dropdown
     const calculateAvailableSpace = () => {
-        const BOTTOM_PADDING = 120; // Space to keep from bottom of screen
+        const BOTTOM_PADDING = 120;
         return SCREEN_HEIGHT - dropdownPosition - BOTTOM_PADDING;
     };
 
-    // Calculate dynamic height based on number of items and available space
     const calculateDropdownHeight = () => {
-        const ITEM_HEIGHT = SIZES.hp(6); // Responsive item height
-        const SEARCH_HEIGHT = isSearch ? SIZES.hp(6) : 0; // Responsive search height
-        const PADDING = SIZES.hp(1); // Small padding
+        const ITEM_HEIGHT = SIZES.hp(6);
+        const SEARCH_HEIGHT = isSearch ? SIZES.hp(6) : 0;
+        const PADDING = SIZES.hp(1);
 
-        // Calculate needed height
         const contentHeight = filteredData.length * ITEM_HEIGHT + SEARCH_HEIGHT + PADDING;
-
-        // Get available space
         const availableSpace = calculateAvailableSpace();
 
-        // Return the smaller of content height or available space
         return Math.min(contentHeight, availableSpace);
     };
 
-    // Measure dropdown position when layout changes
     const handleHeaderLayout = () => {
         if (headerRef.current) {
             headerRef.current.measureInWindow((x, y, width, height) => {
@@ -91,7 +84,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
             duration: 200,
             useNativeDriver: false,
         }).start();
-    }, [isOpen, filteredData.length, dropdownPosition]); // Add dependencies
+    }, [isOpen, filteredData.length, dropdownPosition]);
 
     const heightInterpolation = animation.interpolate({
         inputRange: [0, 1],
@@ -103,7 +96,6 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
         outputRange: [0, 1],
     });
 
-    // Border animation for the header
     const borderWidthInterpolation = animation.interpolate({
         inputRange: [0, 1],
         outputRange: [1, 2],
@@ -133,7 +125,13 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                     activeOpacity={0.8}
                 >
                     <Text style={styles.placeholder} numberOfLines={1} ellipsizeMode="tail">
-                        {selectedItems.length > 0 ? selectedItems.join(', ') : placeholder}
+                        {/* {selectedItems.length > 0
+                            ? data
+                                .filter(item => selectedItems.includes(item.key))
+                                .map(item => item.value)
+                                .join(', ')
+                            : placeholder} */}
+                        {placeholder}
                     </Text>
                     {isOpen ? <SVGIcons.ArrowUp /> : <SVGIcons.ArrowDown />}
                 </TouchableOpacity>

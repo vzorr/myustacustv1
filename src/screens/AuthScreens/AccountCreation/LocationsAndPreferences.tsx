@@ -1,4 +1,4 @@
-import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { UserNavigationRootProps } from '../../../types/stacksParams';
 import accountScreensStyles from '../../../styles/accountScreensStyles';
@@ -9,6 +9,9 @@ import CustomSelector from '../../../components/Selector/CustomSelector';
 import AccountHeader from '../../../components/AccountHeader/AccountHeader';
 import CustomDropDown from '../../../components/DropDown/CustomDropDown';
 import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal';
+import { useDispatch, useSelector } from 'react-redux';
+import ErrorText from '../../../components/ErrorText';
+import { setAccountCreation } from '../../../stores/reducer/AccountCreationReducer';
 
 const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPreferences">> = (props) => {
     const { route, navigation } = props
@@ -17,11 +20,17 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
     const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const [locationToDelete, setLocationToDelete] = useState<string | null>(null);
-    useEffect(() => {
-        if (selectedLocation) {
-            setSelectedLocations(prev => [...prev, selectedLocation]);
-        }
-    }, [selectedLocation]);
+    const [locationDelIndex, setLocationDelIndex] = useState<any>(null);
+    const [errorMessage, setErrorMessage] = useState<any>({ categoryErr: "", locationErr: '' });
+    const dispatch = useDispatch()
+
+    const { accountCreation } = useSelector((state: any) => state?.accountCreation)
+    console.log("accountCreation", accountCreation)
+    // useEffect(() => {
+    //     if (selectedLocation) {
+    //         setSelectedLocations(prev => [...prev, selectedLocation]);
+    //     }
+    // }, [selectedLocation]);
 
     const categories = [
         { key: '1', value: 'Mobiles' },
@@ -30,62 +39,59 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
         { key: '4', value: 'Computers' },
         { key: '5', value: 'Vegetables' },
         { key: '6', value: 'Diary Products' },
-        { key: '7', value: 'Drinks' },
-        { key: '8', value: 'Computers' },
-        { key: '9', value: 'Vegetables' },
-        { key: '10', value: 'Diary Products' },
-        { key: '11', value: 'Drinks' },
-        { key: '12', value: 'Computers' },
-        { key: '13', value: 'Vegetables' },
-        { key: '14', value: 'Diary Products' },
-        { key: '15', value: 'Drinks' },
-        { key: '16', value: 'Vegetables' },
-        { key: '17', value: 'Diary Products' },
-        { key: '18', value: 'Drinks' },
-        { key: '19', value: 'Computers' },
-        { key: '20', value: 'Vegetables' },
-        { key: '21', value: 'Diary Products' },
-        { key: '22', value: 'Drinks' },
     ];
 
-    console.log("selectedItems", selectedCategories)
     const handleAddLocation = () => {
         navigation.navigate("LocationScreen")
     }
-    const handleDeleteLocation = (loc: string) => {
-        setSelectedLocations(prev => prev.filter(item => item !== loc));
+    const handleDeleteLocation = () => {
+        setSelectedLocations(prev => prev.filter((item, index) => index !== locationDelIndex));
     };
     const handleConfirm = () => {
-        if (locationToDelete) {
-            handleDeleteLocation(locationToDelete);
-            setLocationToDelete(null);
+        if (accountCreation.location) {
+            const updatedUserData = {
+                ...accountCreation,
+                location: accountCreation.location.filter((item: any, index: any) => index !== locationDelIndex)
+            };
+            dispatch(setAccountCreation(updatedUserData))
+            setShowDeleteModal(false);
         }
-        setShowDeleteModal(false);
     }
     const handleBack = () => {
         navigation.goBack()
     }
     const handleForward = () => {
-        if (selectedLocation) {
-            navigation.navigate("NotificationPreferences")
+        if (accountCreation.location?.length === 0) {
+            setErrorMessage({ locationErr: "First select the location", categoryErr: "" })
             return
+        } else if (selectedCategories?.length === 0) {
+            setErrorMessage({ categoryErr: "First select the category", locationErr: '' })
+            return
+        } else {
+            const updatedUserData = {
+                ...accountCreation,
+                category : selectedCategories
+            };
+            dispatch(setAccountCreation(updatedUserData))
+            navigation.navigate("NotificationPreferences")
+
         }
-        Alert.alert("First select the category")
     }
 
     return (
         <SafeAreaView style={accountScreensStyles.container}>
-            <View style={{ gap: 24 }}>
+            <View style={{ gap: 24 }}
+            >
                 <AccountHeader
                     title="Locations & Preferences"
                     subTitle="Tell us where you’re located and what types of services you’re interested in."
                 />
                 <View style={{ gap: 8 }}>
-                    {selectedLocations.map((location, index) => (
+                    {accountCreation.location?.map((location: any, index: any) => (
                         <CustomSelector
                             key={index}
                             onPress={() => {
-                                setLocationToDelete(location);
+                                setLocationDelIndex(index);
                                 setShowDeleteModal(true);
                             }}
                             title={location}
@@ -97,6 +103,11 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
                         title="Add Location"
                         iconName="plusIcon"
                     />
+                    {errorMessage?.locationErr &&
+                        <ErrorText
+                            error={errorMessage?.locationErr}
+                        />
+                    }
                     <CustomDropDown
                         data={categories}
                         placeholder="Categories"
@@ -104,6 +115,11 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
                         onSelectionChange={setSelectedCategories}
                         boxStyles={accountScreensStyles.dropdownBox}
                     />
+                    {errorMessage?.categoryErr &&
+                        <ErrorText
+                            error={errorMessage?.categoryErr}
+                        />
+                    }
                 </View>
             </View>
 

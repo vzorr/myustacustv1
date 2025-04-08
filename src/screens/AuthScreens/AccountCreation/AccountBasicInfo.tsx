@@ -2,17 +2,33 @@ import React, { useState } from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import AccountBasicInfoUi from './AccountBasicInfoUi'
 import { Formik } from 'formik'
+import { accountCreationSchema } from '../../../config/constants/errorMessage'
+import { useDispatch } from 'react-redux'
+import { setAccountCreation } from '../../../stores/reducer/AccountCreationReducer'
 
 const AccountBasicInfo: React.FC<UserNavigationRootProps<"AccountBasicInfo">> = (props) => {
     const [isLoading, setIsLoading] = useState(false)
-    const onSubmit = async (value: any) => {
-        console.log("value", value)
+    const dispatch = useDispatch()
+    const onSubmit = async (values: any) => {
+        // console.log("value", values)
+        dispatch(setAccountCreation(values))
+        props.navigation.navigate('LocationsAndPreferences');
+        return
     }
     return (
         <Formik
             initialValues={{
-                emailOrPhone: '',
-                password: ''
+                fName: "",
+                lName: "",
+                phoneNumber: "",
+                password: "",
+                confirmPassword: "",
+                profileImg: {
+                    path: "",
+                },
+                location: [],
+                category: [],
+                termsAndCondition: false
             }}
             onSubmit={async (values: any, { resetForm }) => {
                 setIsLoading(true)
@@ -20,10 +36,10 @@ const AccountBasicInfo: React.FC<UserNavigationRootProps<"AccountBasicInfo">> = 
                 setIsLoading(false)
 
             }}
-        // validationSchema={}
+            validationSchema={accountCreationSchema}
 
         >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
                 <AccountBasicInfoUi
                     navigation={props.navigation}
                     handleChange={handleChange}
@@ -32,6 +48,7 @@ const AccountBasicInfo: React.FC<UserNavigationRootProps<"AccountBasicInfo">> = 
                     values={values}
                     errors={errors}
                     touched={touched}
+                    setFieldValue={setFieldValue}
                 />
             )}
         </Formik>

@@ -5,6 +5,8 @@ import { UserNavigationRootProps } from '../../../types/stacksParams';
 import CustomButton from '../../../components/Buttons/CustomButton';
 import { SVGIcons } from '../../../config/constants/svg';
 import { locationScreenStyles } from '../../../styles/locationScreenStyles';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAccountCreation } from '../../../stores/reducer/AccountCreationReducer';
 
 const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> = (props) => {
     const [region, setRegion] = useState<Region>({
@@ -13,12 +15,17 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     });
-
-
+    const { accountCreation }: any = useSelector((state: any) => state?.accountCreation)
+    const dispatch = useDispatch()
     const handleConfirmLocation = () => {
-        props.navigation.navigate('LocationsAndPreferences', {
-            selectedLocation: `Shkodër, Albania`,
-        });
+        const newLocation = [...accountCreation.location, "Shkodër, Albania"];
+        const updateLocationData = {
+            ...accountCreation,
+            location: newLocation
+        }
+
+        dispatch(setAccountCreation(updateLocationData))
+        props.navigation.navigate('LocationsAndPreferences');
     };
 
     return (
