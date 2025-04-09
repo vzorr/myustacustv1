@@ -1,20 +1,26 @@
 import axios from 'axios';
 
-export const BASE_API_URL_STAGGING = 'https://api.cartsbay.com/api/';
-const BASE_API_URL_PRODUCTION = 'https://api.cartsbay.com/api/';
-export const BASE_SCOCKET_URL = 'http://44.212.152.28:8083/';
-export const IMAGE_BASE_URL = 'https://cartsbay.s3.amazonaws.com';
-// export const BASE_SCOCKET_URL = 'http://44.212.152.28:8085/';
-export const client = (token=null) => {
+export const BASE_API_URL_STAGGING = 'http://47.254.134.96:3000/api/';
+const BASE_API_URL_PRODUCTION = 'http://47.254.134.96:3000/api/';
+
+export const client = (token = null) => {
     return axios.create({
         baseURL: BASE_API_URL_STAGGING,
         headers: {
             'Content-Type': 'application/json',
-            "x-auth-token": token,
+            Authorization: `Bearer ${token}`,
         },
     });
 }
-export const otpClient = (token=null) => {
+export const client1 = (token = null) => {
+    return axios.create({
+        baseURL: BASE_API_URL_STAGGING,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+}
+export const otpClient = (token = null) => {
     return axios.create({
         baseURL: BASE_API_URL_STAGGING,
         headers: {
@@ -24,7 +30,7 @@ export const otpClient = (token=null) => {
     });
 }
 
-export const ClientFormData = (token=null) => {
+export const ClientFormData = (token = null) => {
     return axios.create({
         baseURL: BASE_API_URL_STAGGING,
         headers: {

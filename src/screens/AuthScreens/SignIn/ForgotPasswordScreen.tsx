@@ -15,6 +15,7 @@ import auth from '@react-native-firebase/auth';
 
 import Toast from 'react-native-simple-toast';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
+import { client1 } from '../../../apiManager/Client';
 
 const { width } = Dimensions.get('window');
 
@@ -54,29 +55,27 @@ const ForgotPasswordScreen: React.FC<UserNavigationRootProps<"ForgotPassword">> 
     }, []);
 
     const onSubmit = async (value: any) => {
+        let payload = {
+            email: value.emailOrPhone,
+            role: "customer"
+        }
+        console.log("payload", payload)
         if (!value?.emailOrPhone?.includes('@')) {
 
             console.log("valuessss", value)
             navigation.navigate("OtpVerfication", { type: type })
         } else {
             try {
-                await auth().sendPasswordResetEmail(value.emailOrPhone);
-                Toast.show('Please check your email and follow the instructions to reset your password.', Toast.SHORT);
-                Alert.alert("Please check your email and reset your password")
-                navigation.navigate('SignIn')
-                return true
-            } catch (error: any) {
-                console.error(error);
-                switch (error.code) {
-                    case 'auth/invalid-email':
-                        Toast.show("Please enter a valid email address.", Toast.SHORT);
-                        break;
-                    case 'auth/user-not-found':
-                        Toast.show('No user found with this email.', Toast.SHORT);
-                        break;
-                    default:
-                        Toast.show(error.message, Toast.SHORT);
+                const response = await client1().post(`auth/forgot-password`, payload);
+                console.log("responseeeee", response?.data)
+                const res = response?.data.result
+                if (res) {
+                    navigation.navigate("OtpVerfication", { phoneOrEmail: res?.email, token: res.token })
                 }
+                return
+            } catch (error) {
+                console.error(error);
+                return
             }
         }
     }
@@ -96,7 +95,7 @@ const ForgotPasswordScreen: React.FC<UserNavigationRootProps<"ForgotPassword">> 
                         }}
                         onSubmit={async (values: any, { resetForm }) => {
                             setIsLoading(true)
-                            let res = await onSubmit(values)
+                            let res: any = await onSubmit(values)
                             setIsLoading(false)
                             if (res) {
                                 resetForm({ values: "" })

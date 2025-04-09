@@ -58,7 +58,7 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
 
             try {
                  const response = await ClientFormData().post(
-                    `store/signin`, formData
+                    `account/creation`, formData
                   );
             
                 console.log('Response:', response.data);
