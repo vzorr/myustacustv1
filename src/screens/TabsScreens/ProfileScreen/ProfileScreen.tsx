@@ -1,15 +1,16 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { UserNavigationRootProps } from '../../../types/stacksParams'
 
-const HomeScreen: React.FC = () => {
+const ProfileScreen: React.FC<UserNavigationRootProps<"ProfileScreen">> = (props) => {
     return (
         <View style={styles.container}>
-            <Text>HomeScreen</Text>
+            <Text>ProfileScreen</Text>
         </View>
     )
 }
 
-export default HomeScreen
+export default ProfileScreen
 
 const styles = StyleSheet.create({
     container: {

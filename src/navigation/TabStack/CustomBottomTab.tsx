@@ -1,109 +1,128 @@
-// import React from 'react';
-// import { ScrollView, Text, View, TouchableOpacity, Platform } from 'react-native';
-// import AppIcon from 'components/AppIcon';
-// import { COLORS } from 'global/theme';
+import React from 'react';
+import { Text, View, TouchableOpacity, Platform, Dimensions, StyleSheet } from 'react-native';
+import { SVGIcons } from '../../config/constants/svg';
+import { COLORS, fontSize } from '../../config/themes/theme';
+import { reuseableTextStyles } from '../../styles/reuseableTextStyles';
 
-// export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
-//     return (
-//         <View style={{
-//             position: 'absolute',
-//             bottom: Platform.OS === 'ios' ? 10 : 5,
-//             backgroundColor: "white",
-//             shadowColor: '#000',
-//             shadowOffset: {
-//                 width: 0,
-//                 height: 2,
-//             },
-//             shadowOpacity: 0.25,
-//             shadowRadius: 4,
-//             elevation: 5,
-//         }}>
-//             <ScrollView
-//                 horizontal
-//                 showsHorizontalScrollIndicator={false}
-//                 contentContainerStyle={{ flexDirection: 'row', alignItems: 'center', }}
-//             >
-//                 {state.routes.map((route: any, index: number) => {
-//                     const { options } = descriptors[route.key];
-//                     const label =
-//                         options.tabBarLabel !== undefined
-//                             ? options.tabBarLabel
-//                             : options.title !== undefined
-//                                 ? options.title
-//                                 : route.name;
-//                     const isFocused = state.index === index;
-//                     const onPress = () => {
-//                         const event = navigation.emit({
-//                             type: 'tabPress',
-//                             target: route.key,
-//                             canPreventDefault: true,
-//                         });
-//                         if (!isFocused && !event.defaultPrevented) {
-//                             navigation.navigate(route.name);
-//                         }
-//                     };
-//                     let iconComponent;
-//                     switch (route.name) {
-//                         case "Home":
-//                             iconComponent = <AppIcon category='AntDesign' name="home" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                             break;
-//                         case "Ads":
-//                             iconComponent = <AppIcon category='MaterialIcons' name="campaign" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                             break;
-//                         case "Dashboard":
-//                             iconComponent = <AppIcon category='Entypo' name="line-graph" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                             break;
-//                         case "Rewards":
-//                             iconComponent = <AppIcon category='AntDesign' name="gift" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                             break;
-//                         case "CustomerToBusiness":
-//                             iconComponent = <AppIcon category='Entypo' name="mobile" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                             break;
-//                         case "Favourite":
-//                             iconComponent = <AppIcon category='MaterialIcons' name="favorite-border" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                             break;
-//                         case "Menu":
-//                             iconComponent = <AppIcon category='Feather' name="list" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                             break;
-//                         case "Chat":
-//                             iconComponent = <AppIcon category='Feather' name="message-square" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                             break;
-//                         case "MyShops":
-//                             iconComponent = <AppIcon category='FontAwesome6' name="shop" size={20} color={isFocused ? COLORS.orange : 'black'} />;
-//                             break;
-//                         default:
-//                             break;
-//                     }
-//                     // if (route.name === 'Home') {
-//                     //     iconComponent = <AppIcon category='AntDesign' name="home" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                     // } else if (route.name === 'Ads') {
-//                     //     iconComponent = <AppIcon category='MaterialIcons' name="campaign" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                     // } else if (route.name === 'Rewards') {
-//                     //     iconComponent = <AppIcon category='AntDesign' name="gift" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                     // } else if (route.name === 'CustomerToBusiness') {
-//                     //     iconComponent = <AppIcon category='Entypo' name="mobile" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                     // } else if (route.name === 'Favourite') {
-//                     //     iconComponent = <AppIcon category='MaterialIcons' name="favorite-border" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                     // } else if (route.name === 'Menu') {
-//                     //     iconComponent = <AppIcon category='Feather' name="list" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                     // } else if (route.name === 'Chat') {
-//                     //     iconComponent = <AppIcon category='Feather' name="message-square" size={24} color={isFocused ? COLORS.orange : 'black'} />;
-//                     // } else if (route.name === 'MyShops') {
-//                     //     iconComponent = <AppIcon category='FontAwesome6' name="shop" size={20} color={isFocused ? COLORS.orange : 'black'} />;
-//                     // }
+export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
+    const screenWidth = Dimensions.get('window').width;
 
-//                     return (
-//                         <TouchableOpacity
-//                             key={index}
-//                             style={{ padding: 12, borderBottomColor: isFocused ? COLORS.orange : 'transparent', alignItems: 'center', justifyContent: 'center' }}
-//                             onPress={onPress}
-//                         >
-//                             {iconComponent}
-//                             <Text style={{ color: isFocused ? COLORS.orange : 'black', margin: 4 }}>{label}</Text>
-//                         </TouchableOpacity>
-//                     );
-//                 })}
-//             </ScrollView>
-//         </View>
-//     );
-// };
+    return (
+        <View style={styles.container}>
+            <View style={styles.tabBar}>
+                {state.routes.map((route: any, index: number) => {
+                    const { options } = descriptors[route.key];
+                    const label =
+                        options.tabBarLabel !== undefined
+                            ? options.tabBarLabel
+                            : options.title !== undefined
+                                ? options.title
+                                : route.name;
+                    const isFocused = state.index === index;
+
+                    const onPress = () => {
+                        const event = navigation.emit({
+                            type: 'tabPress',
+                            target: route.key,
+                            canPreventDefault: true,
+                        });
+                        if (!isFocused && !event.defaultPrevented) {
+                            navigation.navigate(route.name);
+                        }
+                    };
+
+                    let iconComponent;
+                    switch (route.name) {
+                        case "Home":
+                            iconComponent = <SVGIcons.HomeIcon stroke={isFocused ? COLORS.white : ""} width={20} height={20} />;
+                            break;
+                        case "SearchScreen":
+                            iconComponent = <SVGIcons.SearchIcon stroke={isFocused ? COLORS.white : ""} />;
+                            break;
+                        case "PostJobScreen":
+                            iconComponent = <SVGIcons.plusIcon stroke={isFocused ? COLORS.white : ""} />;
+                            break;
+                        case "ChatScreen":
+                            iconComponent = <SVGIcons.MessageIcon stroke={isFocused ? COLORS.white : ""} />;
+                            break;
+                        case "ProfileScreen":
+                            iconComponent = <SVGIcons.UserIcon stroke={isFocused ? COLORS.white : ""} />;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    return (
+                        <TouchableOpacity
+                            key={index}
+                            style={[
+                                styles.tabItem,
+                                isFocused ? styles.tabItemActive : null
+                            ]}
+                            onPress={onPress}
+                        >
+                            {iconComponent}
+                            <Text style={[
+                                reuseableTextStyles.subTitle,
+                                { fontSize: fontSize[10] },
+                                isFocused ? styles.tabLabelActive : styles.tabLabelInactive
+                            ]}>
+                                {label}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        // alignItems: 'center',
+        zIndex: 999,
+        paddingHorizontal: 20
+    },
+    tabBar: {
+        flexDirection: 'row',
+        width: '100%',
+        backgroundColor: COLORS.Yellow,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        height: 90,
+        borderTopEndRadius: 16,
+        borderTopStartRadius: 16,
+        shadowColor: '#000',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 12,
+        gap: 4,
+        shadowOffset: {
+            width: 0,
+            height: -2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 5,
+    },
+    tabItem: {
+        width: 55,
+        height: 55,
+        borderRadius: 8,
+        gap: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    tabItemActive: {
+        backgroundColor: COLORS.Navy,
+    },
+    tabLabelActive: {
+        color: COLORS.white,
+    },
+    tabLabelInactive: {
+        color: COLORS.Navy,
+    }
+});

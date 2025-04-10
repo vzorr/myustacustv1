@@ -6,19 +6,18 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Pressable,
 } from 'react-native';
 import { UserNavigationRootProps } from '../../../types/stacksParams';
 import { COLORS, FONTS, fontSize, } from '../../../config/themes/theme';
-import { SVGIcons } from '../../../config/constants/svg';
 import CustomButton from '../../../components/Buttons/CustomButton';
 import { reuseableTextStyles } from '../../../styles/reuseableTextStyles';
+import BackHeader from '../../../components/BackHeader/BackHeader';
 
 const TermsAndConditions: React.FC<UserNavigationRootProps<'TermsAndConditions'>> = (props) => {
     const scrollRef = useRef<ScrollView>(null);
 
     const handleAcceptedConditions = () => {
-        props.navigation.navigate('NotificationPreferences', {
+        props.navigation.navigate('LocationsAndPreferences', {
             isTermsAndConditionsAccepted: true,
         });
     };
@@ -26,56 +25,62 @@ const TermsAndConditions: React.FC<UserNavigationRootProps<'TermsAndConditions'>
     const scrollToTop = () => {
         scrollRef.current?.scrollTo({ y: 0, animated: true });
     };
+    const handleBackPress = () => {
+
+    }
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView ref={scrollRef} contentContainerStyle={styles.content}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                        <SVGIcons.leftArrow />
-                    </TouchableOpacity>
-                    <Text style={styles.title}>Notifications</Text>
-                </View>
-                <View>
+            <ScrollView ref={scrollRef} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                <View style={{ gap: 16 }}>
+                    <BackHeader
+                        onPress={handleBackPress}
+                        title='Availability & Preferences'
+                    />
                     <Text style={reuseableTextStyles.title}>Terms & Conditions</Text>
                 </View>
 
                 {/* Scrollable Content */}
-
-                <Text style={styles.sectionTitle}>Terms & Conditions</Text>
-                <Text style={styles.sectionText}>
-                    By using myUsta, you agree to these terms and conditions. If you do not accept these
-                    terms, you may not use our platform.
-                </Text>
-
-                <Text style={styles.sectionTitle}>User Accounts</Text>
-                <Text style={styles.sectionText}>• You are responsible for maintaining the confidentiality of your account credentials.</Text>
-                <Text style={styles.sectionText}>• You must provide accurate and up-to-date information during registration.</Text>
-
-                <Text style={styles.sectionTitle}>Use of the Platform</Text>
-                <Text style={styles.sectionText}>• Homeowners can post jobs and hire tradespeople for their services.</Text>
-                <Text style={styles.sectionText}>• Tradespeople can create profiles, showcase portfolios, and connect with homeowners.</Text>
-                <Text style={styles.sectionText}>• All interactions between users are conducted at their own discretion. myUsta is not responsible for disputes, damages, or service quality.</Text>
-
-                <Text style={styles.sectionTitle}>Payments and Fees</Text>
-                <Text style={styles.sectionText}>• myUsta may charge fees for connecting users.</Text>
-                <Text style={styles.sectionTitle}>Use of the Platform</Text>
-                <Text style={styles.sectionText}>• Homeowners can post jobs and hire tradespeople for their services.</Text>
-                <Text style={styles.sectionText}>• Tradespeople can create profiles, showcase portfolios, and connect with homeowners.</Text>
-                <Text style={styles.sectionText}>• All interactions between users are conducted at their own discretion. myUsta is not responsible for disputes, damages, or service quality.</Text>
-
-                <Text style={styles.sectionTitle}>Payments and Fees</Text>
-                <Text style={styles.sectionText}>• myUsta may charge fees for connecting users.</Text>
-                <Text style={styles.sectionTitle}>Use of the Platform</Text>
-                <Text style={styles.sectionText}>• Homeowners can post jobs and hire tradespeople for their services.</Text>
-                <Text style={styles.sectionText}>• Tradespeople can create profiles, showcase portfolios, and connect with homeowners.</Text>
-                <Text style={styles.sectionText}>• All interactions between users are conducted at their own discretion. myUsta is not responsible for disputes, damages, or service quality.</Text>
-
-                <Text style={styles.sectionTitle}>Payments and Fees</Text>
-                <Text style={styles.sectionText}>• myUsta may charge fees for connecting users.</Text>
-
-
+                <View style={{ gap: 16 }}>
+                    <View>
+                        <Text style={reuseableTextStyles.title}>Acceptance of Terms</Text>
+                        <Text style={reuseableTextStyles.subTitle}>
+                            By using myUsta, you agree to these terms and conditions. If you do not accept these
+                            terms, you may not use our platform.
+                        </Text>
+                    </View>
+                    <View>
+                        <Text style={reuseableTextStyles.title}>User Accounts</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• You are responsible for maintaining the confidentiality of your account credentials.</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• You must provide accurate and up-to-date information during registration.</Text>
+                    </View>
+                    <View>
+                        <Text style={reuseableTextStyles.title}>Use of the Platform</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• Homeowners can post jobs and hire tradespeople for their services.</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• Tradespeople can create profiles, showcase portfolios, and connect with homeowners.</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• All interactions between users are conducted at their own discretion. myUsta is not responsible for disputes, damages, or service quality.</Text>
+                    </View>
+                    <View>
+                        <Text style={reuseableTextStyles.title}>Payments and Fees</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• myUsta may charge fees for connecting users.</Text>
+                        <Text style={reuseableTextStyles.title}>Use of the Platform</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• Homeowners can post jobs and hire tradespeople for their services.</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• Tradespeople can create profiles, showcase portfolios, and connect with homeowners.</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• All interactions between users are conducted at their own discretion. myUsta is not responsible for disputes, damages, or service quality.</Text>
+                    </View>
+                    <View>
+                        <Text style={reuseableTextStyles.title}>Payments and Fees</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• myUsta may charge fees for connecting users.</Text>
+                        <Text style={reuseableTextStyles.subTitle}>Use of the Platform</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• Homeowners can post jobs and hire tradespeople for their services.</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• Tradespeople can create profiles, showcase portfolios, and connect with homeowners.</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• All interactions between users are conducted at their own discretion. myUsta is not responsible for disputes, damages, or service quality.</Text>
+                    </View>
+                    <View>
+                        <Text style={reuseableTextStyles.title}>Payments and Fees</Text>
+                        <Text style={reuseableTextStyles.subTitle}>• myUsta may charge fees for connecting users.</Text>
+                    </View>
+                </View>
             </ScrollView>
 
             {/* Buttons */}
@@ -103,20 +108,8 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: COLORS.white,
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    title: {
-        fontSize: fontSize[14],
-        fontFamily: FONTS.interRegular,
-        fontWeight: '400',
-        color: COLORS.Navy200,
-        fontStyle: 'normal'
-    },
     content: {
-        // paddingHorizontal: 20,
-        // paddingBottom: 100,
+        gap: 8
     },
     sectionTitle: {
         fontWeight: '700',

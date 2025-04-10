@@ -28,7 +28,8 @@ export const COLORS = {
     authBgColor: 'rgba(0, 32, 63, 1)',
     otpBoxColor: "rgba(128, 143, 159, 1)",
     inputBorder: "rgba(0, 0, 0, 0.20)",
-    modalBgColor: "rgba(55, 55, 55, 0.50)"
+    modalBgColor: "rgba(55, 55, 55, 0.50)",
+    skyBlue: "#0064C6",
 }
 export const fontSize = {
     5: hp(0.7),
