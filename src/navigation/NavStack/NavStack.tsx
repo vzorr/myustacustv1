@@ -1,7 +1,7 @@
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserStackParamList } from '../../types/stacksParams';
-import HomeScreen from '../../screens/HomeScreen/HomeScreen';
+import HomeScreen from '../../screens/TabsScreens/HomeScreen/HomeScreen';
 import SplashScreen from '../../screens/SplashScreen/SplashScreen';
 import SignInScreen from '../../screens/AuthScreens/SignIn/SigninUi';
 import ForgotPasswordScreen from '../../screens/AuthScreens/SignIn/ForgotPasswordScreen';

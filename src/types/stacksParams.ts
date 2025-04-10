@@ -3,6 +3,10 @@ import { RouteProp } from "@react-navigation/native";
 
 export type UserStackParamList = {
     Home: undefined;
+    PostJobScreen: any;
+    SearchScreen: any;
+    ChatScreen: any;
+    ProfileScreen: any;
     Tabs: any;
     Splash: undefined;
     SignIn: any;
