@@ -3,6 +3,7 @@ import { UserStackParamList } from '../../types/stacksParams';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { tabsScreenOptionsStyle } from './tabStyles';
 import HomeScreen from '../../screens/HomeScreen/HomeScreen';
+import { CustomBottomTab } from './CustomBottomTab';
 const Tab = createBottomTabNavigator<UserStackParamList>();
 
 const TabStack: React.FC = () => {
@@ -10,9 +11,9 @@ const TabStack: React.FC = () => {
         <Tab.Navigator
             initialRouteName="Home"
             screenOptions={tabsScreenOptionsStyle}
-        // tabBar={props => (
-        //     <TabBarScrollable {...props} />
-        // )}
+            tabBar={props => (
+                <CustomBottomTab {...props} />
+            )}
         >
             <Tab.Screen
                 name="Home"

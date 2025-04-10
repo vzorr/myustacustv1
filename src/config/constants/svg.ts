@@ -22,6 +22,10 @@ import searchIcon from "../../assets/icons/bx-search.svg"
 import deleteIcon from "../../assets/icons/bx-trash.svg"
 import locationIcon from "../../assets/icons/bx-map.svg"
 import crossIcon from "../../assets/icons/bx-x.svg"
+import HomeIcon from "../../assets/icons/bx-home-alt.svg"
+import SearchIcon from "../../assets/icons/bx-search.svg"
+import MessageIcon from "../../assets/icons/bx-message.svg"
+import UserIcon from "../../assets/icons/user/user-default.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -46,5 +50,9 @@ export const SVGIcons = {
     searchIcon,
     deleteIcon,
     locationIcon,
-    crossIcon
+    crossIcon,
+    HomeIcon,
+    SearchIcon,
+    MessageIcon,
+    UserIcon
 };
