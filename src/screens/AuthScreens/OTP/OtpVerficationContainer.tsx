@@ -14,7 +14,7 @@ const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (
     const type = props.route.params?.type
     const emailorPhoneNo = props.route.params?.phoneOrEmail
     const verifiedToken = props.route.params?.token
-    // console.log("phoneNoConfirmation", phoneNoConfirmation)
+    console.log("phoneNoConfirmation", verifiedToken, emailorPhoneNo)
     const [isLoading, setIsLoading] = useState(false)
     const { navigation } = props
     const inputs: any = [];
@@ -33,7 +33,7 @@ const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (
         const fullCode = otp.join("");
         const otpParse = Number(fullCode)
         if (fullCode.length === 4) {
-            if(verifiedToken){
+            if (verifiedToken) {
                 try {
                     let payload = {
                         code: fullCode
@@ -42,36 +42,37 @@ const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (
                     const response = await client(verifiedToken).post(`auth/signup-verify`, payload);
                     console.log("responseeeee", response?.data)
                     navigation.replace("SuccessMessage", { screenType: "OtpVerfication" })
-                    Toast.show('User signed up', Toast.SHORT);
+                    Toast.show('otp is verified', Toast.SHORT);
                     setIsLoading(false)
                     return
-    
+
                     //   navigation.navigate("NewPassword", { emailorPhoneNo: verInfo })
                 } catch (error) {
                     setIsLoading(false)
                     Toast.show('Invalid OTP. Please try again.', Toast.SHORT);
                 }
-            }else{
+            } else {
                 try {
                     let payload = {
+                        email: emailorPhoneNo,
                         code: fullCode,
-                        email: emailorPhoneNo
+                        role: 'customer'
                     }
                     setIsLoading(true)
                     const response = await client1().post(`auth/verify-otp`, payload);
                     console.log("responseeeee", response?.data)
-                    navigation.replace("NewPassword", { emailorPhoneNo: emailorPhoneNo })
-                    Toast.show('User signed up', Toast.SHORT);
+                    navigation.replace("NewPassword", { emailorPhoneNo: emailorPhoneNo, code: fullCode })
+                    Toast.show('otp is verified', Toast.SHORT);
                     setIsLoading(false)
                     return
-    
-                    //   navigation.navigate("NewPassword", { emailorPhoneNo: verInfo })
+
                 } catch (error) {
+                    console.log("errrrror", error)
                     setIsLoading(false)
                     Toast.show('Invalid OTP. Please try again.', Toast.SHORT);
                 }
             }
-           
+
         }
         else {
             setErrorMessage("otp code is not correct")
@@ -103,18 +104,31 @@ const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (
     );
 
     const handleResendOTP = async () => {
-        try {
-            setIsLoading(true)
-            const response = await client(verifiedToken).post(`auth/signup-resend`);
-            console.log("signup-resend", response?.data)
-            Toast.show('OTP resent successfully', Toast.SHORT);
-            setIsLoading(false)
-            return
+        if (verifiedToken) {
+            try {
+                setIsLoading(true)
+                const response = await client(verifiedToken).post(`auth/signup-resend`);
+                console.log("signup-resend", response?.data)
+                Toast.show('OTP resent successfully', Toast.SHORT);
+                setIsLoading(false)
+                return
 
-            //   navigation.navigate("NewPassword", { emailorPhoneNo: verInfo })
-        } catch (error) {
-            setIsLoading(false)
-            Toast.show('Invalid OTP. Please try again.', Toast.SHORT);
+                //   navigation.navigate("NewPassword", { emailorPhoneNo: verInfo })
+            } catch (error) {
+                setIsLoading(false)
+                Toast.show('Invalid OTP. Please try again.', Toast.SHORT);
+            }
+        } else {
+            try {
+                setIsLoading(true)
+                const response = await client1().post(`auth/resend-otp`, { email: emailorPhoneNo, role: 'customer' });
+                Toast.show('OTP resent successfully', Toast.SHORT);
+                setIsLoading(false)
+                return
+            } catch (error) {
+                setIsLoading(false)
+                Toast.show('Invalid OTP. Please try again.', Toast.SHORT);
+            }
         }
     };
     return (

@@ -70,7 +70,7 @@ const ForgotPasswordScreen: React.FC<UserNavigationRootProps<"ForgotPassword">> 
                 console.log("responseeeee", response?.data)
                 const res = response?.data.result
                 if (res) {
-                    navigation.navigate("OtpVerfication", { phoneOrEmail: res?.email, token: res.token })
+                    navigation.navigate("OtpVerfication", { phoneOrEmail: value.emailOrPhone, token: null })
                 }
                 return
             } catch (error) {

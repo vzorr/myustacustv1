@@ -9,7 +9,9 @@ import { COLORS, FONTS } from '../../../config/themes/theme';
 import { Formik } from 'formik';
 import ErrorText from '../../../components/ErrorText';
 import { logInSchema } from '../../../config/constants/errorMessage';
-
+import VisibleLoader from '../../../components/Loader/VisibleLoader';
+import { client1 } from '../../../apiManager/Client';
+import Toast from 'react-native-simple-toast';
 const { width } = Dimensions.get('window');
 
 const NewPasswordScreen: React.FC<UserNavigationRootProps<"NewPassword">> = (props) => {
@@ -18,7 +20,9 @@ const NewPasswordScreen: React.FC<UserNavigationRootProps<"NewPassword">> = (pro
     const logoScale = useRef(new Animated.Value(1)).current;
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
+    const [isLoading, setIsLoading] = useState(false)
     const verInfo = props.route.params?.emailorPhoneNo
+    const code = props.route.params?.code
     console.log("verInfo", verInfo)
 
     useEffect(() => {
@@ -50,10 +54,24 @@ const NewPasswordScreen: React.FC<UserNavigationRootProps<"NewPassword">> = (pro
     const onSubmit = async (value: any) => {
         let payload = {
             email: value.emailOrPhone,
-            isEmail: true,
-            password: value.password
+            code: code,
+            newPassword: value.password,
+            role:'customer'
         }
-        navigation.navigate("SuccessMessage")
+     
+        try {
+        console.log("payload", payload)
+            setIsLoading(true)
+            const response = await client1().post(`auth/reset-password`, payload);
+            console.log("responseeeexxxxxxxxe", response?.data)
+            navigation.replace("SuccessMessage",  { screenType: "ResetPassword" })
+        
+            setIsLoading(false)
+            return
+        } catch (error) {
+            console.log("errror", error)
+            setIsLoading(false)
+        }
     }
     return (
         <KeyboardAvoidingView
@@ -118,6 +136,9 @@ const NewPasswordScreen: React.FC<UserNavigationRootProps<"NewPassword">> = (pro
                     )}
                 </Formik>
             </ScrollView>
+            {isLoading &&
+                <VisibleLoader />
+            }
         </KeyboardAvoidingView>
     );
 };
