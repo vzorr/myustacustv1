@@ -1,26 +1,15 @@
 import React from 'react';
-import { ScrollView, Text, View, TouchableOpacity, Platform } from 'react-native';
+import { Text, View, TouchableOpacity, Platform, Dimensions, StyleSheet } from 'react-native';
 import { SVGIcons } from '../../config/constants/svg';
-import { COLORS } from '../../config/themes/theme';
+import { COLORS, fontSize } from '../../config/themes/theme';
+import { reuseableTextStyles } from '../../styles/reuseableTextStyles';
 
 export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
+    const screenWidth = Dimensions.get('window').width;
+
     return (
-        <View style={{
-            position: 'absolute',
-            bottom: Platform.OS === 'ios' ? 10 : 5,
-            backgroundColor: "white",
-            shadowColor: '#000',
-            shadowOffset: {
-                width: 0,
-                height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-            elevation: 5,
-        }}>
-            <View
-                style={{ flexDirection: 'row', alignItems: 'center' }}
-            >
+        <View style={styles.container}>
+            <View style={styles.tabBar}>
                 {state.routes.map((route: any, index: number) => {
                     const { options } = descriptors[route.key];
                     const label =
@@ -30,6 +19,7 @@ export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
                                 ? options.title
                                 : route.name;
                     const isFocused = state.index === index;
+
                     const onPress = () => {
                         const event = navigation.emit({
                             type: 'tabPress',
@@ -40,34 +30,45 @@ export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
                             navigation.navigate(route.name);
                         }
                     };
+
                     let iconComponent;
                     switch (route.name) {
                         case "Home":
-                            iconComponent = isFocused ? <SVGIcons.HomeIcon stroke={COLORS.white} /> : <SVGIcons.HomeIcon />;
+                            iconComponent = <SVGIcons.HomeIcon stroke={isFocused ? COLORS.white : ""} width={20} height={20} />;
                             break;
                         case "SearchScreen":
-                            iconComponent = isFocused ? <SVGIcons.SearchIcon stroke={COLORS.white} /> : <SVGIcons.SearchIcon />;
+                            iconComponent = <SVGIcons.SearchIcon stroke={isFocused ? COLORS.white : ""} />;
                             break;
                         case "PostJobScreen":
-                            iconComponent = isFocused ? <SVGIcons.plusIcon stroke={COLORS.white} /> : <SVGIcons.plusIcon />;
+                            iconComponent = <SVGIcons.plusIcon stroke={isFocused ? COLORS.white : ""} />;
                             break;
                         case "ChatScreen":
-                            iconComponent = isFocused ? <SVGIcons.MessageIcon stroke={COLORS.white} /> : <SVGIcons.MessageIcon />;
+                            iconComponent = <SVGIcons.MessageIcon stroke={isFocused ? COLORS.white : ""} />;
                             break;
-                        case "UsersScreen":
-                            iconComponent = isFocused ? <SVGIcons.UserIcon stroke={COLORS.white} /> : <SVGIcons.UserIcon />;
+                        case "ProfileScreen":
+                            iconComponent = <SVGIcons.UserIcon stroke={isFocused ? COLORS.white : ""} />;
                             break;
                         default:
                             break;
                     }
+
                     return (
                         <TouchableOpacity
                             key={index}
-                            style={{ padding: 12, borderBottomColor: isFocused ? COLORS.Yellow : 'transparent', alignItems: 'center', justifyContent: 'center' }}
+                            style={[
+                                styles.tabItem,
+                                isFocused ? styles.tabItemActive : null
+                            ]}
                             onPress={onPress}
                         >
                             {iconComponent}
-                            <Text style={{ color: isFocused ? COLORS.Yellow : 'black', margin: 4 }}>{label}</Text>
+                            <Text style={[
+                                reuseableTextStyles.subTitle,
+                                { fontSize: fontSize[10] },
+                                isFocused ? styles.tabLabelActive : styles.tabLabelInactive
+                            ]}>
+                                {label}
+                            </Text>
                         </TouchableOpacity>
                     );
                 })}
@@ -75,3 +76,53 @@ export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        // alignItems: 'center',
+        zIndex: 999,
+        paddingHorizontal: 20
+    },
+    tabBar: {
+        flexDirection: 'row',
+        width: '100%',
+        backgroundColor: COLORS.Yellow,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        height: 90,
+        borderTopEndRadius: 16,
+        borderTopStartRadius: 16,
+        shadowColor: '#000',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 12,
+        gap: 4,
+        shadowOffset: {
+            width: 0,
+            height: -2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 5,
+    },
+    tabItem: {
+        width: 55,
+        height: 55,
+        borderRadius: 8,
+        gap: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    tabItemActive: {
+        backgroundColor: COLORS.Navy,
+    },
+    tabLabelActive: {
+        color: COLORS.white,
+    },
+    tabLabelInactive: {
+        color: COLORS.Navy,
+    }
+});

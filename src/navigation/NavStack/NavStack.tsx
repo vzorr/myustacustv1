@@ -15,6 +15,7 @@ import LocationsAndPreferences from '../../screens/AuthScreens/AccountCreation/L
 import LocationPickerScreen from '../../screens/AuthScreens/AccountCreation/LocationScreen';
 import NotificationPreferences from '../../screens/AuthScreens/AccountCreation/NotificationPreferences';
 import TermsAndConditions from '../../screens/AuthScreens/AccountCreation/TermsAndConditions';
+import TabStack from '../TabStack/TabStack';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
@@ -23,9 +24,9 @@ const NavStack: React.FC = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='Splash'
+            initialRouteName='Tabs'
         >
-            {/* <Stack.Screen name="Tabs" component={TabStack} /> */}
+            <Stack.Screen name="Tabs" component={TabStack} />
             <Stack.Screen name="Splash" component={SplashScreen} />
             <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />

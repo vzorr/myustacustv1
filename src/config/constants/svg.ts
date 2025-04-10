@@ -26,6 +26,8 @@ import HomeIcon from "../../assets/icons/bx-home-alt.svg"
 import SearchIcon from "../../assets/icons/bx-search.svg"
 import MessageIcon from "../../assets/icons/bx-message.svg"
 import UserIcon from "../../assets/icons/user/user-default.svg"
+import menuIcon from "../../assets/icons/bx-menu-white.svg"
+import bellIcon from "../../assets/icons/bx-bell-white.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -54,5 +56,7 @@ export const SVGIcons = {
     HomeIcon,
     SearchIcon,
     MessageIcon,
-    UserIcon
+    UserIcon,
+    menuIcon,
+    bellIcon
 };
