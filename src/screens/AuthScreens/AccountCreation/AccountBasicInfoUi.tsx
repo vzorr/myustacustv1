@@ -10,12 +10,13 @@ import CustomButton from '../../../components/Buttons/CustomButton'
 import ProgressBar from '../../../components/ProgressBar/ProgressBar'
 import { SVGIcons } from '../../../config/constants/svg'
 import AccountHeader from '../../../components/AccountHeader/AccountHeader'
+import ErrorText from '../../../components/ErrorText'
 interface AccountBasicInfoUiProps {
     navigation: any; // Replace with your navigation type if needed
 }
 
-const AccountBasicInfoUi: React.FC<AccountBasicInfoUiProps> = (props) => {
-    const { navigation } = props;
+const AccountBasicInfoUi = (props: any) => {
+    const { navigation, handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue } = props;
     const [phoneNumber, setPhoneNumber] = useState('');
     const [formattedNumber, setFormattedNumber] = useState('');
     const [image, setImage] = useState<string | null>(null);
@@ -31,7 +32,7 @@ const AccountBasicInfoUi: React.FC<AccountBasicInfoUiProps> = (props) => {
             compressImageQuality: 0.8,
         })
             .then((image: { path: string }) => {
-                setImage(image.path);
+                setFieldValue('profileImg', image)
                 setImageUploaded(false); // Reset uploaded state when new image is selected
                 setShowImageModal(false);
             })
@@ -52,8 +53,9 @@ const AccountBasicInfoUi: React.FC<AccountBasicInfoUiProps> = (props) => {
             useFrontCamera: true,
         })
             .then((image: { path: string }) => {
-                setImage(image.path);
-                setImageUploaded(false); // Reset uploaded state when new image is selected
+                // setImage(image.path);
+                setFieldValue('profileImg', image)
+                setImageUploaded(false);
                 setShowImageModal(false);
             })
             .catch((error: { code: string }) => {
@@ -69,8 +71,6 @@ const AccountBasicInfoUi: React.FC<AccountBasicInfoUiProps> = (props) => {
 
     const handleConfirmUpload = () => {
         setImageUploaded(true);
-        const imageUrl = image; // Using local path for demo
-        console.log('Image URL stored:', imageUrl);
     };
     const handleForward = () => {
         if (imageUploaded) {
@@ -78,7 +78,9 @@ const AccountBasicInfoUi: React.FC<AccountBasicInfoUiProps> = (props) => {
             return;
         }
     }
-
+    const getFormattedNumber = (text: any) => {
+        setFieldValue("phoneNumber", text)
+    }
     return (
         <SafeAreaView style={accountScreensStyles.container}>
             <ScrollView
@@ -102,35 +104,73 @@ const AccountBasicInfoUi: React.FC<AccountBasicInfoUiProps> = (props) => {
                             placeholderTextColor={COLORS.Navy}
                             containerStyle={accountScreensStyles.inputFieldContainer}
                             inputStyle={accountScreensStyles.inputField}
+                            value={values?.fName}
+                            onChangeText={handleChange('fName')}
+                            onBlur={handleBlur("fName")}
                         />
+                        {errors?.fName && touched?.fName &&
+                            <ErrorText
+                                error={errors.fName}
+                            />
+                        }
                         <CustomTextInput
                             placeholder="Last Name"
                             placeholderTextColor={COLORS.Navy}
                             containerStyle={accountScreensStyles.inputFieldContainer}
                             inputStyle={accountScreensStyles.inputField}
+                            value={values?.lName}
+                            onChangeText={handleChange('lName')}
+                            onBlur={handleBlur("lName")}
                         />
+                        {errors?.lName && touched?.lName &&
+                            <ErrorText
+                                error={errors.lName}
+                            />
+                        }
                         <PhoneNumberInput
-                            defaultValue={phoneNumber}
+                            defaultValue={values?.phoneNumber}
                             onChangeText={(text: string) => setPhoneNumber(text)}
-                            onChangeFormattedText={(text: string) => setFormattedNumber(text)}
+                            onChangeFormattedText={getFormattedNumber}
+                            value={values?.phoneNumber}
                         />
+                        {errors?.phoneNumber && touched?.phoneNumber &&
+                            <ErrorText
+                                error={errors.phoneNumber}
+                            />
+                        }
                         <CustomTextInput
                             placeholder="Create Password"
                             placeholderTextColor={COLORS.Navy}
                             isPassword={true}
                             containerStyle={accountScreensStyles.inputFieldContainer}
                             inputStyle={accountScreensStyles.inputField}
+                            value={values?.password}
+                            onChangeText={handleChange('password')}
+                            onBlur={handleBlur("password")}
                         />
+                        {errors?.password && touched?.password &&
+                            <ErrorText
+                                error={errors.password}
+                            />
+                        }
                         <CustomTextInput
                             placeholder="Re-Enter Password"
                             placeholderTextColor={COLORS.Navy}
                             isPassword={true}
                             containerStyle={accountScreensStyles.inputFieldContainer}
                             inputStyle={accountScreensStyles.inputField}
+                            value={values?.confirmPassword}
+                            onChangeText={handleChange('confirmPassword')}
+                            onBlur={handleBlur("confirmPassword")}
                         />
+                        {errors?.confirmPassword && touched?.confirmPassword &&
+                            <ErrorText
+                                error={errors.confirmPassword}
+                            />
+                        }
 
                         {/* Upload Button (shown when no image is selected) */}
-                        {!image && (
+                        {!values?.profileImg?.path && (
                             <CustomSelector
                                 title="Upload Image"
                                 onPress={handleImageUpload}
@@ -138,17 +178,17 @@ const AccountBasicInfoUi: React.FC<AccountBasicInfoUiProps> = (props) => {
                             />
                         )}
                         {/* Image Section - Shows either preview with buttons or uploaded selector */}
-                        {image && (
+                        {values?.profileImg?.path && (
                             <View style={accountScreensStyles.imageSection}>
                                 {!imageUploaded ? (
                                     <>
                                         <View style={accountScreensStyles.imagePreviewContainer}>
-                                            <Image source={{ uri: image }} style={accountScreensStyles.imagePreview} />
+                                            <Image source={{ uri: values?.profileImg?.path }} style={accountScreensStyles.imagePreview} />
                                         </View>
                                         <View style={accountScreensStyles.ButtonsContainer}>
                                             <CustomButton
                                                 title="Cancel"
-                                                onPress={() => setImage(null)}
+                                                onPress={() => setFieldValue("profileImg", "")}
                                                 style={accountScreensStyles.cancelButton}
                                                 textStyle={accountScreensStyles.cancelButtonText}
                                             />
@@ -168,13 +208,14 @@ const AccountBasicInfoUi: React.FC<AccountBasicInfoUiProps> = (props) => {
                                     />
                                 )}
                             </View>
+
                         )}
                     </View>
                 </View>
             </ScrollView>
             {/* Navigation Buttons */}
             <View style={{ gap: 16 }}>
-                <TouchableOpacity style={accountScreensStyles.arrowButtonContianer} onPress={handleForward}>
+                <TouchableOpacity style={accountScreensStyles.arrowButtonContianer} onPress={handleSubmit}>
                     {!imageUploaded ? (
                         <SVGIcons.unFilledRightButton />
                     ) : (

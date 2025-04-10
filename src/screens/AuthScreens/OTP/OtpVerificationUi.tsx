@@ -6,19 +6,14 @@ import { COLORS } from '../../../config/themes/theme';
 import AuthOverlay from '../../../components/AuthOverlay/AuthOverlay';
 
 const OtpVerificationUi = (props: any) => {
-    const { onSubmit, handleOtpChange, otp, inputs, errorMessage, navigation, verInfo } = props
+    const { onSubmit, handleOtpChange, otp, inputs, errorMessage, navigation, verInfo, handleResendOTP } = props
     const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
     useEffect(() => {
-        // Autofocus first input on mount
         inputs[0]?.focus();
         setFocusedIndex(0);
     }, []);
 
-    const handleResendOTP = () => {
-        // navigation.navigate("NewPassword");
-        navigation.replace("SuccessMessage", { screenType: "OtpVerfication" })
-    };
 
     const handleKeyPress = (event: any, index: number) => {
         if (event.nativeEvent.key === 'Backspace') {
@@ -88,7 +83,6 @@ const OtpVerificationUi = (props: any) => {
                                     if (index === 0 || allPrevFilled) {
                                         setFocusedIndex(index);
                                     } else {
-                                        // Refocus to the first empty input before this
                                         const firstEmptyIndex = otp.findIndex((val: string, i: number) => i < index && val === '');
                                         if (firstEmptyIndex !== -1) {
                                             inputs[firstEmptyIndex]?.focus();

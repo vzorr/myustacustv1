@@ -14,14 +14,8 @@ interface CustomTextInputProps {
   // defaultCode?: 'US' | 'PK' | 'IN' | 'GB' | 'CA' | 'AU' | 'FR' | 'DE';
 }
 
-const PhoneNumberInput: React.FC<CustomTextInputProps> = ({
-  containerStyle,
-  inputStyle,
-  onChangeText,
-  onChangeFormattedText,
-  defaultValue = '',
-  // defaultCode = 'US',
-}) => {
+const PhoneNumberInput = (props:any) => {
+  const {containerStyle, inputStyle, onChangeText,  onChangeFormattedText, defaultValue = '', handleBlur}= props
   const phoneInput = useRef<PhoneInput>(null);
 
   return (

@@ -16,6 +16,7 @@ import { setUserInfo } from '../../../stores/reducer/userInfoReducer';
 import Toast from 'react-native-simple-toast';
 import { useDispatch } from 'react-redux';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
+import { client1 } from '../../../apiManager/Client';
 
 const { width } = Dimensions.get('window');
 
@@ -62,6 +63,11 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
         { translateY: logoPositionY }
     ];
     const onSubmit = async (value: any) => {
+        let payload = {
+            email: value.emailOrPhone,
+            password: value.password,
+            role: "customer"
+          }
         if (!value?.emailOrPhone?.includes('@')) {
             try {
                 const phoneNo = `+92${value.emailOrPhone}`
@@ -74,16 +80,17 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
             }
         } else {
             try {
-                const response: any = await auth().signInWithEmailAndPassword(value.emailOrPhone, value.password);
-                if (response?.user) {
-                    const userInfo = response?.user?._user
-                    const storedata: any = {
-                        email: userInfo?.email,
-                        userId: userInfo?.uid,
-                        isLogin: true
-                    }
-                    dispatch(setUserInfo(storedata));
-                }
+                const response= await client1().post(`auth/login`, payload);
+                            
+                // if (response?.user) {
+                //     const userInfo = response?.user?._user
+                //     const storedata: any = {
+                //         email: userInfo?.email,
+                //         userId: userInfo?.uid,
+                //         isLogin: true
+                //     }
+                    // dispatch(setUserInfo(storedata));
+                // }
                 navigation.replace("Home")
                 Toast.show('login successfully', Toast.SHORT);
                 return true

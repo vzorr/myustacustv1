@@ -14,6 +14,7 @@ import ErrorText from '../../../components/ErrorText';
 import auth from '@react-native-firebase/auth';
 import Toast from 'react-native-simple-toast';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
+import { client1 } from '../../../apiManager/Client';
 
 const { width } = Dimensions.get('window');
 
@@ -59,44 +60,24 @@ const SignUpScreen: React.FC<UserNavigationRootProps<"SignUp">> = (props) => {
         { translateY: logoPositionY }
     ];
     const onSubmit = async (value: any) => {
-        console.log("valuesssssssss", value, value?.emailOrPhone?.includes('@'));
-        navigation.navigate("OtpVerfication")
-        // if (!value?.emailOrPhone?.includes('@')) {
-        //     try {
-        //         const phoneNo = `+92${value.emailOrPhone}`
-        //         const confirmation = await auth().signInWithPhoneNumber(phoneNo);
-        //         console.log(confirmation)
-        //         // setVerificationId(confirmation.verificationId);
-        //         Toast.show('otp sent your phone', Toast.SHORT);
-        //         navigation.navigate("OtpVerfication", { verification: confirmation.verificationId, phoneOrEmail: value?.emailOrPhone })
-
-        //     } catch (error) {
-        //         console.error(error);
-        //         Toast.show('Failed to send OTP. Please try again.', Toast.SHORT);
-        //     }
-        // } else {
-        //     try {
-        //         const userCredential = await auth().createUserWithEmailAndPassword(value?.emailOrPhone, value.password);
-        //         const user = userCredential.user;
-        //         await user.sendEmailVerification();
-        //         Alert.alert('Verification email sent! Please check your inbox.');
-        //         auth().signOut();
-        //         navigation.navigate('SignIn')
-        //     } catch (error) {
-        //         console.error(error);
-        //     }
-        // };
-        // // navigation.navigate("OtpVerfication", { verification: value?.emailOrPhone  }) 
-
-
-        // console.log("valuessss", value)
-        // let payload = {
-        //     email: value.emailOrPhone,
-        //     isEmail: true,
-        //     password: value.password
-
-        // }
-    }
+        let payload = {
+            signupMethod: "email",
+            identifier: value.emailOrPhone,
+            role: "customer"
+        }
+        try {
+            const response = await client1().post(`auth/signup`, payload);
+            console.log("responseeeee", response?.data)
+            const res = response?.data.result
+            if (res) {
+                navigation.navigate("OtpVerfication", { phoneOrEmail: res?.email, token: res.token })
+            }
+            return
+        } catch (error) {
+            console.error(error);
+            return
+        }
+    };
     const handleForgotPassword = () => {
         navigation.navigate("ForgotPassword")
     }

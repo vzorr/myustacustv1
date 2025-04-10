@@ -13,7 +13,7 @@ interface successProps {
 const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (props) => {
     const { navigation, route } = props;
     const screenType = route?.params?.screenType
-    console.log("scrreeenn", screenType)
+    console.log("scrreeenncccccc", screenType)
     const screenOpacity = useRef(new Animated.Value(0)).current;
     const logoScale = useRef(new Animated.Value(1)).current;
     const logoPositionY = useRef(new Animated.Value(0)).current;
@@ -29,6 +29,9 @@ const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (pro
                 break;
             case "NotificationPreferences":
                 navigation.navigate("Home");
+                break;
+            case "ResetPassword":
+                navigation.navigate("SignIn");
                 break;
 
             default:
