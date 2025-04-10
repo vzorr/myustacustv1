@@ -9,10 +9,14 @@ import CustomSelector from '../../../components/Selector/CustomSelector';
 import AccountHeader from '../../../components/AccountHeader/AccountHeader';
 import CustomDropDown from '../../../components/DropDown/CustomDropDown';
 import CustomButton from '../../../components/Buttons/CustomButton';
-import { useSelector } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
+import RNFS from 'react-native-fs';
 import axios from 'axios';
-import { ClientFormData } from '../../../apiManager/Client';
+import { client, client1, ClientFormData } from '../../../apiManager/Client';
+import VisibleLoader from '../../../components/Loader/VisibleLoader';
+import { setAccountCreation } from '../../../stores/reducer/AccountCreationReducer';
+
+
 const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPreferences">> = (props) => {
     const { route, navigation } = props
     const isTermsAndConditionsAccepted = route?.params?.isTermsAndConditionsAccepted
@@ -20,8 +24,12 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
     const [notificationViaEmail, setNotificationViaEmail] = useState(false);
     const [notificationViaSMS, setNotificationViaSMS] = useState(false);
     const [notificationViaApp, setNotificationViaApp] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
+    const dispatch = useDispatch()
 
     const { accountCreation }: any = useSelector((state: any) => state?.accountCreation)
+    const { token }: any = useSelector((state: any) => state?.accessToken)
+    console.log("tokeeeeee", token)
     const notiiType = [
         { key: '1', value: 'App' },
         { key: '2', value: 'Email' },
@@ -29,6 +37,13 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
     ];
 
     const handleTermAndCondition = () => {
+        const updateLocationData = {
+            ...accountCreation,
+            notificationViaEmail: notificationViaEmail,
+            notificationViaSms: notificationViaSMS,
+            notificationViaApp: notificationViaApp,
+        }
+        dispatch(setAccountCreation(updateLocationData))
         navigation.navigate("TermsAndConditions")
     }
 
@@ -36,36 +51,39 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
         navigation.goBack()
     }
     const handleCompleteSetup = async () => {
+        setIsLoading(true)
+        console.log("handle Completeee")
         if (isTermsAndConditionsAccepted) {
-            const formData = new FormData();
-            formData.append('fName', accountCreation.fName);
-            formData.append('lName', accountCreation.lName);
-            formData.append('phoneNumber', accountCreation.phoneNumber);
-            formData.append('password', accountCreation.password);
-            formData.append('confirmPassword', accountCreation.confirmPassword);
-            formData.append('profileImg', {
-                uri: accountCreation.profileImg.path,
-                type: `image/${accountCreation.profileImg.type}`,
-                name: `profile.${accountCreation.profileImg.type}`,
-            });
-            formData.append('location', JSON.stringify(accountCreation.location));
-            formData.append('category', JSON.stringify(accountCreation.category));
-
-            formData.append('notificationViaEmail', notificationViaEmail);
-            formData.append('notificationViaSMS', notificationViaSMS);
-            formData.append('notificationViaApp', notificationViaApp);
-            formData.append('termsAndConditions', isTermsAndConditionsAccepted);
-
             try {
-                 const response = await ClientFormData().post(
-                    `account/creation`, formData
-                  );
-            
+                let filePath = accountCreation.profileImg;
+                const actualPath = filePath.path.replace('file://', '');
+                const base64String = await RNFS.readFile(actualPath, 'base64');
+                const base64Image = `data:image/jpeg;base64,${base64String}`;
+
+                let payload = {
+                    basicInfo: {
+                        firstName: accountCreation.fName,
+                        lastName: accountCreation.lName,
+                        phoneNumber: accountCreation.phoneNumber.replace('+', ''),
+                        password: accountCreation.password,
+                        profilePicture: base64Image
+                    },
+                    location: accountCreation.location,
+                    customerPreferences: accountCreation.category,
+                    notificationViaEmail: accountCreation?.notificationViaEmail,
+                    // notificationViaSms: accountCreation?.notificationViaSms,
+                    notificationViaApp: accountCreation?.notificationViaApp,
+                    termsAndConditions: true
+                }
+                console.log('Base64 Image:', payload);
+                const response = await client(token).post("account/customer-creation", payload);
+                setIsLoading(false)
+                navigation.navigate("SuccessMessage", { screenType: "NotificationPreferences" })
                 console.log('Response:', response.data);
             } catch (error: any) {
-                console.error('Error:', error.response?.data || error.message);
+                setIsLoading(false)
+                console.log('Error:', error.response?.data || error.message);
             }
-            navigation.navigate("SuccessMessage", { screenType: "NotificationPreferences" })
             return
         }
     }
@@ -133,6 +151,9 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                     <ProgressBar backgroundColor={COLORS.Yellow} />
                 </View>
             </View>
+            {isLoading &&
+                <VisibleLoader />
+            }
         </SafeAreaView>
     );
 };

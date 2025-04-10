@@ -67,7 +67,7 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
             email: value.emailOrPhone,
             password: value.password,
             role: "customer"
-          }
+        }
         if (!value?.emailOrPhone?.includes('@')) {
             try {
                 const phoneNo = `+92${value.emailOrPhone}`
@@ -80,19 +80,18 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
             }
         } else {
             try {
-                const response= await client1().post(`auth/login`, payload);
-                            
-                // if (response?.user) {
-                //     const userInfo = response?.user?._user
-                //     const storedata: any = {
-                //         email: userInfo?.email,
-                //         userId: userInfo?.uid,
-                //         isLogin: true
-                //     }
-                    // dispatch(setUserInfo(storedata));
-                // }
-                navigation.replace("Home")
-                Toast.show('login successfully', Toast.SHORT);
+                const response = await client1().post(`auth/login`, payload);
+                console.log("responessssssssss", response.data)
+                console.log("responseeeee", response?.data)
+                const res = response?.data
+                if (res.code !== 200) {
+                    return
+                }
+                if (res?.result) {
+                    dispatch(setUserInfo(res?.result));
+                    Toast.show('Login successfully', Toast.SHORT);
+                }
+                // navigation.replace("Home")
                 return true
             } catch (error) {
                 Toast.show("User not found", Toast.SHORT);
