@@ -13,16 +13,18 @@ import {
   REGISTER,
 } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PostJobReducer from '../reducer/PostJobReducer';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['accessToken'],
+  // whitelist: ['accessToken'],
 };
 
 const rootReducer = combineReducers({
   userInfo: userInfoReducer,
   accountCreation: AccountCreationReducer,
-  accessToken: UserTokenReducer
+  accessToken: UserTokenReducer,
+  postJob: PostJobReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

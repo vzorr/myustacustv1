@@ -57,6 +57,11 @@ const SplashScreen: React.FC<UserNavigationRootProps<"Splash">> = (props) => {
     const handleSignUp = () => {
         navigation.navigate('SignUp', { isLogin: false });
     };
+    const handlePostJob = () => {
+        navigation.navigate('Tabs', {
+            screen: 'Home',
+          });
+    };
 
     return (
         <View style={[splashScreenStyles.container, { overflow: 'hidden' }]}>
@@ -86,7 +91,7 @@ const SplashScreen: React.FC<UserNavigationRootProps<"Splash">> = (props) => {
             <Animated.View style={[splashScreenStyles.bottomContainer, { opacity: buttonsOpacity }]}>
                 <CustomButton
                     title="Post a Job Now"
-                    onPress={() => console.log('Post a Job Now')}
+                    onPress={handlePostJob}
                 />
                 <OrDivider />
                 <CustomButton

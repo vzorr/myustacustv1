@@ -11,6 +11,12 @@ import ConfirmationButtons from '../../../components/Buttons/ConfirmationButtons
 import AccountHeader from '../../../components/AccountHeader/AccountHeader'
 import LineSeparator from '../../../components/LineSeparator/LineSeparator'
 import HorizontalImageList from '../../../components/HorizentalImagesList/HorizentalImagesList'
+import { useDispatch, useSelector } from 'react-redux'
+import { client } from '../../../apiManager/Client'
+import RNFS from 'react-native-fs';
+import { postJobValue } from '../../../config/constants/constants'
+import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer'
+import VisibleLoader from '../../../components/Loader/VisibleLoader'
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -19,8 +25,14 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> = (props) => {
     const { route, navigation } = props
-    console.log("djfdfhdjfhd", props.route.params?.values)
-    let previewValue =props.route.params?.values
+    const { token }: any = useSelector((state: any) => state?.accessToken)
+    const { userData }: any = useSelector((state: any) => state?.userInfo)
+
+    const [isLoading, setIsLoading] = useState(false)
+    const dispatch = useDispatch()
+    const { postJob }: any = useSelector((state: any) => state?.postJob)
+    let previewValue = postJob
+    console.log("postpreviewValueJob", previewValue)
     const mapRef = useRef<MapView>(null);
     const Images = [
         {
@@ -48,8 +60,25 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const handleDiscard = () => {
         // navigation.navigate("LocationScreen")
     }
-    const handlePostJob = () => {
-        navigation.navigate("SuccessMessageScreen")
+
+    const handlePostJob = async () => {
+        console.log("token", token)
+        try {
+            if (!userData?.token) {
+                navigation.navigate('SignIn')
+                return
+            }
+            let payload = await postJobValue(previewValue)
+            console.log('Base64 Image:', payload);
+            const response = await client(userData?.token).post("jobs", payload);
+            console.log('Response:', response.data);
+            setIsLoading(false)
+            dispatch(setPostJobReducer({}))
+            navigation.replace("SuccessMessageScreen")
+        } catch (error: any) {
+            setIsLoading(false)
+            console.log('Error:', error.response?.data || error.message);
+        }
     }
     const handleEditJobPost = () => {
         navigation.navigate('Tabs', {
@@ -57,7 +86,9 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
         });
     }
 
+    const submitJobPost = async () => {
 
+    }
     const renderScreenContent = () => (
         <SafeAreaView style={styles.container}>
             <View style={styles.innerContainer}>
@@ -69,7 +100,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 />
                 <AccountHeader
                     title='Category'
-                    subTitle={'Tiler'}
+                    subTitle={previewValue?.category}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
                 />
@@ -82,7 +113,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 <LineSeparator />
                 <AccountHeader
                     title='AREA SIZE'
-                    subTitle={`${previewValue?.areaSize}m²` }
+                    subTitle={`${previewValue?.areaSize}m²`}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ marginTop: -3, gap: 2 }}
                 />
@@ -116,13 +147,13 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 <LineSeparator />
                 <AccountHeader
                     title='LOCATION'
-                    subTitle={previewValue?.location}
+                    subTitle={previewValue?.location?.address}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ marginTop: -3, gap: 2 }}
                 />
                 <AccountHeader
                     title='LOCATION DESCRIPTION'
-                    subTitle={'my Tirana,Albania near abc'}
+                    subTitle={previewValue?.locationDescp}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
                 />
@@ -132,7 +163,8 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                         provider={PROVIDER_GOOGLE}
                         style={styles.mapView}
                         region={region}
-                        onRegionChangeComplete={setRegion}
+                        // onRegionChangeComplete={setRegion}
+                        // onMarkerPress={setRegion}
                         scrollEnabled={true}
                         zoomEnabled={true}
                         pitchEnabled={true}
@@ -180,6 +212,9 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ flexGrow: 1 }}
             />
+            {isLoading &&
+                <VisibleLoader />
+            }
         </View>
     );
 };

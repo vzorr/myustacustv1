@@ -22,6 +22,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Formik } from 'formik'
 import { jobPostValidationSchema } from '../../../config/constants/errorMessage'
 import ErrorText from '../../../components/ErrorText'
+import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer'
+import { useDispatch, useSelector } from 'react-redux'
 
 // Define the ImagePicker result type
 interface ImagePickerResult {
@@ -49,11 +51,12 @@ interface ImageItem {
 }
 
 const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props) => {
+    const { postJob }: any = useSelector((state: any) => state?.postJob)
     const { route, navigation } = props
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-    const [selectedArea, setSelectedArea] = useState<string[]>([]);
-    const [selectLocation, setSelectLocation] = useState<string[]>([]);
-    const [selectedBudget, setSelectedBudget] = useState<string[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(postJob?.category || [] );
+    const [selectedArea, setSelectedArea] = useState<string[]>(postJob?.areaType || []);
+    const [selectLocation, setSelectLocation] = useState<string[]>(postJob?.locationDescp || []);
+    const [selectedBudget, setSelectedBudget] = useState<string[]>(postJob?.budgetDesc || []);
     const [projectTitle, setProjectTitle] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
     const [showStartCalendar, setShowStartCalendar] = useState(false);
@@ -72,6 +75,8 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const [images, setImages] = useState<ImageItem[]>([]);
     const [showImageModal, setShowImageModal] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash' | null>(null);
+
+    const dispatch = useDispatch()
     const [region, setRegion] = useState<Region>({
         latitude: 42.0693,
         longitude: 19.5126,
@@ -227,10 +232,25 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     //     }
     // };
     const onSubmit = async (values: any) => {
-        console.log("valuessss", values)
-        navigation.navigate("PostJobPreview", { values })
+        let updateValue = {
+            ...values,
+            location: {
+                address: values?.locationDescp,
+                latitude: region.latitude,
+                longitude: region.longitude
+            },
+            budget: values?.budgetDesc,
+            locationDescp: selectLocation,
+            budgetDesc: selectedBudget,
+            areaType: selectedArea,
+            category: selectedCategories,
+        }
+        dispatch(setPostJobReducer(updateValue))
+        navigation.navigate("PostJobPreview")
+        return true
 
     }
+    console.log("selectedArea", selectedArea)
     const RenderScreenContent = (props: any) => {
         const { handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue } = props
         const pickImageFromGallery = () => {
@@ -378,6 +398,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 value={values?.areaSize}
                                 onChangeText={handleChange('areaSize')}
                                 onBlur={handleBlur("areaSize")}
+                                keyboardType='numeric'
                             />
                             {errors?.areaSize && touched?.areaSize &&
                                 <ErrorText
@@ -627,20 +648,20 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             />
                             <View>
                                 <TextInput
-                                    style={[styles.input, { minHeight: 100 }]}
+                                    style={[styles.input, { minHeight: 100, color: COLORS.Navy }]}
                                     placeholder={"Location Description..."}
                                     multiline={true}
                                     placeholderTextColor={COLORS.Navy}
                                     textAlignVertical={'top'}
                                     textAlign="left"
-                                    value={values?.location}
-                                    onChangeText={handleChange('location')}
-                                    onBlur={handleBlur("location")}
+                                    value={values?.locationDescp}
+                                    onChangeText={handleChange('locationDescp')}
+                                    onBlur={handleBlur("locationDescp")}
                                 />
                             </View>
-                            {errors?.location && touched?.location &&
+                            {errors?.locationDescp && touched?.locationDescp &&
                                 <ErrorText
-                                    error={errors.location}
+                                    error={errors.locationDescp}
                                 />
                             }
                         </View>
@@ -683,9 +704,10 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                     placeholderTextColor={COLORS.Navy}
                                     containerStyle={[accountScreensStyles.inputFieldContainer, styles.budgetInput]}
                                     inputStyle={accountScreensStyles.inputField}
-                                    value={values?.budget}
-                                    onChangeText={handleChange('budget')}
-                                    onBlur={handleBlur("budget")}
+                                    value={values?.budgetDesc}
+                                    onChangeText={handleChange('budgetDesc')}
+                                    onBlur={handleBlur("budgetDesc")}
+                                    keyboardType='numeric'
                                 />
                                 <TouchableOpacity
                                     style={styles.NIPTContainer}
@@ -738,18 +760,20 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     return (
         <Formik
             initialValues={{
-                title: "",
-                description: "",
-                paymentMethod: "",
-                category: "",
-                areaSize: 0,
-                areaType: "",
-                startDate: "",
-                endDate: "",
-                materials: "",
-                location: "",
-                budget: 0,
-                images: []
+                title: postJob?.title ? postJob?.title : "",
+                description: postJob?.description ? postJob?.description : "",
+                paymentMethod: postJob?.paymentMethod ? postJob?.paymentMethod : "",
+                category: postJob?.category ? postJob?.category : "",
+                areaSize: postJob?.areaSize ? postJob?.areaSize : "",
+                areaType: postJob?.areaType ? postJob?.areaType : "",
+                startDate: postJob?.startDate ? postJob?.startDate : "",
+                endDate: postJob?.endDate ? postJob?.endDate : "",
+                materials: postJob?.materials ? postJob?.materials : "",
+                location: postJob?.location?.address ? postJob?.location?.address : "",
+                budget: postJob?.budget ? postJob?.budget : 0,
+                images: postJob?.images ? postJob?.images : "",
+                locationDescp: postJob?.location?.address ? postJob?.location?.address : "",
+                budgetDesc: postJob?.budget ? postJob?.budget : 0
             }}
             onSubmit={async (values: any, { resetForm }) => {
                 setIsLoading(true)
@@ -759,7 +783,8 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                     resetForm({ values: "" })
                 }
             }}
-        // validationSchema={jobPostValidationSchema}
+            validationSchema={jobPostValidationSchema}
+            enableReinitialize={true}
 
         >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (

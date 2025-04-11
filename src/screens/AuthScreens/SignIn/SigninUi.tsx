@@ -14,9 +14,12 @@ import ErrorText from '../../../components/ErrorText';
 import auth from '@react-native-firebase/auth';
 import { setUserInfo } from '../../../stores/reducer/userInfoReducer';
 import Toast from 'react-native-simple-toast';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
-import { client1 } from '../../../apiManager/Client';
+import { client, client1 } from '../../../apiManager/Client';
+import { postJobValue } from '../../../config/constants/constants';
+import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer';
+import { setUserToken } from '../../../stores/reducer/UserTokenReducer';
 
 const { width } = Dimensions.get('window');
 
@@ -27,6 +30,8 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
     const logoScale = useRef(new Animated.Value(2)).current;
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
+    const { postJob }: any = useSelector((state: any) => state?.postJob)
+    let previewValue = postJob
     const dispatch = useDispatch()
 
     const handleScreen = () => {
@@ -62,6 +67,20 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
         { scale: logoScale },
         { translateY: logoPositionY }
     ];
+    const handlePostJob = async (token: any) => {
+        try {
+
+            let payload = await postJobValue(previewValue)
+            console.log('Base64 Image:', payload);
+            const response = await client(token).post("jobs", payload);
+            console.log('Response:', response.data);
+            setIsLoading(false)
+            dispatch(setPostJobReducer({}))
+        } catch (error: any) {
+            setIsLoading(false)
+            console.log('Error:', error.response?.data || error.message);
+        }
+    }
     const onSubmit = async (value: any) => {
 
         try {
@@ -85,9 +104,13 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
             }
             if (res?.result) {
                 dispatch(setUserInfo(res?.result));
+                setUserToken(res?.result?.token)
+                navigation.replace("Tabs")
                 Toast.show('Login successfully', Toast.SHORT);
+                if (previewValue?.images?.length > 0) {
+                    await handlePostJob(res?.result?.token)
+                }
             }
-            // navigation.replace("Home")
             return true
         } catch (error) {
             Toast.show("User not found", Toast.SHORT);

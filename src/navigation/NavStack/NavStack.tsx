@@ -26,7 +26,7 @@ const NavStack: React.FC = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='PostJobPreview'
+            initialRouteName='Splash'
         >
             <Stack.Screen name="Tabs" component={TabStack} />
             <Stack.Screen name="Splash" component={SplashScreen} />

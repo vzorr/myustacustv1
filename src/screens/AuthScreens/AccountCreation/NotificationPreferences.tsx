@@ -15,6 +15,8 @@ import axios from 'axios';
 import { client, client1, ClientFormData } from '../../../apiManager/Client';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
 import { setAccountCreation } from '../../../stores/reducer/AccountCreationReducer';
+import { postJobValue } from '../../../config/constants/constants';
+import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer';
 
 
 const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPreferences">> = (props) => {
@@ -24,6 +26,10 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
     const [notificationViaEmail, setNotificationViaEmail] = useState(false);
     const [notificationViaSMS, setNotificationViaSMS] = useState(false);
     const [notificationViaApp, setNotificationViaApp] = useState(false);
+
+    const { postJob }: any = useSelector((state: any) => state?.postJob)
+    console.log("postJob", postJob)
+    let previewValue = postJob
     const [isLoading, setIsLoading] = useState(false)
     const dispatch = useDispatch()
 
@@ -49,6 +55,23 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
 
     const handleBack = () => {
         navigation.goBack()
+    }
+    const handlePostJob = async () => {
+        try {
+            if (!token) {
+                navigation.navigate('SignIn')
+                return
+            }
+            let payload = await postJobValue(previewValue)
+            console.log('Base64 Image:', payload);
+            const response = await client(token).post("jobs", payload);
+            console.log('Response:', response.data);
+            setIsLoading(false)
+            dispatch(setPostJobReducer({}))
+        } catch (error: any) {
+            setIsLoading(false)
+            console.log('Error:', error.response?.data || error.message);
+        }
     }
     const handleCompleteSetup = async () => {
         setIsLoading(true)
@@ -79,6 +102,9 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                 const response = await client(token).post("account/customer-creation", payload);
                 setIsLoading(false)
                 navigation.navigate("SuccessMessage", { screenType: "NotificationPreferences" })
+                if(previewValue){
+                   await handlePostJob()
+                }
                 console.log('Response:', response.data);
             } catch (error: any) {
                 setIsLoading(false)
