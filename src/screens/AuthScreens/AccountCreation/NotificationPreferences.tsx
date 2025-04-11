@@ -71,7 +71,7 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                     location: accountCreation.location,
                     customerPreferences: accountCreation.category,
                     notificationViaEmail: accountCreation?.notificationViaEmail,
-                    // notificationViaSms: accountCreation?.notificationViaSms,
+                    notificationViaSms: accountCreation?.notificationViaSms,
                     notificationViaApp: accountCreation?.notificationViaApp,
                     termsAndConditions: true
                 }
