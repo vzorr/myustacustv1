@@ -57,10 +57,10 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
             formData.append('termsAndConditions', isTermsAndConditionsAccepted);
 
             try {
-                 const response = await ClientFormData().post(
+                const response = await ClientFormData().post(
                     `account/creation`, formData
-                  );
-            
+                );
+
                 console.log('Response:', response.data);
             } catch (error: any) {
                 console.error('Error:', error.response?.data || error.message);
@@ -100,6 +100,9 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                         onSelectionChange={setSelectedNotiType}
                         boxStyles={accountScreensStyles.dropdownBox}
                         getValue={getValue}
+                        isMultiSelect
+                        isSearch={false}
+                        zIndex={1000}
                     />
                     <CustomSelector
                         onPress={handleTermAndCondition}

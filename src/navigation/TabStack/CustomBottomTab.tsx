@@ -34,19 +34,19 @@ export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
                     let iconComponent;
                     switch (route.name) {
                         case "Home":
-                            iconComponent = <SVGIcons.HomeIcon stroke={isFocused ? COLORS.white : ""} width={20} height={20} />;
+                            iconComponent = isFocused ? <SVGIcons.HomeWhiteIcon /> : <SVGIcons.HomeIcon />;
                             break;
                         case "SearchScreen":
-                            iconComponent = <SVGIcons.SearchIcon stroke={isFocused ? COLORS.white : ""} />;
+                            iconComponent = isFocused ? <SVGIcons.SearchWhiteIcon /> : <SVGIcons.SearchIcon />;
                             break;
                         case "PostJobScreen":
-                            iconComponent = <SVGIcons.plusIcon stroke={isFocused ? COLORS.white : ""} />;
+                            iconComponent = isFocused ? <SVGIcons.PlusWhiteIcon /> : <SVGIcons.plusIcon />;
                             break;
                         case "ChatScreen":
-                            iconComponent = <SVGIcons.MessageIcon stroke={isFocused ? COLORS.white : ""} />;
+                            iconComponent = isFocused ? <SVGIcons.ChatWhiteIcon /> : <SVGIcons.MessageIcon />;
                             break;
                         case "ProfileScreen":
-                            iconComponent = <SVGIcons.UserIcon stroke={isFocused ? COLORS.white : ""} />;
+                            iconComponent = isFocused ? <SVGIcons.ProfileIcon /> : <SVGIcons.UserIcon />;
                             break;
                         default:
                             break;

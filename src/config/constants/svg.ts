@@ -21,6 +21,7 @@ import plusIcon from "../../assets/icons/bx-plus.svg"
 import searchIcon from "../../assets/icons/bx-search.svg"
 import deleteIcon from "../../assets/icons/bx-trash.svg"
 import locationIcon from "../../assets/icons/bx-map.svg"
+import locationYellowIcon from "../../assets/icons/bx-map-yellow.svg"
 import crossIcon from "../../assets/icons/bx-x.svg"
 import HomeIcon from "../../assets/icons/bx-home-alt.svg"
 import SearchIcon from "../../assets/icons/bx-search.svg"
@@ -28,6 +29,16 @@ import MessageIcon from "../../assets/icons/bx-message.svg"
 import UserIcon from "../../assets/icons/user/user-default.svg"
 import menuIcon from "../../assets/icons/bx-menu-white.svg"
 import bellIcon from "../../assets/icons/bx-bell-white.svg"
+import HomeWhiteIcon from "../../assets/icons/bx-home-white.svg"
+import SearchWhiteIcon from "../../assets/icons/bx-search-white.svg"
+import PlusWhiteIcon from "../../assets/icons/bx-plus-white.svg"
+import ChatWhiteIcon from "../../assets/icons/bx-chat-white.svg"
+import ProfileIcon from "../../assets/icons/bx-user-white.svg"
+import radioUnSelected from "../../assets/icons/radio/radio-unselected.svg"
+import radioSelected from "../../assets/icons/radio/radio-selected.svg"
+import checkIcon from "../../assets/icons/bx-check.svg"
+import infoNIPTIcon from "../../assets/icons/bx-info-circle.svg"
+import editIcon from "../../assets/icons/bx-pencil.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -58,5 +69,16 @@ export const SVGIcons = {
     MessageIcon,
     UserIcon,
     menuIcon,
-    bellIcon
+    bellIcon,
+    HomeWhiteIcon,
+    SearchWhiteIcon,
+    PlusWhiteIcon,
+    ChatWhiteIcon,
+    ProfileIcon,
+    locationYellowIcon,
+    radioUnSelected,
+    radioSelected,
+    checkIcon,
+    infoNIPTIcon,
+    editIcon
 };

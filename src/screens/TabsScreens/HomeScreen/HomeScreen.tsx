@@ -3,6 +3,7 @@ import React from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import { COLORS, FONTS, SIZES } from '../../../config/themes/theme'
 import { SVGIcons } from '../../../config/constants/svg'
+import AppHeader from '../../../components/AppHeader/AppHeader'
 
 const CategoryItem = ({ iconName, label }: { iconName: React.ReactNode, label: string }) => {
     return (
@@ -45,30 +46,14 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
-
-            {/* Header */}
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.menuButton}>
-                    <SVGIcons.menuIcon stroke={COLORS.white} />
-                </TouchableOpacity>
-
-                <View style={styles.logoContainer}>
-                    <SVGIcons.MyUstaLogo width={80} height={30} />
-                </View>
-
-                <TouchableOpacity style={styles.notificationButton}>
-                    <SVGIcons.bellIcon stroke={COLORS.white} />
-                    <View style={styles.notificationBadge}>
-                        <Text style={styles.notificationBadgeText}>3</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
-
-            <ScrollView
-                style={styles.scrollView}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.scrollViewContent}
-            >
+            <AppHeader
+                onMenuPress={() => { }}
+                onNotificationPress={() => { }}
+                showNotificationBadge={true}
+                badgeCount={5}
+                isProfile={false}
+            />
+            <View>
                 {/* Categories */}
                 <ScrollView
                     horizontal
@@ -89,32 +74,37 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
                     />
                     {/* Add more categories as needed */}
                 </ScrollView>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.scrollViewContent}
+                >
 
-                {/* Most Visited Professions */}
-                <View style={styles.sectionContainer}>
-                    <Text style={styles.sectionTitle}>Most Visited Professions</Text>
+                    {/* Most Visited Professions */}
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionTitle}>Most Visited Professions</Text>
 
-                    <ProfessionCard
-                        title="Plumber"
-                        count={253}
-                        icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Plumber.png')} style={styles.professionImage} />}
-                    />
+                        <ProfessionCard
+                            title="Plumber"
+                            count={253}
+                            icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Plumber.png')} style={styles.professionImage} />}
+                        />
 
-                    <ProfessionCard
-                        title="Dry Wall"
-                        count={518}
-                        icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Drywall.png')} style={styles.dryWalImage} />}
-                        color={COLORS.Navy}
-                    />
+                        <ProfessionCard
+                            title="Dry Wall"
+                            count={518}
+                            icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Drywall.png')} style={styles.dryWalImage} />}
+                            color={COLORS.Navy}
+                        />
 
-                    <ProfessionCard
-                        title="Electrician"
-                        count={346}
-                        icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-                        color={COLORS.Navy}
-                    />
-                </View>
-            </ScrollView>
+                        <ProfessionCard
+                            title="Electrician"
+                            count={346}
+                            icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
+                            color={COLORS.Navy}
+                        />
+                    </View>
+                </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }
@@ -170,10 +160,10 @@ const styles = StyleSheet.create({
     scrollViewContent: {
         paddingBottom: 80, // Add padding for bottom tab
         paddingHorizontal: 20,
-        paddingVertical: 16
+        // paddingVertical: 16
     },
     categoriesContainer: {
-        paddingVertical: 16,
+        padding: 16,
         gap: 8,
     },
     categoryItem: {
@@ -194,6 +184,7 @@ const styles = StyleSheet.create({
     },
     sectionContainer: {
         marginBottom: 16,
+        paddingHorizontal: 3.9
     },
     sectionTitle: {
         fontSize: 18,
@@ -205,7 +196,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.skyBlue,
         borderRadius: 12,
         padding: 16,
-        marginBottom: 10,
+        marginBottom: 8,
         flexDirection: 'row',
         justifyContent: 'space-between',
         overflow: 'hidden',

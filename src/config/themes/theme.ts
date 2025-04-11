@@ -30,6 +30,7 @@ export const COLORS = {
     inputBorder: "rgba(0, 0, 0, 0.20)",
     modalBgColor: "rgba(55, 55, 55, 0.50)",
     skyBlue: "#0064C6",
+    grey: "#BEBEBE"
 }
 export const fontSize = {
     5: hp(0.7),

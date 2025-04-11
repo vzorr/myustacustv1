@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Animated, TextInput, Dimensions, Modal, Platform } from 'react-native';
 import { SVGIcons } from '../../config/constants/svg';
 import { COLORS, FONTS, fontSize, SIZES } from '../../config/themes/theme';
-import CustomSelector from '../Selector/CustomSelector';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -18,12 +17,10 @@ interface CustomDropDownProps {
     isSearch?: boolean;
     maxHeight?: number;
     zIndex?: number;
-    getValue?: any;
-    isAddLocation?: boolean,
-    handleAddLocation?: any
+    getValue?: any
 }
 
-const CustomDropDown: React.FC<CustomDropDownProps> = ({
+const UseableDropDown: React.FC<CustomDropDownProps> = ({
     data,
     placeholder,
     selectedItems,
@@ -35,9 +32,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
     isSearch,
     maxHeight,
     zIndex = 100,
-    getValue,
-    isAddLocation,
-    handleAddLocation
+    getValue
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
@@ -258,13 +253,6 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                             onTouchMove={e => e.stopPropagation()}
                             onTouchEnd={e => e.stopPropagation()}
                         />
-                        {isAddLocation &&
-                            <CustomSelector
-                                title='Add New Location'
-                                iconName='plusIcon'
-                                onPress={handleAddLocation}
-                            />
-                        }
                     </View>
                 </TouchableOpacity>
             </Modal>
@@ -374,4 +362,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CustomDropDown;
+export default UseableDropDown;
