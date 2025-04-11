@@ -9,6 +9,7 @@ export type UserStackParamList = {
     ChatScreen: any;
     ProfileScreen: any;
     PostJobPreview: any;
+    SuccessMessageScreen: any;
     Splash: undefined;
     SignIn: any;
     SignUp: any;

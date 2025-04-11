@@ -1,5 +1,5 @@
 import { FlatList, Platform, SafeAreaView, StyleSheet, Text, UIManager, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import AppHeader from '../../../components/AppHeader/AppHeader'
 import Heading from '../../../components/Heading/Heading'
@@ -19,6 +19,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> = (props) => {
     const { route, navigation } = props
+    const mapRef = useRef<MapView>(null);
     const Images = [
         {
             id: 1,
@@ -46,7 +47,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
         // navigation.navigate("LocationScreen")
     }
     const handlePostJob = () => {
-        navigation.navigate("SuccessMessage", { screenType: "PostJobPreview" })
+        navigation.navigate("SuccessMessageScreen")
     }
     const handleEditJobPost = () => {
         navigation.navigate('Tabs', {
@@ -123,13 +124,17 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
                 />
-                <View style={{ gap: 8, height: 400, borderRadius: 50 }}>
-                    <Text style={reuseableTextStyles.subTitle}>Place the marker in the exact location</Text>
+                <View style={styles.mapContainer}>
                     <MapView
+                        ref={mapRef}
                         provider={PROVIDER_GOOGLE}
-                        style={locationScreenStyles.map}
+                        style={styles.mapView}
                         region={region}
                         onRegionChangeComplete={setRegion}
+                        scrollEnabled={true}
+                        zoomEnabled={true}
+                        pitchEnabled={true}
+                        rotateEnabled={true}
                     >
                         <Marker coordinate={region} />
                     </MapView>
@@ -192,6 +197,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 20
+    },
+    mapContainer: {
+        height: 250,
+        overflow: 'hidden',
+        borderRadius: 12,
+        marginBottom: 16,
+    },
+    mapView: {
+        ...StyleSheet.absoluteFillObject,
+        borderRadius: 12,
     },
     radioContainer: {
         flexDirection: 'row',
