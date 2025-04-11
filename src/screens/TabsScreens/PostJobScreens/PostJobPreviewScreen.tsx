@@ -19,6 +19,8 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> = (props) => {
     const { route, navigation } = props
+    console.log("djfdfhdjfhd", props.route.params?.values)
+    let previewValue =props.route.params?.values
     const mapRef = useRef<MapView>(null);
     const Images = [
         {
@@ -61,7 +63,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
             <View style={styles.innerContainer}>
                 <AccountHeader
                     title='PAYMENT METHOD'
-                    subTitle={'By Cash'}
+                    subTitle={`By ${previewValue?.paymentMethod}`}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
                 />
@@ -73,20 +75,20 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 />
                 <AccountHeader
                     title='JOB DESCRIPTION'
-                    subTitle={'I need tile installation for my home in Myslym,Shyri,Tirana!'}
+                    subTitle={previewValue?.description}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
                 />
                 <LineSeparator />
                 <AccountHeader
                     title='AREA SIZE'
-                    subTitle={'35 m²'}
+                    subTitle={`${previewValue?.areaSize}m²` }
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ marginTop: -3, gap: 2 }}
                 />
                 <AccountHeader
                     title='MATERIALS'
-                    subTitle={'Tiles'}
+                    subTitle={previewValue?.materials}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
                 />
@@ -97,24 +99,24 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                     containerStyle={{ gap: 2 }}
                 />
                 <HorizontalImageList
-                    images={Images}
+                    images={previewValue?.images}
                 />
                 <AccountHeader
                     title='START DATE'
-                    subTitle={'20 January 2025'}
+                    subTitle={previewValue?.startDate}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
                 />
                 <AccountHeader
                     title='END DATE'
-                    subTitle={'27 January 2025'}
+                    subTitle={previewValue?.endDate}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
                 />
                 <LineSeparator />
                 <AccountHeader
                     title='LOCATION'
-                    subTitle={'Tirana,Albania'}
+                    subTitle={previewValue?.location}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ marginTop: -3, gap: 2 }}
                 />
@@ -141,7 +143,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 </View>
                 <AccountHeader
                     title='BUDGET'
-                    subTitle={'60,000 All'}
+                    subTitle={previewValue?.budget}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
                 />

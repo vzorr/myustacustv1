@@ -61,4 +61,32 @@ export const accountCreationSchema = yup.object().shape({
         })
 });
 
+export const jobPostValidationSchema = yup.object().shape({
+    title: yup.string().required('Title is required'),
+    description: yup.string().required('Description is required'),
+    paymentMethod: yup.string().required('Payment method is required'),
+    // category: yup.string().required('Category is required'),
+    areaSize: yup.number()
+      .typeError('Area size must be a number')
+      .min(1, 'Area size must be greater than 0')
+      .required('Area size is required'),
+    areaType: yup.string().required('Area type is required'),
+    startDate: yup.date()
+      .required('Start date is required')
+      .typeError('Invalid date format'),
+    endDate: yup.date()
+      .required('End date is required')
+      .typeError('Invalid date format')
+      .min(yup.ref('startDate'), 'End date must be after start date'),
+    materials: yup.string().required('Materials information is required'),
+    location: yup.string().required('Location is required'),
+    // budget: yup.number()
+    //   .typeError('Budget must be a number')
+    //   .min(1, 'Budget must be greater than 0')
+    //   .required('Budget is required'),
+    images: yup.array()
+      .of(yup.mixed())
+      .min(1, 'At least one image is required')
+  });
+
 
