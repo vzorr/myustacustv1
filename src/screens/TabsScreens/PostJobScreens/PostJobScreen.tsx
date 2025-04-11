@@ -1,5 +1,5 @@
-import { FlatList, LayoutAnimation, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View } from 'react-native'
-import React, { useState } from 'react'
+import { FlatList, LayoutAnimation, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View, KeyboardAvoidingView, Alert, Modal } from 'react-native'
+import React, { useState, useRef } from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import AppHeader from '../../../components/AppHeader/AppHeader'
 import Heading from '../../../components/Heading/Heading'
@@ -17,6 +17,18 @@ import ConfirmationButtons from '../../../components/Buttons/ConfirmationButtons
 import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal'
 import { BudgetSuggestionModal } from '../../../components/BudgetGraph/BudgetGraphModal'
 import { Calendar } from 'react-native-calendars'
+import ImagePicker from 'react-native-image-crop-picker'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
+// Define the ImagePicker result type
+interface ImagePickerResult {
+    path: string;
+    width: number;
+    height: number;
+    size: number;
+    mime: string;
+    [key: string]: any;
+}
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -26,6 +38,11 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 interface MaterialItem {
     id: string;
     name: string;
+}
+
+interface ImageItem {
+    id: string;
+    path: string;
 }
 
 const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props) => {
@@ -45,6 +62,11 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const [materialToDelete, setMaterialToDelete] = useState<string | null>(null);
     const [showBudgetModal, setShowBudgetModal] = useState(false);
     const [areaSize, setAreaSize] = useState(35);
+    const [budget, setBudget] = useState("Budget Lek...");
+    const [images, setImages] = useState<ImageItem[]>([]);
+    const [showImageModal, setShowImageModal] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash' | null>(null);
+    const mapRef = useRef<MapView>(null);
 
     // Budget data
     const budgetData = {
@@ -76,6 +98,11 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         { key: '4', value: 'kitchen' },
         { key: '5', value: 'outdoor space' },
         { key: '6', value: 'Custom' },
+    ];
+    const currency = [
+        { key: '1', value: 'Albanian Lek' },
+        { key: '2', value: 'Euro' },
+        { key: '3', value: 'USD' },
     ];
 
     // Format date for display
@@ -133,337 +160,449 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         // navigation.navigate("PostJobPreview")
     }
 
+    // Image picker functions
+    const pickImageFromGallery = () => {
+        ImagePicker.openPicker({
+            width: 300,
+            height: 300,
+            cropping: true,
+            compressImageQuality: 0.8,
+            multiple: true,
+            maxFiles: 5,
+        })
+            .then((selectedImages: ImagePickerResult | ImagePickerResult[]) => {
+                const newImages = Array.isArray(selectedImages)
+                    ? selectedImages.map(img => ({
+                        id: Date.now().toString() + Math.random().toString(),
+                        path: img.path
+                    }))
+                    : [{ id: Date.now().toString(), path: selectedImages.path }];
+
+                setImages([...images, ...newImages]);
+                setShowImageModal(false);
+            })
+            .catch((error) => {
+                if (error.code !== 'E_PICKER_CANCELLED') {
+                    Alert.alert('Error', 'Failed to pick image from gallery');
+                }
+            });
+    };
+
+    const takePhotoWithCamera = () => {
+        ImagePicker.openCamera({
+            width: 300,
+            height: 300,
+            cropping: true,
+            compressImageQuality: 0.8,
+        })
+            .then((image: ImagePickerResult) => {
+                setImages([...images, { id: Date.now().toString(), path: image.path }]);
+                setShowImageModal(false);
+            })
+            .catch((error) => {
+                if (error.code !== 'E_PICKER_CANCELLED') {
+                    Alert.alert('Error', 'Failed to take photo');
+                }
+            });
+    };
+
+    const handleImageUpload = () => {
+        setShowImageModal(true);
+    };
+
+    // Payment method toggle
+    const togglePaymentMethod = (method: 'card' | 'cash') => {
+        if (paymentMethod === method) {
+            setPaymentMethod(null);
+        } else {
+            setPaymentMethod(method);
+        }
+    };
+
     const renderScreenContent = () => (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.innerContainer}>
-                <Heading
-                    headingText='PAYMENT METHOD'
-                    style={{ fontSize: fontSize[16] }}
-                />
-                <View style={styles.radioMainContainer}>
-                    <View style={styles.radioContainer}>
-                        <TouchableOpacity>
-                            <SVGIcons.radioUnSelected />
-                        </TouchableOpacity>
-                        <Text style={reuseableTextStyles.subTitle}>Card</Text>
-                    </View>
-                    <View style={styles.radioContainer}>
-                        <TouchableOpacity>
-                            <SVGIcons.radioSelected />
-                        </TouchableOpacity>
-                        <Text style={reuseableTextStyles.subTitle}>Cash</Text>
-                    </View>
-                </View>
-                <Heading
-                    headingText='JOB DETAILS'
-                    style={{ fontSize: fontSize[16] }}
-                />
-                <View style={{ gap: 8 }}>
-                    <MultilineCustomInput
-                        placeholder="Write a job title..."
-                        value={projectTitle}
-                        onChangeText={setProjectTitle}
-                        maxLength={80}
-                        containerStyle={accountScreensStyles.inputFieldContainer}
-                        inputStyle={accountScreensStyles.inputField}
-                        characterCount={80 - projectTitle.length}
+        <KeyboardAwareScrollView
+            enableOnAndroid={true}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ flexGrow: 1 }}
+            showsVerticalScrollIndicator={false}
+            enableAutomaticScroll={true}
+            scrollEnabled={true}
+            extraHeight={50}
+            extraScrollHeight={50}
+        >
+            <SafeAreaView style={styles.container}>
+                <View style={styles.innerContainer}>
+                    <Heading
+                        headingText='PAYMENT METHOD'
+                        style={{ fontSize: fontSize[16] }}
                     />
-                    <MultilineCustomInput
-                        placeholder="Provide a detailed job description..."
-                        value={projectDescription}
-                        onChangeText={setProjectDescription}
-                        maxLength={600}
-                        multiline
-                        numberOfLines={4}
-                        containerStyle={accountScreensStyles.inputFieldContainer}
-                        inputStyle={accountScreensStyles.inputField}
-                        characterCount={600 - projectDescription.length}
-                    />
-                    <CustomDropDown
-                        data={categories}
-                        placeholder="Categories"
-                        selectedItems={selectedCategories}
-                        onSelectionChange={setSelectedCategories}
-                        boxStyles={accountScreensStyles.dropdownBox}
-                        isMultiSelect
-                        isSearch={false}
-                        zIndex={1000}
-                    />
-                </View>
-                <Heading
-                    headingText='PROJECT SPECIFICATIONS'
-                    style={{ fontSize: fontSize[16] }}
-                />
-                <View style={{ gap: 8 }}>
-                    <CustomTextInput
-                        placeholder="Area size m²"
-                        placeholderTextColor={COLORS.Navy}
-                        containerStyle={accountScreensStyles.inputFieldContainer}
-                        inputStyle={accountScreensStyles.inputField}
-                    />
-                    <CustomDropDown
-                        data={areaType}
-                        placeholder="Area Type"
-                        selectedItems={selectedCategories}
-                        onSelectionChange={setSelectedCategories}
-                        boxStyles={accountScreensStyles.dropdownBox}
-                        isMultiSelect={false}
-                        isSearch={false}
-                        zIndex={1000}
-                    />
-                </View>
-
-                {/* Materials Section */}
-                {showAddForm ? (
-                    <View style={styles.addExperienceContainer}>
-                        <View style={styles.addTitleContainer}>
-                            <Text style={[reuseableTextStyles.title, { fontSize: fontSize[14] }]}>Materials</Text>
-                            <TouchableOpacity onPress={handleCancelMaterial}>
-                                <SVGIcons.crossIcon />
+                    <View style={styles.radioMainContainer}>
+                        <View style={styles.radioContainer}>
+                            <TouchableOpacity onPress={() => togglePaymentMethod('card')}>
+                                {paymentMethod === 'card' ? (
+                                    <SVGIcons.radioSelected />
+                                ) : (
+                                    <SVGIcons.radioUnSelected />
+                                )}
                             </TouchableOpacity>
+                            <Text style={reuseableTextStyles.subTitle}>Card</Text>
                         </View>
-
-                        {/* Show input and buttons only when adding new material */}
-                        {showMaterialInput && (
-                            <>
-                                <View style={{ gap: 8 }}>
-                                    <CustomTextInput
-                                        placeholder='e.g Wood'
-                                        placeholderTextColor={COLORS.Navy}
-                                        containerStyle={accountScreensStyles.inputFieldContainer}
-                                        inputStyle={accountScreensStyles.inputField}
-                                        value={newMaterial}
-                                        onChangeText={setNewMaterial}
-                                    />
-                                </View>
-                                <ConfirmationButtons
-                                    cancelText='Cancel'
-                                    onCancel={() => {
-                                        setNewMaterial("");
-                                        setShowMaterialInput(false);
-                                    }}
-                                    confirmText='Add'
-                                    onConfirm={handleConfirmAdd}
-                                    confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
-                                    containerStyle={{ gap: 12 }}
-                                />
-                            </>
-                        )}
-
-                        {/* List of added materials */}
-                        {materials.map((material) => (
-                            <CustomSelector
-                                key={material.id}
-                                title={material.name}
-                                iconName="deleteIcon"
-                                onPress={() => handleDeleteMaterial(material.id)}
-                            />
-                        ))}
-                        {/* Show plus button when not adding new material */}
-                        {!showMaterialInput && (
-                            <CustomSelector
-                                onPress={() => setShowMaterialInput(true)}
-                                title="Add Material"
-                                iconName="plusIcon"
-                            />
-                        )}
+                        <View style={styles.radioContainer}>
+                            <TouchableOpacity onPress={() => togglePaymentMethod('cash')}>
+                                {paymentMethod === 'cash' ? (
+                                    <SVGIcons.radioSelected />
+                                ) : (
+                                    <SVGIcons.radioUnSelected />
+                                )}
+                            </TouchableOpacity>
+                            <Text style={reuseableTextStyles.subTitle}>Cash</Text>
+                        </View>
                     </View>
-                ) : (
-                    <CustomSelector
-                        onPress={handleAddMaterials}
-                        title="Material (Optional)"
-                        iconName="plusIcon"
+                    <Heading
+                        headingText='JOB DETAILS'
+                        style={{ fontSize: fontSize[16] }}
                     />
-                )}
-
-                <Heading
-                    headingText='IMAGES'
-                    style={{ fontSize: fontSize[16] }}
-                />
-                <CustomSelector
-                    title='Upload Image'
-                    iconName='uploadIcon'
-                />
-
-                {/* START DATE with Calendar */}
-                <Heading
-                    headingText='START DATE'
-                    style={{ fontSize: fontSize[16] }}
-                />
-                <TouchableOpacity onPress={() => {
-                    setShowStartCalendar(!showStartCalendar);
-                    setShowEndCalendar(false);
-                }}>
-                    <CustomSelector
-                        title={startDate ? formatDate(startDate) : "Select Start Date"}
-                        iconName={showStartCalendar ? 'ArrowUp' : 'ArrowDown'}
-                    />
-                </TouchableOpacity>
-                {showStartCalendar && (
-                    <View style={styles.calendarContainer}>
-                        <Calendar
-                            current={startDate || new Date().toISOString().split('T')[0]}
-                            minDate={new Date().toISOString().split('T')[0]}
-                            onDayPress={(day) => {
-                                setStartDate(day.dateString);
-                                setShowStartCalendar(false);
-                            }}
-                            markedDates={{
-                                [startDate]: { selected: true, selectedColor: COLORS.Yellow }
-                            }}
-                            theme={{
-                                calendarBackground: COLORS.white,
-                                textSectionTitleColor: COLORS.Black,
-                                selectedDayBackgroundColor: COLORS.Yellow,
-                                selectedDayTextColor: COLORS.white,
-                                todayTextColor: COLORS.Yellow,
-                                dayTextColor: COLORS.Black,
-                                textDisabledColor: COLORS.grey,
-                                arrowColor: COLORS.Yellow,
-                                monthTextColor: COLORS.Black,
-                                textDayFontFamily: FONTS.interRegular,
-                                textMonthFontFamily: FONTS.interBold,
-                                textDayHeaderFontFamily: FONTS.interRegular,
-                                textDayFontSize: fontSize[14],
-                                textMonthFontSize: fontSize[16],
-                                textDayHeaderFontSize: fontSize[12]
-                            }}
+                    <View style={{ gap: 8 }}>
+                        <MultilineCustomInput
+                            placeholder="Write a job title..."
+                            value={projectTitle}
+                            onChangeText={setProjectTitle}
+                            maxLength={80}
+                            containerStyle={accountScreensStyles.inputFieldContainer}
+                            inputStyle={accountScreensStyles.inputField}
+                            characterCount={80 - projectTitle.length}
+                        />
+                        <MultilineCustomInput
+                            placeholder="Provide a detailed job description..."
+                            value={projectDescription}
+                            onChangeText={setProjectDescription}
+                            maxLength={600}
+                            multiline
+                            numberOfLines={4}
+                            containerStyle={accountScreensStyles.inputFieldContainer}
+                            inputStyle={accountScreensStyles.inputField}
+                            characterCount={600 - projectDescription.length}
+                        />
+                        <CustomDropDown
+                            data={categories}
+                            placeholder="Categories"
+                            selectedItems={selectedCategories}
+                            onSelectionChange={setSelectedCategories}
+                            boxStyles={accountScreensStyles.dropdownBox}
+                            isMultiSelect
+                            isSearch={false}
+                            zIndex={1000}
                         />
                     </View>
-                )}
-
-                {/* END DATE with Calendar */}
-                <Heading
-                    headingText='END DATE'
-                    style={{ fontSize: fontSize[16] }}
-                />
-                <TouchableOpacity onPress={() => {
-                    setShowEndCalendar(!showEndCalendar);
-                    setShowStartCalendar(false);
-                }}>
-                    <CustomSelector
-                        title={endDate ? formatDate(endDate) : "Select End Date"}
-                        iconName={showEndCalendar ? 'ArrowUp' : 'ArrowDown'}
+                    <Heading
+                        headingText='PROJECT SPECIFICATIONS'
+                        style={{ fontSize: fontSize[16] }}
                     />
-                </TouchableOpacity>
-                {showEndCalendar && (
-                    <View style={styles.calendarContainer}>
-                        <Calendar
-                            current={endDate || startDate || new Date().toISOString().split('T')[0]}
-                            minDate={startDate || new Date().toISOString().split('T')[0]}
-                            onDayPress={(day) => {
-                                setEndDate(day.dateString);
-                                setShowEndCalendar(false);
-                            }}
-                            markedDates={{
-                                [endDate]: { selected: true, selectedColor: COLORS.Yellow },
-                                ...(startDate && {
-                                    [startDate]: { selected: true, selectedColor: COLORS.Yellow }
-                                })
-                            }}
-                            theme={{
-                                calendarBackground: COLORS.white,
-                                textSectionTitleColor: COLORS.Black,
-                                selectedDayBackgroundColor: COLORS.Yellow,
-                                selectedDayTextColor: COLORS.white,
-                                todayTextColor: COLORS.Yellow,
-                                dayTextColor: COLORS.Black,
-                                textDisabledColor: COLORS.grey,
-                                arrowColor: COLORS.Yellow,
-                                monthTextColor: COLORS.Black,
-                                textDayFontFamily: FONTS.interRegular,
-                                textMonthFontFamily: FONTS.interBold,
-                                textDayHeaderFontFamily: FONTS.interRegular,
-                                textDayFontSize: fontSize[14],
-                                textMonthFontSize: fontSize[16],
-                                textDayHeaderFontSize: fontSize[12]
-                            }}
-                        />
-                    </View>
-                )}
-
-                <Heading
-                    headingText='LOCATION'
-                    style={{ fontSize: fontSize[16] }}
-                />
-                <View style={{ gap: 8 }}>
-                    <CustomDropDown
-                        data={areaType}
-                        placeholder="Select Location"
-                        selectedItems={selectedCategories}
-                        onSelectionChange={setSelectedCategories}
-                        boxStyles={accountScreensStyles.dropdownBox}
-                        isMultiSelect={false}
-                        isSearch={false}
-                        zIndex={1000}
-                        isAddLocation={true}
-                        handleAddLocation={handleAddNewLocation}
-                    />
-                    <View>
-                        <TextInput
-                            style={[styles.input, { minHeight: 100 }]}
-                            placeholder={"Location Description..."}
-                            multiline={true}
-                            placeholderTextColor={COLORS.Navy}
-                            textAlignVertical={'top'}
-                            textAlign="left"
-                        />
-                    </View>
-                </View>
-                <View style={{ gap: 8, height: 400, borderRadius: 50 }}>
-                    <Text style={reuseableTextStyles.subTitle}>Place the marker in the exact location</Text>
-                    <MapView
-                        provider={PROVIDER_GOOGLE}
-                        style={locationScreenStyles.map}
-                        region={region}
-                        onRegionChangeComplete={setRegion}
-                    >
-                        <Marker coordinate={region} />
-                    </MapView>
-                </View>
-                <Heading
-                    headingText='BUDGET (OPTIONAL)'
-                    style={{ fontSize: fontSize[16] }}
-                />
-                <View style={{ gap: 8 }}>
-                    <CustomDropDown
-                        data={areaType}
-                        placeholder="Currency"
-                        selectedItems={selectedCategories}
-                        onSelectionChange={setSelectedCategories}
-                        boxStyles={accountScreensStyles.dropdownBox}
-                        isMultiSelect={false}
-                        isSearch={false}
-                        zIndex={1000}
-                    />
-                    <View>
+                    <View style={{ gap: 8 }}>
                         <CustomTextInput
                             placeholder="Area size m²"
                             placeholderTextColor={COLORS.Navy}
                             containerStyle={accountScreensStyles.inputFieldContainer}
                             inputStyle={accountScreensStyles.inputField}
-                            value={areaSize.toString()}
-                            onChangeText={(text) => setAreaSize(Number(text))}
-                            keyboardType="numeric"
                         />
-
-                        <TouchableOpacity
-                            style={styles.NIPTContainer}
-                            onPress={() => setShowBudgetModal(true)}
-                        >
-                            <SVGIcons.infoNIPTIcon />
-                        </TouchableOpacity>
+                        <CustomDropDown
+                            data={areaType}
+                            placeholder="Area Type"
+                            selectedItems={selectedCategories}
+                            onSelectionChange={setSelectedCategories}
+                            boxStyles={accountScreensStyles.dropdownBox}
+                            isMultiSelect={false}
+                            isSearch={false}
+                            zIndex={1000}
+                        />
                     </View>
+
+                    {/* Materials Section */}
+                    {showAddForm ? (
+                        <View style={styles.addExperienceContainer}>
+                            <View style={styles.addTitleContainer}>
+                                <Text style={[reuseableTextStyles.title, { fontSize: fontSize[14] }]}>Materials</Text>
+                                <TouchableOpacity onPress={handleCancelMaterial}>
+                                    <SVGIcons.crossIcon />
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* Show input and buttons only when adding new material */}
+                            {showMaterialInput && (
+                                <>
+                                    <View style={{ gap: 8 }}>
+                                        <CustomTextInput
+                                            placeholder='e.g Wood'
+                                            placeholderTextColor={COLORS.Navy}
+                                            containerStyle={accountScreensStyles.inputFieldContainer}
+                                            inputStyle={accountScreensStyles.inputField}
+                                            value={newMaterial}
+                                            onChangeText={setNewMaterial}
+                                        />
+                                    </View>
+                                    <ConfirmationButtons
+                                        cancelText='Cancel'
+                                        onCancel={() => {
+                                            setNewMaterial("");
+                                            setShowMaterialInput(false);
+                                        }}
+                                        confirmText='Add'
+                                        onConfirm={handleConfirmAdd}
+                                        confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
+                                        containerStyle={{ gap: 12 }}
+                                    />
+                                </>
+                            )}
+
+                            {/* List of added materials */}
+                            {materials.map((material) => (
+                                <CustomSelector
+                                    key={material.id}
+                                    title={material.name}
+                                    iconName="deleteIcon"
+                                    onPress={() => handleDeleteMaterial(material.id)}
+                                />
+                            ))}
+                            {/* Show plus button when not adding new material */}
+                            {!showMaterialInput && (
+                                <CustomSelector
+                                    onPress={() => setShowMaterialInput(true)}
+                                    title="Add Material"
+                                    iconName="plusIcon"
+                                />
+                            )}
+                        </View>
+                    ) : (
+                        <CustomSelector
+                            onPress={handleAddMaterials}
+                            title="Material (Optional)"
+                            iconName="plusIcon"
+                        />
+                    )}
+
+                    <Heading
+                        headingText='IMAGES'
+                        style={{ fontSize: fontSize[16] }}
+                    />
+                    <CustomSelector
+                        title={images.length > 0 ? `${images.length} Images Selected` : 'Upload Image'}
+                        iconName='uploadIcon'
+                        onPress={handleImageUpload}
+                    />
+
+                    {/* START DATE with Calendar */}
+                    <Heading
+                        headingText='START DATE'
+                        style={{ fontSize: fontSize[16] }}
+                    />
+                    <CustomSelector
+                        onPress={() => {
+                            setShowStartCalendar(!showStartCalendar);
+                            setShowEndCalendar(false);
+                        }}
+                        title={startDate ? formatDate(startDate) : "Select Start Date"}
+                        iconName={showStartCalendar ? 'ArrowUp' : 'ArrowDown'}
+                    />
+                    {showStartCalendar && (
+                        <View style={styles.calendarContainer}>
+                            <Calendar
+                                current={startDate || new Date().toISOString().split('T')[0]}
+                                minDate={new Date().toISOString().split('T')[0]}
+                                onDayPress={(day) => {
+                                    setStartDate(day.dateString);
+                                    setShowStartCalendar(false);
+                                }}
+                                markedDates={{
+                                    [startDate]: { selected: true, selectedColor: COLORS.Yellow }
+                                }}
+                                theme={{
+                                    calendarBackground: COLORS.white,
+                                    textSectionTitleColor: COLORS.Black,
+                                    selectedDayBackgroundColor: COLORS.Yellow,
+                                    selectedDayTextColor: COLORS.white,
+                                    todayTextColor: COLORS.Yellow,
+                                    dayTextColor: COLORS.Black,
+                                    textDisabledColor: COLORS.grey,
+                                    arrowColor: COLORS.Yellow,
+                                    monthTextColor: COLORS.Black,
+                                    textDayFontFamily: FONTS.interRegular,
+                                    textMonthFontFamily: FONTS.interBold,
+                                    textDayHeaderFontFamily: FONTS.interRegular,
+                                    textDayFontSize: fontSize[14],
+                                    textMonthFontSize: fontSize[16],
+                                    textDayHeaderFontSize: fontSize[12],
+                                }}
+                                style={styles.calendar}
+                                headerStyle={{
+                                    backgroundColor: COLORS.white,
+                                    borderTopLeftRadius: 10,
+                                    borderTopRightRadius: 10,
+                                    paddingHorizontal: 10,
+                                    paddingVertical: 5,
+                                }}
+                                renderHeader={(date) => (
+                                    <View style={styles.calendarHeader}>
+                                        <Text style={styles.calendarHeaderText}>
+                                            {date.toString('MMMM yyyy')}
+                                        </Text>
+                                    </View>
+                                )}
+                            />
+                        </View>
+                    )}
+
+                    {/* END DATE with Calendar */}
+                    <Heading
+                        headingText='END DATE'
+                        style={{ fontSize: fontSize[16] }}
+                    />
+                    <CustomSelector
+                        onPress={() => {
+                            setShowEndCalendar(!showEndCalendar);
+                            setShowStartCalendar(false);
+                        }}
+                        title={endDate ? formatDate(endDate) : "Select End Date"}
+                        iconName={showEndCalendar ? 'ArrowUp' : 'ArrowDown'}
+                    />
+                    {showEndCalendar && (
+                        <View style={styles.calendarContainer}>
+                            <Calendar
+                                current={endDate || startDate || new Date().toISOString().split('T')[0]}
+                                minDate={startDate || new Date().toISOString().split('T')[0]}
+                                onDayPress={(day) => {
+                                    setEndDate(day.dateString);
+                                    setShowEndCalendar(false);
+                                }}
+                                markedDates={{
+                                    [endDate]: { selected: true, selectedColor: COLORS.Yellow },
+                                    ...(startDate && {
+                                        [startDate]: { selected: true, selectedColor: COLORS.Yellow }
+                                    })
+                                }}
+                                theme={{
+                                    calendarBackground: COLORS.white,
+                                    textSectionTitleColor: COLORS.Black,
+                                    selectedDayBackgroundColor: COLORS.Yellow,
+                                    selectedDayTextColor: COLORS.white,
+                                    todayTextColor: COLORS.Yellow,
+                                    dayTextColor: COLORS.Black,
+                                    textDisabledColor: COLORS.grey,
+                                    arrowColor: COLORS.Yellow,
+                                    monthTextColor: COLORS.Black,
+                                    textDayFontFamily: FONTS.interRegular,
+                                    textMonthFontFamily: FONTS.interBold,
+                                    textDayHeaderFontFamily: FONTS.interRegular,
+                                    textDayFontSize: fontSize[14],
+                                    textMonthFontSize: fontSize[16],
+                                    textDayHeaderFontSize: fontSize[12],
+                                }}
+                                style={styles.calendar}
+                                headerStyle={{
+                                    backgroundColor: COLORS.white,
+                                    borderTopLeftRadius: 10,
+                                    borderTopRightRadius: 10,
+                                    paddingHorizontal: 10,
+                                    paddingVertical: 5,
+                                }}
+                                renderHeader={(date) => (
+                                    <View style={styles.calendarHeader}>
+                                        <Text style={styles.calendarHeaderText}>
+                                            {date.toString('MMMM yyyy')}
+                                        </Text>
+                                    </View>
+                                )}
+                            />
+                        </View>
+                    )}
+
+                    <Heading
+                        headingText='LOCATION'
+                        style={{ fontSize: fontSize[16] }}
+                    />
+                    <View style={{ gap: 8 }}>
+                        <CustomDropDown
+                            data={areaType}
+                            placeholder="Select Location"
+                            selectedItems={selectedCategories}
+                            onSelectionChange={setSelectedCategories}
+                            boxStyles={accountScreensStyles.dropdownBox}
+                            isMultiSelect={false}
+                            isSearch={false}
+                            zIndex={1000}
+                            isAddLocation={true}
+                            handleAddLocation={handleAddNewLocation}
+                        />
+                        <View>
+                            <TextInput
+                                style={[styles.input, { minHeight: 100 }]}
+                                placeholder={"Location Description..."}
+                                multiline={true}
+                                placeholderTextColor={COLORS.Navy}
+                                textAlignVertical={'top'}
+                                textAlign="left"
+                            />
+                        </View>
+                    </View>
+                    <View style={{ gap: 8 }}>
+                        <Text style={reuseableTextStyles.subTitle}>Place the marker in the exact location</Text>
+                        <View style={styles.mapContainer}>
+                            <MapView
+                                ref={mapRef}
+                                provider={PROVIDER_GOOGLE}
+                                style={styles.mapView}
+                                region={region}
+                                onRegionChangeComplete={setRegion}
+                                scrollEnabled={true}
+                                zoomEnabled={true}
+                                pitchEnabled={true}
+                                rotateEnabled={true}
+                            >
+                                <Marker coordinate={region} />
+                            </MapView>
+                        </View>
+                    </View>
+                    <Heading
+                        headingText='BUDGET (OPTIONAL)'
+                        style={{ fontSize: fontSize[16] }}
+                    />
+                    <View style={styles.budgetContainer}>
+                        <CustomDropDown
+                            data={currency}
+                            placeholder="Currency"
+                            selectedItems={selectedCategories}
+                            onSelectionChange={setSelectedCategories}
+                            boxStyles={accountScreensStyles.dropdownBox}
+                            isMultiSelect={false}
+                            isSearch={false}
+                            zIndex={1000}
+                        />
+                        <View style={styles.budgetInputContainer}>
+                            <CustomTextInput
+                                placeholder="Budget Lek..."
+                                placeholderTextColor={COLORS.Navy}
+                                containerStyle={[accountScreensStyles.inputFieldContainer, styles.budgetInput]}
+                                inputStyle={accountScreensStyles.inputField}
+                                value={budget}
+                                onChangeText={(text) => setBudget(text)}
+                            />
+                            <TouchableOpacity
+                                style={styles.NIPTContainer}
+                                onPress={() => setShowBudgetModal(true)}
+                            >
+                                <SVGIcons.infoNIPTIcon />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <ConfirmationButtons
+                        cancelText='Cancel'
+                        onCancel={handleCancel}
+                        confirmText='Review Details'
+                        onConfirm={handlePreview}
+                        confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
+                    />
                 </View>
-                <ConfirmationButtons
-                    cancelText='Cancel'
-                    onCancel={handleCancel}
-                    confirmText='Review Details'
-                    onConfirm={handlePreview}
-                    confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
-                />
-            </View>
-        </SafeAreaView>
+            </SafeAreaView>
+        </KeyboardAwareScrollView>
     );
 
     const screenData = [{ id: '1' }];
@@ -497,6 +636,32 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                 areaSize={areaSize}
                 budgetData={budgetData}
             />
+
+            {/* Image Upload Modal */}
+            <Modal
+                visible={showImageModal}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setShowImageModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalTitle}>Upload Image</Text>
+                        <TouchableOpacity style={styles.modalOption} onPress={takePhotoWithCamera}>
+                            <Text style={styles.modalOptionText}>Take Photo</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalOption} onPress={pickImageFromGallery}>
+                            <Text style={styles.modalOptionText}>Choose from Gallery</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.modalCancel}
+                            onPress={() => setShowImageModal(false)}
+                        >
+                            <Text style={styles.modalCancelText}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -507,7 +672,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 20,
         paddingTop: 16,
-        paddingBottom: 100
+        paddingBottom: 150
     },
     innerContainer: {
         gap: 16
@@ -556,11 +721,101 @@ const styles = StyleSheet.create({
     calendarContainer: {
         marginTop: 10,
         borderRadius: 10,
+        backgroundColor: COLORS.white,
+        padding: 10,
         elevation: 4,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
+        marginBottom: 16,
+        overflow: 'hidden',
+    },
+    calendar: {
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: COLORS.inputBorder,
+        width: '100%',
+    },
+    calendarHeader: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+    },
+    calendarHeaderText: {
+        fontSize: fontSize[16],
+        fontFamily: FONTS.interBold,
+        color: COLORS.Black,
+        marginHorizontal: 10,
+    },
+    mapContainer: {
+        height: 250,
+        overflow: 'hidden',
+        borderRadius: 12,
+        marginBottom: 16,
+    },
+    mapView: {
+        ...StyleSheet.absoluteFillObject,
+        borderRadius: 12,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        width: '80%',
+        backgroundColor: COLORS.white,
+        borderRadius: 10,
+        padding: 20,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    modalTitle: {
+        fontSize: fontSize[16],
+        fontFamily: FONTS.interBold,
+        color: COLORS.Black,
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+    modalOption: {
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.inputBorder,
+    },
+    modalOptionText: {
+        fontSize: fontSize[14],
+        fontFamily: FONTS.interRegular,
+        color: COLORS.Black,
+        textAlign: 'center',
+    },
+    modalCancel: {
+        marginTop: 15,
+        paddingVertical: 10,
+        backgroundColor: COLORS.Yellow,
+        borderRadius: 8,
+    },
+    modalCancelText: {
+        fontSize: fontSize[14],
+        fontFamily: FONTS.interBold,
+        color: COLORS.white,
+        textAlign: 'center',
+    },
+    budgetContainer: {
+        gap: 8,
+        marginBottom: 16,
+    },
+    budgetInputContainer: {
+        position: 'relative',
+    },
+    budgetInput: {
+        marginBottom: 0,
     },
 });
 

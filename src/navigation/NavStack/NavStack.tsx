@@ -17,6 +17,7 @@ import NotificationPreferences from '../../screens/AuthScreens/AccountCreation/N
 import TermsAndConditions from '../../screens/AuthScreens/AccountCreation/TermsAndConditions';
 import TabStack from '../TabStack/TabStack';
 import PostJobPreviewScreen from '../../screens/TabsScreens/PostJobScreens/PostJobPreviewScreen';
+import SuccessMessageScreen from '../../screens/TabsScreens/PostJobScreens/SuccessMessageScreen';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
@@ -43,6 +44,7 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="NotificationPreferences" component={NotificationPreferences} />
             <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
             <Stack.Screen name="PostJobPreview" component={PostJobPreviewScreen} />
+            <Stack.Screen name="SuccessMessageScreen" component={SuccessMessageScreen} />
         </Stack.Navigator>
     )
 }
