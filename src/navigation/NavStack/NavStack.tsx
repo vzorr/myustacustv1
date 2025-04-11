@@ -25,7 +25,7 @@ const NavStack: React.FC = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='Tabs'
+            initialRouteName='AccountBasicInfo'
         >
             <Stack.Screen name="Tabs" component={TabStack} />
             <Stack.Screen name="Splash" component={SplashScreen} />
