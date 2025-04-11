@@ -15,6 +15,9 @@ import auth from '@react-native-firebase/auth';
 import Toast from 'react-native-simple-toast';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
 import { client1 } from '../../../apiManager/Client';
+import { useDispatch } from 'react-redux';
+import { setUserToken } from '../../../stores/reducer/UserTokenReducer';
+import { setUserInfo } from '../../../stores/reducer/userInfoReducer';
 
 const { width } = Dimensions.get('window');
 
@@ -25,6 +28,7 @@ const SignUpScreen: React.FC<UserNavigationRootProps<"SignUp">> = (props) => {
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
     const [isLoading, setIsLoading] = useState(false)
+    const dispatch = useDispatch()
 
     const handleScreen = () => {
         navigation.navigate('SignIn')
@@ -60,17 +64,33 @@ const SignUpScreen: React.FC<UserNavigationRootProps<"SignUp">> = (props) => {
         { translateY: logoPositionY }
     ];
     const onSubmit = async (value: any) => {
+        let signupMethod = ""
+        let identifier = ""
+        if (value.emailOrPhone && value.emailOrPhone.includes('@')) {
+            signupMethod = "email"
+            identifier = value.emailOrPhone
+        } else {
+            signupMethod = "phone"
+            identifier = '92' + value.emailOrPhone
+        }
         let payload = {
-            signupMethod: "email",
-            identifier: value.emailOrPhone,
+            signupMethod: signupMethod,
+            identifier: identifier,
             role: "customer"
         }
+        console.log("payload", payload)
         try {
             const response = await client1().post(`auth/signup`, payload);
             console.log("responseeeee", response?.data)
             const res = response?.data.result
+            if (res.isVerified) {
+                Toast.show(response?.data.message, Toast.SHORT);
+                return
+            }
             if (res) {
-                navigation.navigate("OtpVerfication", { phoneOrEmail: res?.email, token: res.token })
+                navigation.navigate("OtpVerfication", { phoneOrEmail: res?.email ? res?.email : res?.phone, token: res.token })
+                dispatch(setUserToken(res.token))
+                dispatch(setUserInfo(res));
             }
             return
         } catch (error) {

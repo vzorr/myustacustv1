@@ -12,7 +12,8 @@ interface HorizontalImageListProps {
     images: ImageItem[];
 }
 
-const HorizontalImageList: React.FC<HorizontalImageListProps> = ({ images }) => {
+const HorizontalImageList = (props:any) => {
+   const {images}= props
     return (
         <FlatList
             horizontal
@@ -21,7 +22,7 @@ const HorizontalImageList: React.FC<HorizontalImageListProps> = ({ images }) => 
             renderItem={({ item }) => (
                 <View style={styles.imageContainer}>
                     <Image
-                        source={item.imagePath ? item.imagePath : { uri: item.uri }}
+                        source={item.imagePath ? item.imagePath : { uri: item.path }}
                         style={styles.image}
                     />
                 </View>

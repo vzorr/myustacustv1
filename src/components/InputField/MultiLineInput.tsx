@@ -14,17 +14,19 @@ interface CustomInputProps {
     characterCount?: number;
 }
 
-const MultilineCustomInput: React.FC<CustomInputProps> = ({
-    placeholder,
-    value,
-    onChangeText,
-    maxLength,
-    multiline = false,
-    numberOfLines = 1,
-    containerStyle,
-    inputStyle,
-    characterCount,
-}) => {
+const MultilineCustomInput = (props:any) => {
+    const {
+        placeholder,
+        value,
+        onChangeText,
+        maxLength,
+        multiline = false,
+        numberOfLines = 1,
+        containerStyle,
+        inputStyle,
+        characterCount,
+        onBlur
+    }=props
     return (
         <View style={{ gap: 4 }}>
             <TextInput
@@ -33,6 +35,7 @@ const MultilineCustomInput: React.FC<CustomInputProps> = ({
                 value={value}
                 onChangeText={onChangeText}
                 maxLength={maxLength}
+                onBlur={onBlur}
                 multiline={multiline}
                 numberOfLines={numberOfLines}
                 placeholderTextColor={COLORS.Navy}
