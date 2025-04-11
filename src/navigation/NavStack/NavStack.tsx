@@ -16,6 +16,7 @@ import LocationPickerScreen from '../../screens/AuthScreens/AccountCreation/Loca
 import NotificationPreferences from '../../screens/AuthScreens/AccountCreation/NotificationPreferences';
 import TermsAndConditions from '../../screens/AuthScreens/AccountCreation/TermsAndConditions';
 import TabStack from '../TabStack/TabStack';
+import PostJobPreviewScreen from '../../screens/TabsScreens/PostJobScreens/PostJobPreviewScreen';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
@@ -41,6 +42,7 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="LocationScreen" component={LocationPickerScreen} />
             <Stack.Screen name="NotificationPreferences" component={NotificationPreferences} />
             <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
+            <Stack.Screen name="PostJobPreview" component={PostJobPreviewScreen} />
         </Stack.Navigator>
     )
 }

@@ -118,6 +118,9 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                         onSelectionChange={setSelectedNotiType}
                         boxStyles={accountScreensStyles.dropdownBox}
                         getValue={getValue}
+                        isMultiSelect
+                        isSearch={false}
+                        zIndex={1000}
                     />
                     <CustomSelector
                         onPress={handleTermAndCondition}

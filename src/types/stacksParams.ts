@@ -2,12 +2,13 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from "@react-navigation/native";
 
 export type UserStackParamList = {
+    Tabs: any;
     Home: undefined;
     PostJobScreen: any;
     SearchScreen: any;
     ChatScreen: any;
     ProfileScreen: any;
-    Tabs: any;
+    PostJobPreview: any;
     Splash: undefined;
     SignIn: any;
     SignUp: any;

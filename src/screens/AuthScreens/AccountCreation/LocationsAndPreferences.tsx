@@ -70,7 +70,7 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
         } else {
             const updatedUserData = {
                 ...accountCreation,
-                category : selectedCategories
+                category: selectedCategories
             };
             dispatch(setAccountCreation(updatedUserData))
             navigation.navigate("NotificationPreferences")
@@ -114,6 +114,9 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
                         selectedItems={selectedCategories}
                         onSelectionChange={setSelectedCategories}
                         boxStyles={accountScreensStyles.dropdownBox}
+                        isMultiSelect
+                        isSearch={false}
+                        zIndex={1000}
                     />
                     {errorMessage?.categoryErr &&
                         <ErrorText
