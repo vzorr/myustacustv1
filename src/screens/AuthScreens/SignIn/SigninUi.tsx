@@ -63,42 +63,36 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
         { translateY: logoPositionY }
     ];
     const onSubmit = async (value: any) => {
-        let payload = {
-            email: value.emailOrPhone,
-            password: value.password,
-            role: "customer"
-        }
-        if (!value?.emailOrPhone?.includes('@')) {
-            try {
-                const phoneNo = `+92${value.emailOrPhone}`
-                const confirmation = await auth().signInWithPhoneNumber(phoneNo);
-                Toast.show('OTP Sent, Check your phone for the verification code.', Toast.SHORT);
-                navigation.navigate("OtpVerfication", { otpConfirmation: confirmation, type: "logIn" })
-            } catch (error) {
-                console.error('Error sending OTP:', error);
-                Alert.alert('Error', 'Failed to send OTP. Please try again.');
-            }
-        } else {
-            try {
-                const response = await client1().post(`auth/login`, payload);
-                console.log("responessssssssss", response.data)
-                console.log("responseeeee", response?.data)
-                const res = response?.data
-                if (res.code !== 200) {
-                    return
-                }
-                if (res?.result) {
-                    dispatch(setUserInfo(res?.result));
-                    Toast.show('Login successfully', Toast.SHORT);
-                }
-                // navigation.replace("Home")
-                return true
-            } catch (error) {
-                Toast.show("User not found", Toast.SHORT);
-                return false
-            }
-        }
 
+        try {
+            let identifier = ""
+            if (value.emailOrPhone && value.emailOrPhone.includes('@')) {
+                identifier = value.emailOrPhone
+            } else {
+                identifier = '92' + value.emailOrPhone
+            }
+            let payload = {
+                email: identifier,
+                password: value.password,
+                role: "customer"
+            }
+            const response = await client1().post(`auth/login`, payload);
+            console.log("responessssssssss", response.data)
+            console.log("responseeeee", response?.data)
+            const res = response?.data
+            if (res.code !== 200) {
+                return
+            }
+            if (res?.result) {
+                dispatch(setUserInfo(res?.result));
+                Toast.show('Login successfully', Toast.SHORT);
+            }
+            // navigation.replace("Home")
+            return true
+        } catch (error) {
+            Toast.show("User not found", Toast.SHORT);
+            return false
+        }
     }
     const handleForgotPassword = () => {
         navigation.navigate("ForgotPassword", { type: 'forgetPassword' })

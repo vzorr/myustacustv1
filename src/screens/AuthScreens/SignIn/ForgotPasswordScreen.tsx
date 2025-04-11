@@ -59,24 +59,17 @@ const ForgotPasswordScreen: React.FC<UserNavigationRootProps<"ForgotPassword">> 
             email: value.emailOrPhone,
             role: "customer"
         }
-        console.log("payload", payload)
-        if (!value?.emailOrPhone?.includes('@')) {
-
-            console.log("valuessss", value)
-            navigation.navigate("OtpVerfication", { type: type })
-        } else {
-            try {
-                const response = await client1().post(`auth/forgot-password`, payload);
-                console.log("responseeeee", response?.data)
-                const res = response?.data.result
-                if (res) {
-                    navigation.navigate("OtpVerfication", { phoneOrEmail: value.emailOrPhone, token: null })
-                }
-                return
-            } catch (error) {
-                console.error(error);
-                return
+        try {
+            const response = await client1().post(`auth/forgot-password`, payload);
+            console.log("responseeeee", response?.data)
+            const res = response?.data.result
+            if (res) {
+                navigation.navigate("OtpVerfication", { phoneOrEmail: value.emailOrPhone, token: null })
             }
+            return
+        } catch (error) {
+            console.error(error);
+            return
         }
     }
     return (
