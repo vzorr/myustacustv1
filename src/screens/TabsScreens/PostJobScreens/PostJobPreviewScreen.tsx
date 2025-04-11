@@ -1,4 +1,4 @@
-import { FlatList, Platform, SafeAreaView, StyleSheet, Text, UIManager, View } from 'react-native'
+import { FlatList, Platform, SafeAreaView, StatusBar, StyleSheet, Text, UIManager, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import AppHeader from '../../../components/AppHeader/AppHeader'
@@ -159,6 +159,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const screenData = [{ id: '1' }];
     return (
         <View style={{ backgroundColor: COLORS.white, flex: 1 }}>
+            <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
             <AppHeader
                 onMenuPress={() => { }}
                 onNotificationPress={() => { }}
