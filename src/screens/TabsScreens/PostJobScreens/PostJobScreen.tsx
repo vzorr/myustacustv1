@@ -1,5 +1,5 @@
 import { FlatList, LayoutAnimation, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View, KeyboardAvoidingView, Alert, Modal, StatusBar } from 'react-native'
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import AppHeader from '../../../components/AppHeader/AppHeader'
 import Heading from '../../../components/Heading/Heading'
@@ -68,6 +68,11 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const [showAddForm, setShowAddForm] = useState<boolean>(false);
     const [showMaterialInput, setShowMaterialInput] = useState<boolean>(false);
     const [newMaterial, setNewMaterial] = useState<string>("");
+    const [categoryError, setCategoryError] = useState<string>("");
+    const [areaError, setAreaError] = useState<string>("");
+    const [locationError, setLocationError] = useState<string>("");
+    const [budgetError, setBudgetError] = useState<string>("");
+    const [discardChangesModel, setDiscardChangesModal] = useState(false);
     const [materials, setMaterials] = useState<MaterialItem[]>(
         postJob?.materials ?
             postJob.materials.split(',').map((mat: string, index: number) => ({
@@ -114,16 +119,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         averagePrice: 20
     };
 
-
-
-    // const categories = [
-    //     { key: '1', value: 'Plumber' },
-    //     { key: '2', value: 'Electrician' },
-    //     { key: '3', value: 'Woodworker' },
-    //     { key: '4', value: 'Mason' },
-    //     { key: '5', value: 'Tiler' },
-    //     { key: '6', value: 'Decorator' },
-    // ];
     const categories = metaData?.categories?.map((name: any, index: any) => ({
         key: name?.key,
         value: name.name
@@ -194,9 +189,12 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     }
 
     const handleCancel = () => {
-        navigation.goBack()
+          setDiscardChangesModal(true)
     }
-
+    const handleConfirmCancel = () => {
+        dispatch(setPostJobReducer({}))
+        navigation.navigate('Tabs')
+    }
     // Image picker functions
     // const pickImageFromGallery = () => {
     //     ImagePicker.openPicker({
@@ -256,10 +254,20 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     //     }
     // };
     const onSubmit = async (values: any) => {
-        // Create materials string from materials array
+        if (selectedCategories?.length === 0) {
+            setCategoryError("please select category")
+            return
+        } else if (selectedArea?.length === 0) {
+            setAreaError("please select Area type")
+            return
+        } else if (selectedBudget?.length === 0) {
+            setBudgetError("please select Budget")
+            return
+        } else if (selectLocation?.length === 0) {
+            setLocationError("please select location")
+            return
+        }
         const materialsString = materials.map(item => item.name).join(', ');
-
-        // Create updated values object with materials
         let updateValue = {
             ...values,
             materials: materialsString,
@@ -273,15 +281,23 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
             budgetDesc: selectedBudget,
             areaType: selectedArea,
             category: selectedCategories,
-            images: images
         }
 
-        // Save to redux store
         dispatch(setPostJobReducer(updateValue))
         navigation.navigate("PostJobPreview")
+        setCategoryError('')
+        setAreaError('')
+        setLocationError('')
+        setBudgetError('')
         return true
     }
-    console.log("selectedArea", selectedArea)
+    useEffect(() => {
+        setCategoryError("")
+        setBudgetError("")
+        setAreaError("")
+        setLocationError("")
+    }, [selectedCategories, selectedArea, selectedBudget, selectLocation])
+
     const RenderScreenContent = (props: any) => {
         const { handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue } = props
         const pickImageFromGallery = () => {
@@ -294,9 +310,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                 maxFiles: 5,
             })
                 .then((selectedImages) => {
-
                     setFieldValue("images", [...selectedImages, ...values?.images]);
-                    // setImages([...images, ...newImages]);
                     setShowImageModal(false);
                 })
                 .catch((error) => {
@@ -314,15 +328,25 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                 compressImageQuality: 0.8,
             })
                 .then((image: any) => {
-                    setFieldValue("images", [...image, ...values?.images]);
+                    const newImages = [image];
+                    setFieldValue("images", [...newImages, ...values?.images]);
                     setShowImageModal(false);
                 })
                 .catch((error) => {
+                    console.log("errorroooo", error)
                     if (error.code !== 'E_PICKER_CANCELLED') {
                         Alert.alert('Error', 'Failed to take photo');
                     }
                 });
         };
+        const handleConfirmAdd = useCallback(() => {
+            if (values?.materials.trim()) {
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                setMaterials(prevMaterials => [...prevMaterials, { id: `material-${Date.now()}`, name: values?.materials.trim() }]);
+                setNewMaterial("");
+                setShowMaterialInput(false);
+            }
+        }, [values?.materials]);
 
         return (
             <KeyboardAwareScrollView
@@ -415,6 +439,11 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 isSearch={false}
                                 zIndex={1000}
                             />
+                            {categoryError &&
+                                <ErrorText
+                                    error={categoryError}
+                                />
+                            }
                         </View>
                         <Heading
                             headingText='PROJECT SPECIFICATIONS'
@@ -446,6 +475,12 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 isSearch={false}
                                 zIndex={1000}
                             />
+                            {console.log("areaError", areaError)}
+                            {areaError &&
+                                <ErrorText
+                                    error={areaError}
+                                />
+                            }
                         </View>
 
                         {/* Materials Section */}
@@ -511,7 +546,11 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 iconName="plusIcon"
                             />
                         )}
-
+                        {errors?.materials && touched?.materials &&
+                            <ErrorText
+                                error={errors.materials}
+                            />
+                        }
                         <Heading
                             headingText='IMAGES'
                             style={{ fontSize: fontSize[16] }}
@@ -672,6 +711,12 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 isAddLocation={true}
                                 handleAddLocation={handleAddNewLocation}
                             />
+                            {console.log("locationError", locationError)}
+                            {locationError &&
+                                <ErrorText
+                                    error={locationError}
+                                />
+                            }
                             <View>
                                 <TextInput
                                     style={[styles.input, { minHeight: 100, color: COLORS.Navy }]}
@@ -725,6 +770,11 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 isSearch={false}
                                 zIndex={1000}
                             />
+                            {budgetError &&
+                                <ErrorText
+                                    error={budgetError}
+                                />
+                            }
                             <View style={styles.budgetInputContainer}>
                                 <CustomTextInput
                                     placeholder="Budget Lek..."
@@ -810,7 +860,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                     resetForm({ values: "" })
                 }
             }}
-            // validationSchema={jobPostValidationSchema}
+            validationSchema={jobPostValidationSchema}
             enableReinitialize={true}
         >
             {(formikProps) => (
@@ -840,6 +890,11 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                         visible={showDeleteModal}
                         onCancel={() => setShowDeleteModal(false)}
                         Confirm={handleConfirmDelete}
+                    />
+                    <ConfirmationModal
+                        visible={discardChangesModel}
+                        onCancel={() => setDiscardChangesModal(false)}
+                        Confirm={handleConfirmCancel}
                     />
                     <BudgetSuggestionModal
                         visible={showBudgetModal}

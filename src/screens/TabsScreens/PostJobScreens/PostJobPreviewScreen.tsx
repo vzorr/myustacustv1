@@ -18,6 +18,7 @@ import { postJobValue } from '../../../config/constants/constants'
 import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer'
 import VisibleLoader from '../../../components/Loader/VisibleLoader'
 import Toast from 'react-native-simple-toast';
+import ConfirmationModal from '../../../components/ConfirmationModal/ConfirmationModal'
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -29,14 +30,15 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const { token }: any = useSelector((state: any) => state?.accessToken)
     const { userData }: any = useSelector((state: any) => state?.userInfo)
 
+    const [discardChangesModel, setDiscardChangesModal] = useState(false);
     const { metaData }: any = useSelector((state: any) => state?.metaData)
     const [isLoading, setIsLoading] = useState(false)
     const dispatch = useDispatch()
     const { postJob }: any = useSelector((state: any) => state?.postJob)
     const previewValue = useMemo(() => postJob, [postJob]);
-    
+
     const mapRef = useRef<MapView>(null);
-    
+
     // Use the location from postJob if available, otherwise use default location
     const initialRegion = useMemo(() => ({
         latitude: previewValue?.location?.latitude || 42.0693,
@@ -46,9 +48,12 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     }), [previewValue?.location]);
 
     const handleDiscard = useCallback(() => {
-        navigation.goBack()
+        setDiscardChangesModal(true)
     }, [navigation]);
-
+    const handleConfirmCancel = () => {
+        dispatch(setPostJobReducer({}))
+        navigation.navigate('Tabs')
+    }
     const handlePostJob = useCallback(async () => {
         console.log("token", token)
         try {
@@ -56,18 +61,18 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 navigation.navigate('SignIn')
                 return
             }
-            
+
             // Validate that all required fields are present
-            if (!previewValue?.title || !previewValue?.description || 
-                !previewValue?.paymentMethod || !previewValue?.areaSize || 
-                !previewValue?.startDate || !previewValue?.endDate || 
-                !previewValue?.location || !previewValue?.images || 
+            if (!previewValue?.title || !previewValue?.description ||
+                !previewValue?.paymentMethod || !previewValue?.areaSize ||
+                !previewValue?.startDate || !previewValue?.endDate ||
+                !previewValue?.location || !previewValue?.images ||
                 previewValue.images.length === 0) {
-                
+
                 Toast.show('Please fill in all required fields to post a job', Toast.SHORT);
                 return;
             }
-            
+
             setIsLoading(true)
             let payload = await postJobValue(previewValue, metaData?.categories)
             console.log('Base64 Image:', payload);
@@ -88,7 +93,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
             screen: 'PostJobScreen',
         });
     }, [navigation]);
-
+    console.log("previewValue", previewValue)
     const renderScreenContent = useCallback(() => (
         <SafeAreaView style={styles.container}>
             <View style={styles.innerContainer}>
@@ -192,7 +197,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     ), [previewValue, initialRegion, handleDiscard, handlePostJob]);
 
     const screenData = useMemo(() => [{ id: '1' }], []);
-    
+
     return (
         <View style={{ backgroundColor: COLORS.white, flex: 1 }}>
             <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
@@ -204,7 +209,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 isProfile={false}
                 isOnPreview={true}
                 jobTitle='Tile installations'
-                jobProviderName={`${userData?.firstName || 'username'} ${userData?.lastName}`}
+                jobProviderName={`${userData?.firstName || ''} ${userData?.lastName || ''}`}
                 time='2 minutes ago'
                 handleEditJobPost={handleEditJobPost}
             />
@@ -221,6 +226,12 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
             {isLoading &&
                 <VisibleLoader />
             }
+            <ConfirmationModal
+                visible={discardChangesModel}
+                onCancel={() => setDiscardChangesModal(false)}
+                Confirm={handleConfirmCancel}
+                title="Discard Job"
+            />
         </View>
     );
 };
