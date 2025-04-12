@@ -9,11 +9,14 @@ import { Alert } from 'react-native';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
 import { useFocusEffect } from '@react-navigation/native';
 import { client, client1 } from '../../../apiManager/Client';
+import { setUserInfo } from '../../../stores/reducer/userInfoReducer';
+import { useDispatch } from 'react-redux';
 const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (props) => {
     const verInfo = props.route.params?.verification
     const type = props.route.params?.type
     const emailorPhoneNo = props.route.params?.phoneOrEmail
     const verifiedToken = props.route.params?.token
+    const dispatch = useDispatch()
     console.log("phoneNoConfirmation", verifiedToken, emailorPhoneNo)
     const [isLoading, setIsLoading] = useState(false)
     const { navigation } = props
@@ -28,7 +31,6 @@ const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (
             inputs[index + 1].focus();
         }
     };
-    console.log("verifiedToken")
     const handleSubmit = async () => {
         const fullCode = otp.join("");
         const otpParse = Number(fullCode)
@@ -42,6 +44,7 @@ const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (
                     const response = await client(verifiedToken).post(`auth/signup-verify`, payload);
                     console.log("responseeeee", response?.data)
                     navigation.replace("SuccessMessage", { screenType: "OtpVerfication" })
+                    dispatch(setUserInfo(response?.data?.result))
                     Toast.show('otp is verified', Toast.SHORT);
                     setIsLoading(false)
                     return

@@ -31,7 +31,8 @@ const AccountBasicInfo: React.FC<UserNavigationRootProps<"AccountBasicInfo">> = 
                 notificationViaEmail: false,
                 notificationViaSMS: false,
                 notificationViaApp: false,
-                termsAndConditions: false
+                termsAndConditions: false,
+                notificationPreferences: []
             }}
             onSubmit={async (values: any, { resetForm }) => {
                 setIsLoading(true)

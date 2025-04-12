@@ -5,6 +5,7 @@ import AuthOverlay from '../../../components/AuthOverlay/AuthOverlay';
 import { COLORS, FONTS } from '../../../config/themes/theme';
 import CustomButton from '../../../components/Buttons/CustomButton';
 import { SVGIcons } from '../../../config/constants/svg';
+import { useSelector } from 'react-redux';
 const { width } = Dimensions.get('window');
 interface successProps {
 
@@ -13,6 +14,8 @@ interface successProps {
 const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (props) => {
     const { navigation, route } = props;
     const screenType = route?.params?.screenType
+    const { userData }: any = useSelector((state: any) => state?.userInfo)
+    console.log("userData", userData?.email)
     console.log("scrreeenncccccc", screenType)
     const screenOpacity = useRef(new Animated.Value(0)).current;
     const logoScale = useRef(new Animated.Value(1)).current;
@@ -78,7 +81,7 @@ const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (pro
                 <Text style={[styles.title, { color: screenType === "NotificationPreferences" ? COLORS.Navy : COLORS.white }]}>Success!</Text>
                 <Text style={[styles.subTitle, { color: screenType === "NotificationPreferences" ? COLORS.GreyedOut : COLORS.white }]}>
                     {screenType === "OtpVerfication"
-                        ? "Your phone number has been successfully verified!"
+                        ? `Your ${userData?.email ? "email": "phone number"} has been successfully verified!`
                         : screenType === "NotificationPreferences"
                             ? "Your account has been setup."
                             : "Your password has been reset!"}

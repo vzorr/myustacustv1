@@ -21,11 +21,12 @@ import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer';
 
 const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPreferences">> = (props) => {
     const { route, navigation } = props
+    const { accountCreation }: any = useSelector((state: any) => state?.accountCreation)
     const isTermsAndConditionsAccepted = route?.params?.isTermsAndConditionsAccepted
-    const [selectedNotiiType, setSelectedNotiType] = useState<string[]>([]);
-    const [notificationViaEmail, setNotificationViaEmail] = useState(false);
-    const [notificationViaSMS, setNotificationViaSMS] = useState(false);
-    const [notificationViaApp, setNotificationViaApp] = useState(false);
+    const [selectedNotiiType, setSelectedNotiType] = useState<string[]>(accountCreation?.notificationPreferences || []);
+    const [notificationViaEmail, setNotificationViaEmail] = useState(accountCreation?.notificationViaEmail || false);
+    const [notificationViaSMS, setNotificationViaSMS] = useState(accountCreation?.notificationViaSms || false);
+    const [notificationViaApp, setNotificationViaApp] = useState(accountCreation?.notificationViaApp || false);
 
     const { metaData }: any = useSelector((state: any) => state?.metaData)
     const { postJob }: any = useSelector((state: any) => state?.postJob)
@@ -34,7 +35,6 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
     const [isLoading, setIsLoading] = useState(false)
     const dispatch = useDispatch()
 
-    const { accountCreation }: any = useSelector((state: any) => state?.accountCreation)
     const { token }: any = useSelector((state: any) => state?.accessToken)
     console.log("tokeeeeee", token)
     const notiiType = [
@@ -49,6 +49,7 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
             notificationViaEmail: notificationViaEmail,
             notificationViaSms: notificationViaSMS,
             notificationViaApp: notificationViaApp,
+            notificationPreferences: selectedNotiiType
         }
         dispatch(setAccountCreation(updateLocationData))
         navigation.navigate("TermsAndConditions")
@@ -74,11 +75,14 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
             console.log('Error:', error.response?.data || error.message);
         }
     }
+    console.log( accountCreation?.notificationViaApp)
     const handleCompleteSetup = async () => {
         setIsLoading(true)
         console.log("handle Completeee")
-        if (isTermsAndConditionsAccepted) {
+        if (accountCreation?.termsAndConditions) {
             try {
+                const selectedCategories = metaData?.categories?.filter((category: any) => accountCreation?.category.includes(category.name))
+                .map((category: any) => category.key);
                 let filePath = accountCreation.profileImg;
                 const actualPath = filePath.path.replace('file://', '');
                 const base64String = await RNFS.readFile(actualPath, 'base64');
@@ -93,18 +97,19 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                         profilePicture: base64Image
                     },
                     location: accountCreation.location,
-                    customerPreferences: accountCreation.category,
+                    customerPreferences: selectedCategories,
                     notificationViaEmail: accountCreation?.notificationViaEmail,
                     notificationViaSms: accountCreation?.notificationViaSms,
                     notificationViaApp: accountCreation?.notificationViaApp,
-                    termsAndConditions: true
+                    termsAndConditions: accountCreation?.termsAndConditions
                 }
                 console.log('Base64 Image:', payload);
                 const response = await client(token).post("account/customer-creation", payload);
                 setIsLoading(false)
+                dispatch(setAccountCreation({}))
                 navigation.navigate("SuccessMessage", { screenType: "NotificationPreferences" })
-                if(previewValue?.images.length > 0){
-                   await handlePostJob()
+                if (previewValue?.images.length > 0) {
+                    await handlePostJob()
                 }
                 console.log('Response:', response.data);
             } catch (error: any) {
@@ -167,11 +172,11 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                         onPress={handleCompleteSetup}
                         style={{
                             width: SIZES.width * 0.42,
-                            backgroundColor: !isTermsAndConditionsAccepted ? COLORS.Gray : COLORS.Yellow,
-                            borderWidth: !isTermsAndConditionsAccepted ? 1 : 0,
-                            borderColor: !isTermsAndConditionsAccepted ? COLORS.inputBorder : "",
+                            backgroundColor: !accountCreation?.termsAndConditions ? COLORS.Gray : COLORS.Yellow,
+                            borderWidth: !accountCreation?.termsAndConditions ? 1 : 0,
+                            borderColor: !accountCreation?.termsAndConditions ? COLORS.inputBorder : "",
                         }}
-                        textStyle={{ color: !isTermsAndConditionsAccepted ? COLORS.Black : "", }}
+                        textStyle={{ color: !accountCreation?.termsAndConditions ? COLORS.Black : "", }}
                     />
                 </View>
 

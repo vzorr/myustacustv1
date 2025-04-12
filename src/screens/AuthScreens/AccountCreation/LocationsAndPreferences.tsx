@@ -14,9 +14,10 @@ import ErrorText from '../../../components/ErrorText';
 import { setAccountCreation } from '../../../stores/reducer/AccountCreationReducer';
 
 const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPreferences">> = (props) => {
+    const { accountCreation } = useSelector((state: any) => state?.accountCreation)
     const { route, navigation } = props
     const selectedLocation = route?.params?.selectedLocation
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(accountCreation?.category || []);
     const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const [locationToDelete, setLocationToDelete] = useState<string | null>(null);
@@ -25,7 +26,6 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
     const dispatch = useDispatch()
     const { metaData }: any = useSelector((state: any) => state?.metaData)
 
-    const { accountCreation } = useSelector((state: any) => state?.accountCreation)
     console.log("accountCreation", accountCreation)
     // useEffect(() => {
     //     if (selectedLocation) {
@@ -55,7 +55,7 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
         if (accountCreation.location) {
             const updatedUserData = {
                 ...accountCreation,
-                location: accountCreation.location.filter((item: any, index: any) => index !== locationDelIndex)
+                location: accountCreation.location.filter((item: any, index: any) => index !== locationDelIndex),
             };
             dispatch(setAccountCreation(updatedUserData))
             setShowDeleteModal(false);

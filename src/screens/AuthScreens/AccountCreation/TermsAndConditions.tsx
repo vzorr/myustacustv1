@@ -12,12 +12,24 @@ import { COLORS, FONTS, fontSize, } from '../../../config/themes/theme';
 import CustomButton from '../../../components/Buttons/CustomButton';
 import { reuseableTextStyles } from '../../../styles/reuseableTextStyles';
 import BackHeader from '../../../components/BackHeader/BackHeader';
+import { useNavigation } from '@react-navigation/native';
+import { setAccountCreation } from '../../../stores/reducer/AccountCreationReducer';
+import { useDispatch, useSelector } from 'react-redux';
 
 const TermsAndConditions: React.FC<UserNavigationRootProps<'TermsAndConditions'>> = (props) => {
     const scrollRef = useRef<ScrollView>(null);
+    const navigation =  useNavigation()
+    const { accountCreation }: any = useSelector((state: any) => state?.accountCreation)
+    const dispatch:any = useDispatch()
 
     const handleAcceptedConditions = () => {
-        props.navigation.navigate('LocationsAndPreferences', {
+        const updateLocationData = {
+            ...accountCreation,
+            termsAndConditions: true
+
+        }
+        dispatch(setAccountCreation(updateLocationData))
+        props.navigation.replace('NotificationPreferences', {
             isTermsAndConditionsAccepted: true,
         });
     };
