@@ -83,7 +83,6 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
         }
     }
     const onSubmit = async (value: any) => {
-
         try {
             let identifier = ""
             if (value.emailOrPhone && value.emailOrPhone.includes('@')) {
@@ -96,26 +95,39 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                 password: value.password,
                 role: "customer"
             }
+            console.log("Login payload:", payload);
             const response = await client1().post(`auth/login`, payload);
-            console.log("responessssssssss", response.data)
-            console.log("responseeeee", response?.data)
-            const res = response?.data
+            console.log("Login response:", response.data);
+            const res = response?.data;
+            
             if (res.code !== 200) {
-                return
+                Toast.show(res.message || 'Login failed', Toast.SHORT);
+                return false;
             }
+            
             if (res?.result) {
                 dispatch(setUserInfo(res?.result));
-                setUserToken(res?.result?.token)
-                navigation.replace("Tabs")
+                dispatch(setUserToken(res?.result?.token));
+                navigation.replace("Tabs");
                 Toast.show('Login successfully', Toast.SHORT);
+                
                 if (previewValue?.images?.length > 0) {
-                    await handlePostJob(res?.result?.token)
+                    await handlePostJob(res?.result?.token);
                 }
+                return true;
             }
-            return true
-        } catch (error) {
-            Toast.show("User not found", Toast.SHORT);
-            return false
+            return false;
+        } catch (error: any) {
+            console.log("Login error:", error);
+            
+            // Extract and show the specific error message
+            if (error.response && error.response.data) {
+                console.log("Error response data:", error.response.data);
+                Toast.show(error.response.data.message || "Login failed", Toast.SHORT);
+            } else {
+                Toast.show("Login failed. Please check your credentials.", Toast.SHORT);
+            }
+            return false;
         }
     }
     const handleForgotPassword = () => {
@@ -137,11 +149,16 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                             password: ''
                         }}
                         onSubmit={async (values: any, { resetForm }) => {
-                            setIsLoading(true)
-                            let res = await onSubmit(values)
-                            setIsLoading(false)
-                            if (res) {
-                                resetForm({ values: "" })
+                            setIsLoading(true);
+                            try {
+                                let res = await onSubmit(values);
+                                if (res) {
+                                    resetForm();
+                                }
+                            } catch (err) {
+                                console.log("Form submission error:", err);
+                            } finally {
+                                setIsLoading(false);
                             }
                         }}
                         validationSchema={logInSchema}

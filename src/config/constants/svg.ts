@@ -39,6 +39,8 @@ import radioSelected from "../../assets/icons/radio/radio-selected.svg"
 import checkIcon from "../../assets/icons/bx-check.svg"
 import infoNIPTIcon from "../../assets/icons/bx-info-circle.svg"
 import editIcon from "../../assets/icons/bx-pencil.svg"
+import EyeWhiteIcon from "../../assets/icons/bx-show-white.svg"
+import EyeHideWhiteIcon from "../../assets/icons/bx-hide-white.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -80,5 +82,7 @@ export const SVGIcons = {
     radioSelected,
     checkIcon,
     infoNIPTIcon,
-    editIcon
+    editIcon,
+    EyeWhiteIcon,
+    EyeHideWhiteIcon
 };
