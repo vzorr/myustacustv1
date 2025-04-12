@@ -140,7 +140,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
         } else if (selectedItems.length === 1) {
             return selectedItems[0];
         } else {
-            return `${selectedItems.length} items selected`;
+            return selectedItems.join(',')
         }
     };
 
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     selectedText: {
-        fontWeight: 'bold',
+        // fontWeight: 'bold',
     },
     modalOverlay: {
         flex: 1,
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: COLORS.Navy,
+        borderColor: COLORS.inputBorder,
         elevation: 5,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },

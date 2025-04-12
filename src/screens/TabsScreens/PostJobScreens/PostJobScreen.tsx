@@ -1,5 +1,5 @@
 import { FlatList, LayoutAnimation, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View, KeyboardAvoidingView, Alert, Modal, StatusBar } from 'react-native'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import AppHeader from '../../../components/AppHeader/AppHeader'
 import Heading from '../../../components/Heading/Heading'
@@ -24,6 +24,8 @@ import { jobPostValidationSchema } from '../../../config/constants/errorMessage'
 import ErrorText from '../../../components/ErrorText'
 import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer'
 import { useDispatch, useSelector } from 'react-redux'
+import Toast from 'react-native-simple-toast'
+import VisibleLoader from '../../../components/Loader/VisibleLoader'
 
 // Define the ImagePicker result type
 interface ImagePickerResult {
@@ -66,7 +68,14 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const [showAddForm, setShowAddForm] = useState<boolean>(false);
     const [showMaterialInput, setShowMaterialInput] = useState<boolean>(false);
     const [newMaterial, setNewMaterial] = useState<string>("");
-    const [materials, setMaterials] = useState<MaterialItem[]>([]);
+    const [materials, setMaterials] = useState<MaterialItem[]>(
+        postJob?.materials ?
+            postJob.materials.split(',').map((mat: string, index: number) => ({
+                id: `material-${index}-${Date.now()}`,
+                name: mat.trim()
+            })) :
+            []
+    );
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const [materialToDelete, setMaterialToDelete] = useState<string | null>(null);
     const [showBudgetModal, setShowBudgetModal] = useState(false);
@@ -86,6 +95,15 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     });
+
+    // Use a memoized initialRegion to prevent unnecessary re-renders
+    const initialRegion = React.useMemo(() => ({
+        latitude: region.latitude,
+        longitude: region.longitude,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+    }), []);
+
     const [isLoading, setIsLoading] = useState(false)
     const mapRef = useRef<MapView>(null);
 
@@ -106,7 +124,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     //     { key: '5', value: 'Tiler' },
     //     { key: '6', value: 'Decorator' },
     // ];
-    const categories = metaData?.categories?.map((name:any, index:any) => ({
+    const categories = metaData?.categories?.map((name: any, index: any) => ({
         key: name?.key,
         value: name.name
     }));
@@ -144,28 +162,28 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         setNewMaterial("");
     };
 
-    const handleConfirmAdd = () => {
+    const handleConfirmAdd = useCallback(() => {
         if (newMaterial.trim()) {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            setMaterials([...materials, { id: Date.now().toString(), name: newMaterial }]);
+            setMaterials(prevMaterials => [...prevMaterials, { id: `material-${Date.now()}`, name: newMaterial.trim() }]);
             setNewMaterial("");
             setShowMaterialInput(false);
         }
-    };
+    }, [newMaterial]);
 
-    const handleDeleteMaterial = (id: string) => {
+    const handleDeleteMaterial = useCallback((id: string) => {
         setMaterialToDelete(id);
         setShowDeleteModal(true);
-    };
+    }, []);
 
-    const handleConfirmDelete = () => {
+    const handleConfirmDelete = useCallback(() => {
         if (materialToDelete) {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            setMaterials(materials.filter(item => item.id !== materialToDelete));
+            setMaterials(prevMaterials => prevMaterials.filter(item => item.id !== materialToDelete));
             setShowDeleteModal(false);
             setMaterialToDelete(null);
         }
-    };
+    }, [materialToDelete]);
 
     const handleAddNewLocation = () => {
         navigation.navigate("LocationScreen")
@@ -176,7 +194,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     }
 
     const handleCancel = () => {
-        // navigation.navigate("PostJobPreview")
+        navigation.goBack()
     }
 
     // Image picker functions
@@ -238,8 +256,13 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     //     }
     // };
     const onSubmit = async (values: any) => {
+        // Create materials string from materials array
+        const materialsString = materials.map(item => item.name).join(', ');
+
+        // Create updated values object with materials
         let updateValue = {
             ...values,
+            materials: materialsString,
             location: {
                 address: values?.locationDescp,
                 latitude: region.latitude,
@@ -250,11 +273,13 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
             budgetDesc: selectedBudget,
             areaType: selectedArea,
             category: selectedCategories,
+            images: images
         }
+
+        // Save to redux store
         dispatch(setPostJobReducer(updateValue))
         navigation.navigate("PostJobPreview")
         return true
-
     }
     console.log("selectedArea", selectedArea)
     const RenderScreenContent = (props: any) => {
@@ -386,7 +411,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 selectedItems={selectedCategories}
                                 onSelectionChange={setSelectedCategories}
                                 boxStyles={accountScreensStyles.dropdownBox}
-                                isMultiSelect
+                                isMultiSelect={true}
                                 isSearch={false}
                                 zIndex={1000}
                             />
@@ -461,11 +486,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                         />
                                     </>
                                 )}
-                                {errors?.materials && touched?.materials &&
-                                    <ErrorText
-                                        error={errors.materials}
-                                    />
-                                }
                                 {/* List of added materials */}
                                 {materials.map((material) => (
                                     <CustomSelector
@@ -671,26 +691,27 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 />
                             }
                         </View>
-                        <View style={{ gap: 8 }}>
+                        <View>
                             <Text style={reuseableTextStyles.subTitle}>Place the marker in the exact location</Text>
-                            <View style={styles.mapContainer}>
-                                <MapView
-                                    // ref={mapRef}
-                                    provider={PROVIDER_GOOGLE}
-                                    style={styles.mapView}
-                                    region={region}
-                                // onRegionChangeComplete={}
-                                // scrollEnabled={true}
-                                // zoomEnabled={true}
-                                // pitchEnabled={true}
-                                // rotateEnabled={true}
-                                >
-                                    <Marker coordinate={region} />
-                                </MapView>
-                            </View>
+                        </View>
+                        <View style={styles.mapContainer}>
+                            <MapView
+                                ref={mapRef}
+                                provider={PROVIDER_GOOGLE}
+                                style={styles.mapView}
+                                initialRegion={initialRegion}
+                                scrollEnabled={true}
+                                zoomEnabled={true}
+                                pitchEnabled={true}
+                                rotateEnabled={true}
+                                shouldRasterizeIOS={true}
+                                cacheEnabled={true}
+                            >
+                                <Marker coordinate={initialRegion} />
+                            </MapView>
                         </View>
                         <Heading
-                            headingText='BUDGET (OPTIONAL)'
+                            headingText='BUDGET'
                             style={{ fontSize: fontSize[16] }}
                         />
                         <View style={styles.budgetContainer}>
@@ -791,9 +812,8 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
             }}
             // validationSchema={jobPostValidationSchema}
             enableReinitialize={true}
-
         >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
+            {(formikProps) => (
                 <View style={{ backgroundColor: COLORS.white, flex: 1 }}>
                     <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
                     <AppHeader
@@ -809,17 +829,12 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                     <FlatList
                         data={screenData}
                         keyExtractor={item => item.id}
-                        renderItem={() => <RenderScreenContent
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleSubmit={handleSubmit}
-                            values={values}
-                            errors={errors}
-                            touched={touched}
-                            setFieldValue={setFieldValue}
-                        />}
+                        renderItem={() => <RenderScreenContent {...formikProps} />}
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={{ flexGrow: 1 }}
+                        maxToRenderPerBatch={1}
+                        windowSize={1}
+                        removeClippedSubviews={true}
                     />
                     <ConfirmationModal
                         visible={showDeleteModal}

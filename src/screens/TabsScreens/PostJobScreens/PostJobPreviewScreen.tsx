@@ -1,5 +1,5 @@
 import { FlatList, Platform, SafeAreaView, StatusBar, StyleSheet, Text, UIManager, View } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useMemo, useCallback } from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import AppHeader from '../../../components/AppHeader/AppHeader'
 import Heading from '../../../components/Heading/Heading'
@@ -33,29 +33,41 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const [isLoading, setIsLoading] = useState(false)
     const dispatch = useDispatch()
     const { postJob }: any = useSelector((state: any) => state?.postJob)
-    let previewValue = postJob
-    console.log("postpreviewValueJob", previewValue?.category)
+    const previewValue = useMemo(() => postJob, [postJob]);
+    
     const mapRef = useRef<MapView>(null);
-    const [region, setRegion] = useState<Region>({
-        latitude: 42.0693,
-        longitude: 19.5126,
+    
+    // Use the location from postJob if available, otherwise use default location
+    const initialRegion = useMemo(() => ({
+        latitude: previewValue?.location?.latitude || 42.0693,
+        longitude: previewValue?.location?.longitude || 19.5126,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
-    });
+    }), [previewValue?.location]);
 
+    const handleDiscard = useCallback(() => {
+        navigation.goBack()
+    }, [navigation]);
 
-
-    const handleDiscard = () => {
-        // navigation.navigate("LocationScreen")
-    }
-
-    const handlePostJob = async () => {
+    const handlePostJob = useCallback(async () => {
         console.log("token", token)
         try {
             if (!userData?.token && !token) {
                 navigation.navigate('SignIn')
                 return
             }
+            
+            // Validate that all required fields are present
+            if (!previewValue?.title || !previewValue?.description || 
+                !previewValue?.paymentMethod || !previewValue?.areaSize || 
+                !previewValue?.startDate || !previewValue?.endDate || 
+                !previewValue?.location || !previewValue?.images || 
+                previewValue.images.length === 0) {
+                
+                Toast.show('Please fill in all required fields to post a job', Toast.SHORT);
+                return;
+            }
+            
             setIsLoading(true)
             let payload = await postJobValue(previewValue, metaData?.categories)
             console.log('Base64 Image:', payload);
@@ -69,17 +81,15 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
             Toast.show(error.response?.data?.message, Toast.SHORT);
             console.log('Error:', error.response?.data?.message);
         }
-    }
-    const handleEditJobPost = () => {
+    }, [token, userData, previewValue, metaData, navigation, dispatch]);
+
+    const handleEditJobPost = useCallback(() => {
         navigation.navigate('Tabs', {
             screen: 'PostJobScreen',
         });
-    }
+    }, [navigation]);
 
-    const submitJobPost = async () => {
-
-    }
-    const renderScreenContent = () => (
+    const renderScreenContent = useCallback(() => (
         <SafeAreaView style={styles.container}>
             <View style={styles.innerContainer}>
                 <AccountHeader
@@ -152,15 +162,16 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                         ref={mapRef}
                         provider={PROVIDER_GOOGLE}
                         style={styles.mapView}
-                        region={region}
-                        // onRegionChangeComplete={setRegion}
-                        // onMarkerPress={setRegion}
+                        initialRegion={initialRegion}
                         scrollEnabled={true}
                         zoomEnabled={true}
                         pitchEnabled={true}
                         rotateEnabled={true}
+                        shouldRasterizeIOS={true}
+                        showsUserLocation={true}
+                        cacheEnabled={true}
                     >
-                        <Marker coordinate={region} />
+                        <Marker coordinate={initialRegion} />
                     </MapView>
                 </View>
                 <AccountHeader
@@ -170,17 +181,18 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                     containerStyle={{ gap: 2 }}
                 />
                 <ConfirmationButtons
-                    cancelText='Cancel'
+                    cancelText='Discard'
                     onCancel={handleDiscard}
-                    confirmText='Review Details'
+                    confirmText='Post Job'
                     onConfirm={handlePostJob}
                     confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
                 />
             </View>
         </SafeAreaView>
-    );
+    ), [previewValue, initialRegion, handleDiscard, handlePostJob]);
 
-    const screenData = [{ id: '1' }];
+    const screenData = useMemo(() => [{ id: '1' }], []);
+    
     return (
         <View style={{ backgroundColor: COLORS.white, flex: 1 }}>
             <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
@@ -202,6 +214,9 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 renderItem={() => renderScreenContent()}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ flexGrow: 1 }}
+                maxToRenderPerBatch={1}
+                windowSize={1}
+                removeClippedSubviews={true}
             />
             {isLoading &&
                 <VisibleLoader />
