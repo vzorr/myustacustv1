@@ -50,7 +50,8 @@ export const locationScreenStyles = StyleSheet.create({
         fontFamily: FONTS.interRegular,
         fontWeight: '400',
         color: COLORS.Navy200,
-        fontStyle: 'normal'
+        fontStyle: 'normal',
+        textAlign: 'left'
     },
 
 })

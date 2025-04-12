@@ -136,7 +136,7 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
                         <SVGIcons.filledLeftButton />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleForward}>
-                        {selectedLocation ?
+                        {selectedLocation || selectedCategories ?
                             <SVGIcons.filledRightButton /> :
                             <SVGIcons.unFilledRightButton />
                         }

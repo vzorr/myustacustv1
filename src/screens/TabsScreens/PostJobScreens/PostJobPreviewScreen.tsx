@@ -1,4 +1,4 @@
-import { FlatList, Platform, SafeAreaView, StyleSheet, Text, UIManager, View } from 'react-native'
+import { FlatList, Platform, SafeAreaView, StatusBar, StyleSheet, Text, UIManager, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import AppHeader from '../../../components/AppHeader/AppHeader'
@@ -13,7 +13,7 @@ import LineSeparator from '../../../components/LineSeparator/LineSeparator'
 import HorizontalImageList from '../../../components/HorizentalImagesList/HorizentalImagesList'
 import { useDispatch, useSelector } from 'react-redux'
 import { client } from '../../../apiManager/Client'
-import RNFS from 'react-native-fs';
+// import RNFS from 'react-native-fs';
 import { postJobValue } from '../../../config/constants/constants'
 import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer'
 import VisibleLoader from '../../../components/Loader/VisibleLoader'
@@ -183,6 +183,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const screenData = [{ id: '1' }];
     return (
         <View style={{ backgroundColor: COLORS.white, flex: 1 }}>
+            <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
             <AppHeader
                 onMenuPress={() => { }}
                 onNotificationPress={() => { }}
