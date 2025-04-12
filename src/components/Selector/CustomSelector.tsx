@@ -31,7 +31,13 @@ const CustomSelector: React.FC<SelectorProps> = ({
 
     return (
         <TouchableOpacity style={[styles.contianer, style]} onPress={onPress} disabled={disabled}>
-            <Text style={[styles.selectorTxt, textStyle]}>{title}</Text>
+            <View style={styles.textContainer}>
+                <Text
+                    style={[styles.selectorTxt, textStyle]}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >{title}</Text>
+            </View>
             {IconComponent ? <IconComponent /> : null}
         </TouchableOpacity>
     );
@@ -52,7 +58,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 10,
     },
+    textContainer: {
+        width: "80%"
+    },
     selectorTxt: {
+        // flex: 1,
         fontFamily: FONTS.interMedium,
         fontSize: fontSize[14],
         fontStyle: 'normal',
@@ -60,6 +70,7 @@ const styles = StyleSheet.create({
         color: COLORS.Navy,
         textAlignVertical: 'center',
     },
+
 });
 
 export default CustomSelector;

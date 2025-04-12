@@ -33,12 +33,12 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
     // }, [selectedLocation]);
 
     const categories = [
-        { key: '1', value: 'Mobiles' },
-        { key: '2', value: 'Appliances' },
-        { key: '3', value: 'Cameras' },
-        { key: '4', value: 'Computers' },
-        { key: '5', value: 'Vegetables' },
-        { key: '6', value: 'Diary Products' },
+        { key: '1', value: 'Plumber' },
+        { key: '2', value: 'Electrcian' },
+        { key: '3', value: 'Woodworker' },
+        { key: '4', value: 'Mason' },
+        { key: '5', value: 'Tiler' },
+        { key: '6', value: 'Decorator' },
     ];
 
     const handleAddLocation = () => {
@@ -132,7 +132,7 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
                         <SVGIcons.filledLeftButton />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleForward}>
-                        {selectedLocation ?
+                        {selectedLocation || selectedCategories ?
                             <SVGIcons.filledRightButton /> :
                             <SVGIcons.unFilledRightButton />
                         }

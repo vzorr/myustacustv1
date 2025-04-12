@@ -41,7 +41,7 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
     };
     useEffect(() => {
         Geocoder.init(googleLocationApiKey, { language: "en" }); // Initialize only once!
-      }, []);
+    }, []);
     useEffect(() => {
         checkPermissions()
     }, [])
@@ -59,14 +59,14 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
                 Geolocation.requestAuthorization('always').then((res) => {
                     if (res === "granted") {
                         // getLocationAndNavigate()
-                        
+
                     }
                 });
             }
         } catch (error) {
         }
     }
-    
+
     const handleRegionChange = (newRegion: any) => {
         setRegion(newRegion);
         Geocoder.from(newRegion.latitude, newRegion.longitude)
@@ -117,25 +117,32 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
             <View style={locationScreenStyles.mapContainer}>
                 <View style={locationScreenStyles.searchBar}>
                     <View style={locationScreenStyles.locationTextContainer}>
-                        <SVGIcons.locationIcon />
-                        <Text style={locationScreenStyles.searchText}>{address}</Text>
+                        <View style={{ left: -10 }}>
+                            <SVGIcons.locationIcon />
+                        </View>
+                        <View style={{ width: "80%" }}>
+                            <Text
+                                numberOfLines={1}
+                                ellipsizeMode="tail"
+                                style={locationScreenStyles.searchText}>{address}</Text>
+                        </View>
                     </View>
-                    <TouchableOpacity>
+                    <TouchableOpacity >
                         <SVGIcons.crossIcon />
                     </TouchableOpacity>
                 </View>
-                    <MapView
-                        // provider={PROVIDER_GOOGLE}
-                        ref={mapViewRef}
-                        style={locationScreenStyles.map}
-                        region={region}
-                        loadingEnabled
-                        onRegionChangeComplete={handleRegionChange}
-                        zoomControlEnabled
-                        onMapReady={handleMapReady}
-                    >
-                        <Marker coordinate={region} />
-                    </MapView>
+                <MapView
+                    // provider={PROVIDER_GOOGLE}
+                    ref={mapViewRef}
+                    style={locationScreenStyles.map}
+                    region={region}
+                    loadingEnabled
+                    onRegionChangeComplete={handleRegionChange}
+                    zoomControlEnabled
+                    onMapReady={handleMapReady}
+                >
+                    <Marker coordinate={region} />
+                </MapView>
                 <View style={locationScreenStyles.bottom}>
                     <CustomButton
                         onPress={handleConfirmLocation}
