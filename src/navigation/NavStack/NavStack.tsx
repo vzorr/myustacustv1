@@ -21,6 +21,7 @@ import SuccessMessageScreen from '../../screens/TabsScreens/PostJobScreens/Succe
 import { client1 } from '../../apiManager/Client';
 import { useDispatch } from 'react-redux';
 import { setMetaData } from '../../stores/reducer/GeneralMetaDataReducer';
+import LoadingScreen from '../../components/Loader/LoadingScreen';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
@@ -59,6 +60,7 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
             <Stack.Screen name="PostJobPreview" component={PostJobPreviewScreen} />
             <Stack.Screen name="SuccessMessageScreen" component={SuccessMessageScreen} />
+            <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
         </Stack.Navigator>
     )
 }

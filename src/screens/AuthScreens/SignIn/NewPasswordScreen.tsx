@@ -8,7 +8,7 @@ import AuthOverlay from '../../../components/AuthOverlay/AuthOverlay';
 import { COLORS, FONTS } from '../../../config/themes/theme';
 import { Formik } from 'formik';
 import ErrorText from '../../../components/ErrorText';
-import { logInSchema } from '../../../config/constants/errorMessage';
+import { ChangePasswordSchema, logInSchema } from '../../../config/constants/errorMessage';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
 import { client1 } from '../../../apiManager/Client';
 import Toast from 'react-native-simple-toast';
@@ -52,24 +52,30 @@ const NewPasswordScreen: React.FC<UserNavigationRootProps<"NewPassword">> = (pro
     }, []);
 
     const onSubmit = async (value: any) => {
+        console.log("values", value)
         let payload = {
-            email: value.emailOrPhone,
+            email: verInfo ? verInfo : "",
             code: code,
             newPassword: value.password,
-            role:'customer'
+            role: 'customer'
         }
-     
+
         try {
-        console.log("payload", payload)
+            console.log("payload", payload)
             setIsLoading(true)
             const response = await client1().post(`auth/reset-password`, payload);
             console.log("responseeeexxxxxxxxe", response?.data)
-            navigation.replace("SuccessMessage",  { screenType: "ResetPassword" })
-        
+            navigation.replace("SuccessMessage", { screenType: "ResetPassword" })
+
             setIsLoading(false)
             return
-        } catch (error) {
+        } catch (error: any) {
             console.log("errror", error)
+            if (error.response && error.response.data && error.response.data.message) {
+                Toast.show(error.response.data.message, Toast.LONG);
+            } else {
+                Toast.show("Failed to reset password. Please try again.", Toast.LONG);
+            }
             setIsLoading(false)
         }
     }
@@ -84,13 +90,13 @@ const NewPasswordScreen: React.FC<UserNavigationRootProps<"NewPassword">> = (pro
             >
                 <Formik
                     initialValues={{
-                        emailOrPhone: verInfo ? verInfo : "",
+                        confirmPassword: "",
                         password: '',
                     }}
                     onSubmit={(values, { resetForm }) => {
                         onSubmit(values)
                     }}
-                    validationSchema={logInSchema}
+                    validationSchema={ChangePasswordSchema}
                     enableReinitialize={true}
                 >
                     {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
@@ -99,30 +105,33 @@ const NewPasswordScreen: React.FC<UserNavigationRootProps<"NewPassword">> = (pro
                             <Animated.View style={[styles.content, { transform: [{ translateX: contentAnim }] }]}>
                                 <Text style={styles.title}>Set Your New Password</Text>
                                 <Text style={styles.subTitle}>Use at least 8 characters with letters, numbers, and symbols.</Text>
-                                <CustomTextInput
-                                    placeholder={"Email or phone number"}
-                                    placeholderTextColor={COLORS.white}
-                                    value={values?.emailOrPhone}
-                                    onChangeText={handleChange('emailOrPhone')}
-                                    onBlur={handleBlur("emailOrPhone")}
-                                    editable={false}
-                                />
-                                {errors?.emailOrPhone && touched?.emailOrPhone &&
-                                    <ErrorText
-                                        error={errors.emailOrPhone}
-                                    />
-                                }
+
                                 <CustomTextInput
                                     placeholder="Enter password"
                                     placeholderTextColor={COLORS.white}
-                                    secureTextEntry
                                     onChangeText={handleChange('password')}
                                     onBlur={handleBlur("password")}
                                     value={values?.password}
+                                    isPassword={true}
+                                    containerStyle={{ marginTop: 8, marginBottom: 2 }}
                                 />
                                 {errors?.password && touched?.password &&
                                     <ErrorText
                                         error={errors.password}
+                                    />
+                                }
+                                <CustomTextInput
+                                    placeholder="Confirm Password"
+                                    placeholderTextColor={COLORS.white}
+                                    isPassword={true}
+                                    value={values?.confirmPassword}
+                                    onChangeText={handleChange('confirmPassword')}
+                                    onBlur={handleBlur("confirmPassword")}
+                                    containerStyle={{ marginTop: 4, marginBottom: 2 }}
+                                />
+                                {errors?.confirmPassword && touched?.confirmPassword &&
+                                    <ErrorText
+                                        error={errors.confirmPassword}
                                     />
                                 }
                                 <CustomButton

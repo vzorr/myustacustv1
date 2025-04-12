@@ -23,6 +23,7 @@ export type UserStackParamList = {
     LocationScreen: any;
     NotificationPreferences: any;
     TermsAndConditions: any;
+    LoadingScreen: any;
 };
 
 export type UserNavigationRootProps<T extends keyof UserStackParamList> = {
