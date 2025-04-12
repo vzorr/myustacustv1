@@ -31,6 +31,7 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
     const { postJob }: any = useSelector((state: any) => state?.postJob)
+    const { metaData }: any = useSelector((state: any) => state?.metaData)
     let previewValue = postJob
     const dispatch = useDispatch()
 
@@ -70,7 +71,7 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
     const handlePostJob = async (token: any) => {
         try {
 
-            let payload = await postJobValue(previewValue)
+            let payload = await postJobValue(previewValue, metaData?.categories)
             console.log('Base64 Image:', payload);
             const response = await client(token).post("jobs", payload);
             console.log('Response:', response.data);

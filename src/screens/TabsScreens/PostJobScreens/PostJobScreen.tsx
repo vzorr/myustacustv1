@@ -53,7 +53,7 @@ interface ImageItem {
 const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props) => {
     const { postJob }: any = useSelector((state: any) => state?.postJob)
     const { route, navigation } = props
-    const [selectedCategories, setSelectedCategories] = useState<string[]>(postJob?.category || [] );
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(postJob?.category || []);
     const [selectedArea, setSelectedArea] = useState<string[]>(postJob?.areaType || []);
     const [selectLocation, setSelectLocation] = useState<string[]>(postJob?.locationDescp || []);
     const [selectedBudget, setSelectedBudget] = useState<string[]>(postJob?.budgetDesc || []);
@@ -75,6 +75,9 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const [images, setImages] = useState<ImageItem[]>([]);
     const [showImageModal, setShowImageModal] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash' | null>(null);
+    const { metaData }: any = useSelector((state: any) => state?.metaData)
+    const { userData }: any = useSelector((state: any) => state?.userInfo)
+    console.log("userData", userData)
 
     const dispatch = useDispatch()
     const [region, setRegion] = useState<Region>({
@@ -95,15 +98,18 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
 
 
 
-    const categories = [
-        { key: '1', value: 'Plumber' },
-        { key: '2', value: 'Electrician' },
-        { key: '3', value: 'Woodworker' },
-        { key: '4', value: 'Mason' },
-        { key: '5', value: 'Tiler' },
-        { key: '6', value: 'Decorator' },
-    ];
-
+    // const categories = [
+    //     { key: '1', value: 'Plumber' },
+    //     { key: '2', value: 'Electrician' },
+    //     { key: '3', value: 'Woodworker' },
+    //     { key: '4', value: 'Mason' },
+    //     { key: '5', value: 'Tiler' },
+    //     { key: '6', value: 'Decorator' },
+    // ];
+    const categories = metaData?.categories?.map((name:any, index:any) => ({
+        key: name?.key,
+        value: name.name
+    }));
     const areaType = [
         { key: '1', value: 'Room' },
         { key: '2', value: 'Bathroom' },
@@ -783,7 +789,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                     resetForm({ values: "" })
                 }
             }}
-            validationSchema={jobPostValidationSchema}
+            // validationSchema={jobPostValidationSchema}
             enableReinitialize={true}
 
         >
@@ -795,7 +801,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                         showNotificationBadge={true}
                         badgeCount={5}
                         isProfile={true}
-                        userName={'Igli Faslija'}
+                        userName={`${userData?.firstName || 'username'} ${userData?.lastName}`}
                         userLocation={'Tirana, AL'}
                         imageUrl=''
                     />

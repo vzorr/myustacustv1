@@ -1,5 +1,6 @@
 import React from 'react';
 import { FlatList, Image, StyleSheet, View, ImageSourcePropType } from 'react-native';
+import { COLORS } from '../../config/themes/theme';
 
 interface ImageItem {
     id?: number | string;
@@ -24,6 +25,7 @@ const HorizontalImageList = (props:any) => {
                     <Image
                         source={item.imagePath ? item.imagePath : { uri: item.path }}
                         style={styles.image}
+                        resizeMode='cover'
                     />
                 </View>
             )}
@@ -39,7 +41,7 @@ const styles = StyleSheet.create({
 
     },
     imageContainer: {
-        backgroundColor: "blue",
+        backgroundColor: COLORS.white,
         borderRadius: 8,
     },
     image: {

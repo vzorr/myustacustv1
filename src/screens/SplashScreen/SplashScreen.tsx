@@ -59,7 +59,7 @@ const SplashScreen: React.FC<UserNavigationRootProps<"Splash">> = (props) => {
     };
     const handlePostJob = () => {
         navigation.navigate('Tabs', {
-            screen: 'Home',
+            screen: 'PostJobScreen',
           });
     };
 

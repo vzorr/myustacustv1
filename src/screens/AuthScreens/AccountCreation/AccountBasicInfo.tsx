@@ -39,7 +39,7 @@ const AccountBasicInfo: React.FC<UserNavigationRootProps<"AccountBasicInfo">> = 
                 setIsLoading(false)
 
             }}
-            // validationSchema={accountCreationSchema}
+            validationSchema={accountCreationSchema}
             >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
                 <AccountBasicInfoUi

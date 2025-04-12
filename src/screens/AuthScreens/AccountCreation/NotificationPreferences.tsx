@@ -27,6 +27,7 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
     const [notificationViaSMS, setNotificationViaSMS] = useState(false);
     const [notificationViaApp, setNotificationViaApp] = useState(false);
 
+    const { metaData }: any = useSelector((state: any) => state?.metaData)
     const { postJob }: any = useSelector((state: any) => state?.postJob)
     console.log("postJob", postJob)
     let previewValue = postJob
@@ -62,7 +63,7 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                 navigation.navigate('SignIn')
                 return
             }
-            let payload = await postJobValue(previewValue)
+            let payload = await postJobValue(previewValue, metaData?.categories)
             console.log('Base64 Image:', payload);
             const response = await client(token).post("jobs", payload);
             console.log('Response:', response.data);
@@ -102,7 +103,7 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                 const response = await client(token).post("account/customer-creation", payload);
                 setIsLoading(false)
                 navigation.navigate("SuccessMessage", { screenType: "NotificationPreferences" })
-                if(previewValue){
+                if(previewValue?.images.length > 0){
                    await handlePostJob()
                 }
                 console.log('Response:', response.data);

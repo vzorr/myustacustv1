@@ -23,6 +23,7 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
     const [locationDelIndex, setLocationDelIndex] = useState<any>(null);
     const [errorMessage, setErrorMessage] = useState<any>({ categoryErr: "", locationErr: '' });
     const dispatch = useDispatch()
+    const { metaData }: any = useSelector((state: any) => state?.metaData)
 
     const { accountCreation } = useSelector((state: any) => state?.accountCreation)
     console.log("accountCreation", accountCreation)
@@ -32,15 +33,18 @@ const LocationsAndPreferences: React.FC<UserNavigationRootProps<"LocationsAndPre
     //     }
     // }, [selectedLocation]);
 
-    const categories = [
-        { key: '1', value: 'Mobiles' },
-        { key: '2', value: 'Appliances' },
-        { key: '3', value: 'Cameras' },
-        { key: '4', value: 'Computers' },
-        { key: '5', value: 'Vegetables' },
-        { key: '6', value: 'Diary Products' },
-    ];
-
+    // const categories = [
+    //     { key: '1', value: 'Mobiles' },
+    //     { key: '2', value: 'Appliances' },
+    //     { key: '3', value: 'Cameras' },
+    //     { key: '4', value: 'Computers' },
+    //     { key: '5', value: 'Vegetables' },
+    //     { key: '6', value: 'Diary Products' },
+    // ];
+    const categories = metaData?.categories?.map((name: any, index: any) => ({
+        key: name?.key,
+        value: name.name
+    }));
     const handleAddLocation = () => {
         navigation.navigate("LocationScreen")
     }

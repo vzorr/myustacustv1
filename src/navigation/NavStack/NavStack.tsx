@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserStackParamList } from '../../types/stacksParams';
 import HomeScreen from '../../screens/TabsScreens/HomeScreen/HomeScreen';
@@ -18,15 +18,29 @@ import TermsAndConditions from '../../screens/AuthScreens/AccountCreation/TermsA
 import TabStack from '../TabStack/TabStack';
 import PostJobPreviewScreen from '../../screens/TabsScreens/PostJobScreens/PostJobPreviewScreen';
 import SuccessMessageScreen from '../../screens/TabsScreens/PostJobScreens/SuccessMessageScreen';
+import { client1 } from '../../apiManager/Client';
+import { useDispatch } from 'react-redux';
+import { setMetaData } from '../../stores/reducer/GeneralMetaDataReducer';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
+    const dispatch = useDispatch()
+    const getMetaData = async () => {
+        let res = await client1().get('general/meta')
+        if (res.data?.code !== 200) {
+            return
+        }
+        dispatch(setMetaData(res?.data?.result))
+    }
+    useEffect(() => {
+        getMetaData()
+    }, [])
     return (
         <Stack.Navigator
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='Splash'
+            initialRouteName='AccountBasicInfo'
         >
             <Stack.Screen name="Tabs" component={TabStack} />
             <Stack.Screen name="Splash" component={SplashScreen} />

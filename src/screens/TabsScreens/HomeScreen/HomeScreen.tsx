@@ -85,20 +85,20 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
 
                         <ProfessionCard
                             title="Plumber"
-                            count={253}
+                            count={0}
                             icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Plumber.png')} style={styles.professionImage} />}
                         />
 
                         <ProfessionCard
                             title="Dry Wall"
-                            count={518}
+                            count={0}
                             icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Drywall.png')} style={styles.dryWalImage} />}
                             color={COLORS.Navy}
                         />
 
                         <ProfessionCard
                             title="Electrician"
-                            count={346}
+                            count={0}
                             icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
                             color={COLORS.Navy}
                         />

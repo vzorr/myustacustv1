@@ -14,8 +14,8 @@ import { googleLocationApiKey } from '../../../config/constants/constants';
 Geocoder.init(googleLocationApiKey);
 const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> = (props) => {
     const [address, setAddress] = useState("");
-
     const mapViewRef = useRef(null);
+    
     const [region, setRegion] = useState<Region>({
         latitude: 42.0693,
         longitude: 19.5126,

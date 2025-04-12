@@ -17,6 +17,7 @@ import RNFS from 'react-native-fs';
 import { postJobValue } from '../../../config/constants/constants'
 import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer'
 import VisibleLoader from '../../../components/Loader/VisibleLoader'
+import Toast from 'react-native-simple-toast';
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -28,26 +29,13 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const { token }: any = useSelector((state: any) => state?.accessToken)
     const { userData }: any = useSelector((state: any) => state?.userInfo)
 
+    const { metaData }: any = useSelector((state: any) => state?.metaData)
     const [isLoading, setIsLoading] = useState(false)
     const dispatch = useDispatch()
     const { postJob }: any = useSelector((state: any) => state?.postJob)
     let previewValue = postJob
-    console.log("postpreviewValueJob", previewValue)
+    console.log("postpreviewValueJob", previewValue?.category)
     const mapRef = useRef<MapView>(null);
-    const Images = [
-        {
-            id: 1,
-            imagePath: require('../../../assets/images/MostVisitedProfessions/Plumber.png')
-        },
-        {
-            id: 2,
-            imagePath: require('../../../assets/images/MostVisitedProfessions/Drywall.png')
-        },
-        {
-            id: 3,
-            imagePath: require('../../../assets/images/MostVisitedProfessions/Electrician.png')
-        }
-    ]
     const [region, setRegion] = useState<Region>({
         latitude: 42.0693,
         longitude: 19.5126,
@@ -64,20 +52,22 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const handlePostJob = async () => {
         console.log("token", token)
         try {
-            if (!userData?.token) {
+            if (!userData?.token && !token) {
                 navigation.navigate('SignIn')
                 return
             }
-            let payload = await postJobValue(previewValue)
+            setIsLoading(true)
+            let payload = await postJobValue(previewValue, metaData?.categories)
             console.log('Base64 Image:', payload);
-            const response = await client(userData?.token).post("jobs", payload);
+            const response = await client(token ? token : userData?.token).post("jobs", payload);
             console.log('Response:', response.data);
             setIsLoading(false)
             dispatch(setPostJobReducer({}))
             navigation.replace("SuccessMessageScreen")
         } catch (error: any) {
             setIsLoading(false)
-            console.log('Error:', error.response?.data || error.message);
+            Toast.show(error.response?.data?.message, Toast.SHORT);
+            console.log('Error:', error.response?.data?.message);
         }
     }
     const handleEditJobPost = () => {
@@ -201,7 +191,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 isProfile={false}
                 isOnPreview={true}
                 jobTitle='Tile installations'
-                jobProviderName='Igli Faslija'
+                jobProviderName={`${userData?.firstName || 'username'} ${userData?.lastName}`}
                 time='2 minutes ago'
                 handleEditJobPost={handleEditJobPost}
             />
