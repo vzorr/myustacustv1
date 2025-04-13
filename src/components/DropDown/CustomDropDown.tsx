@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: COLORS.inputBorder,
         paddingHorizontal: 12,
-        paddingVertical: 10,
+        // paddingVertical: 10,
         justifyContent: 'center',
     },
     headerContent: {

@@ -6,9 +6,10 @@ interface CustomTextInputProps extends TextInputProps {
     isPassword?: boolean;
     containerStyle?: StyleProp<ViewStyle>;
     inputStyle?: StyleProp<TextStyle>;
-    cursorColor?: string
+    cursorColor?: string;
+    basicInfo?: string
 }
-const CustomTextInput: React.FC<CustomTextInputProps> = ({ isPassword, cursorColor = COLORS.white, containerStyle, inputStyle, ...props }) => {
+const CustomTextInput: React.FC<CustomTextInputProps> = ({ isPassword, basicInfo, cursorColor = COLORS.white, containerStyle, inputStyle, ...props }) => {
     const [secureText, setSecureText] = useState(isPassword);
 
     const toggleSecureText = () => {
@@ -28,12 +29,17 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({ isPassword, cursorCol
                     onPress={toggleSecureText}
                     activeOpacity={0.7}
                 >
-                    {secureText ?
-                        <SVGIcons.EyeWhiteIcon />
-                        :
-                        <SVGIcons.EyeHideWhiteIcon />
-                    }
-
+                    {basicInfo !== "basicInfo" ? (
+                        secureText ?
+                            <SVGIcons.EyeWhiteIcon />
+                            :
+                            <SVGIcons.EyeHideWhiteIcon />
+                    ) : (
+                        secureText ?
+                            <SVGIcons.eyeicon />
+                            :
+                            <SVGIcons.hideEyeIcon />
+                    )}
                 </TouchableOpacity>
             )}
         </View>
