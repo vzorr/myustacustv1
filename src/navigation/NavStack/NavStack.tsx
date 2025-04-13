@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserStackParamList } from '../../types/stacksParams';
-import HomeScreen from '../../screens/TabsScreens/HomeScreen/HomeScreen';
 import SplashScreen from '../../screens/SplashScreen/SplashScreen';
 import SignInScreen from '../../screens/AuthScreens/SignIn/SigninUi';
 import ForgotPasswordScreen from '../../screens/AuthScreens/SignIn/ForgotPasswordScreen';
@@ -50,7 +49,6 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="OtpVerfication" component={OtpVerficationContainer} />
             <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
             <Stack.Screen name="SuccessMessage" component={SuccessMessage} />
-            <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
             <Stack.Screen name="AccountBasicInfo" component={AccountBasicInfo} />

@@ -24,14 +24,14 @@ const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (pro
     const handleContinue = () => {
         switch (screenType) {
             case "NewPassword":
-                navigation.navigate("Home");
+                navigation.navigate("Tabs", { screen: "Home" });
                 break;
 
             case "OtpVerfication":
                 navigation.navigate("AccountBasicInfo");
                 break;
             case "NotificationPreferences":
-                navigation.navigate("Home");
+                navigation.navigate("Tabs", { screen: "Home" });
                 break;
             case "ResetPassword":
                 navigation.navigate("SignIn");
@@ -81,7 +81,7 @@ const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (pro
                 <Text style={[styles.title, { color: screenType === "NotificationPreferences" ? COLORS.Navy : COLORS.white }]}>Success!</Text>
                 <Text style={[styles.subTitle, { color: screenType === "NotificationPreferences" ? COLORS.GreyedOut : COLORS.white }]}>
                     {screenType === "OtpVerfication"
-                        ? `Your ${userData?.email ? "email": "phone number"} has been successfully verified!`
+                        ? `Your ${userData?.email ? "email" : "phone number"} has been successfully verified!`
                         : screenType === "NotificationPreferences"
                             ? "Your account has been setup."
                             : "Your password has been reset!"}

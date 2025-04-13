@@ -123,6 +123,18 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         key: name?.key,
         value: name.name
     }));
+    const UKLocations = [
+        { key: '1', value: 'London' },
+        { key: '2', value: 'Manchester' },
+        { key: '3', value: 'Birmingham' },
+        { key: '4', value: 'Liverpool' },
+        { key: '5', value: 'Edinburgh' },
+        { key: '6', value: 'Glasgow' },
+        { key: '7', value: 'Bristol' },
+        { key: '8', value: 'Leeds' },
+        { key: '9', value: 'Cardiff' },
+        { key: '10', value: 'Belfast' },
+    ]
     const areaType = [
         { key: '1', value: 'Room' },
         { key: '2', value: 'Bathroom' },
@@ -189,7 +201,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     }
 
     const handleCancel = () => {
-          setDiscardChangesModal(true)
+        setDiscardChangesModal(true)
     }
     const handleConfirmCancel = () => {
         dispatch(setPostJobReducer({}))
@@ -397,12 +409,12 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             style={{ fontSize: fontSize[16] }}
                         />
                         <View style={{ gap: 8 }}>
-                            <MultilineCustomInput
+                            <TextInput
+                                style={[styles.input, { color: COLORS.Navy }]}
                                 placeholder="Write a job title..."
-                                maxLength={80}
-                                containerStyle={accountScreensStyles.inputFieldContainer}
-                                inputStyle={accountScreensStyles.inputField}
-                                characterCount={80 - values?.title.length}
+                                placeholderTextColor={COLORS.Navy}
+                                multiline
+                                numberOfLines={1}
                                 value={values?.title}
                                 onChangeText={handleChange('title')}
                                 onBlur={handleBlur("title")}
@@ -412,15 +424,12 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                     error={errors.title}
                                 />
                             }
-                            <MultilineCustomInput
+                            <TextInput
+                                style={[styles.input, styles.multilineInput]}
                                 placeholder="Provide a detailed job description..."
-                                maxLength={600}
-                                multiline
-                                numberOfLines={4}
-                                containerStyle={accountScreensStyles.inputFieldContainer}
-                                inputStyle={accountScreensStyles.inputField}
-                                characterCount={600 - values?.description.length}
+                                placeholderTextColor={COLORS.Navy}
                                 value={values?.description}
+                                multiline
                                 onChangeText={handleChange('description')}
                                 onBlur={handleBlur("description")}
                             />
@@ -556,7 +565,9 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             style={{ fontSize: fontSize[16] }}
                         />
                         <CustomSelector
-                            title={images.length > 0 ? `${images.length} Images Selected` : 'Upload Image'}
+                            title={values?.images && Array.isArray(values.images) && values.images.length > 0
+                                ? `${values.images.length} Images Selected`
+                                : 'Upload Image'}
                             iconName='uploadIcon'
                             onPress={handleImageUpload}
                         />
@@ -700,7 +711,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                         />
                         <View style={{ gap: 8 }}>
                             <CustomDropDown
-                                data={areaType}
+                                data={UKLocations}
                                 placeholder="Select Location"
                                 selectedItems={selectLocation}
                                 onSelectionChange={setSelectLocation}
@@ -944,6 +955,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 10,
     },
+    multilineInput: {
+        height: 100,
+        textAlign: 'left',
+        textAlignVertical: 'top',
+        color: COLORS.Navy
+    },
     NIPTContainer: {
         position: 'absolute',
         right: 12,
@@ -964,11 +981,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     calendarContainer: {
-        marginTop: 10,
+        marginTop: -10,
         borderRadius: 10,
         backgroundColor: COLORS.white,
-        padding: 10,
-        elevation: 4,
+        elevation: 2,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
