@@ -22,6 +22,7 @@ const SuccessMessage: React.FC<UserNavigationRootProps<"SuccessMessage">> = (pro
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
     const handleContinue = () => {
+        // navigation.navigate("Tabs", { screen: "Home" });
         switch (screenType) {
             case "NewPassword":
                 navigation.navigate("Tabs", { screen: "Home" });
