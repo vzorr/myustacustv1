@@ -883,7 +883,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                         showNotificationBadge={true}
                         badgeCount={5}
                         isProfile={true}
-                        userName={`${userData?.firstName || 'username'} ${userData?.lastName}`}
+                        userName={`${userData?.firstName || ''} ${userData?.lastName || ''}`}
                         userLocation={'Tirana, AL'}
                         imageUrl=''
                     />
