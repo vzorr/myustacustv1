@@ -17,7 +17,7 @@ const SuccessMessageScreen: React.FC<UserNavigationRootProps<"SuccessMessageScre
     const logoPositionY = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(width)).current;
     const handleContinue = () => {
-        navigation.navigate("Home");
+        navigation.navigate("Tabs",{screen:"Home"});
     };
 
     useEffect(() => {

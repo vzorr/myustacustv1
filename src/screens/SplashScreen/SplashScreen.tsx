@@ -60,7 +60,7 @@ const SplashScreen: React.FC<UserNavigationRootProps<"Splash">> = (props) => {
     const handlePostJob = () => {
         navigation.navigate('Tabs', {
             screen: 'PostJobScreen',
-          });
+        });
     };
 
     return (
@@ -93,7 +93,9 @@ const SplashScreen: React.FC<UserNavigationRootProps<"Splash">> = (props) => {
                     title="Post a Job Now"
                     onPress={handlePostJob}
                 />
-                <OrDivider />
+                <View style={{ paddingVertical: 10 }}>
+                    <OrDivider />
+                </View>
                 <CustomButton
                     title="Sign-In"
                     onPress={handleSignIn}
@@ -103,6 +105,7 @@ const SplashScreen: React.FC<UserNavigationRootProps<"Splash">> = (props) => {
                     title="Sign-Up"
                     onPress={handleSignUp}
                     style={splashScreenStyles.secondaryButton}
+
                 />
             </Animated.View>
         </View>

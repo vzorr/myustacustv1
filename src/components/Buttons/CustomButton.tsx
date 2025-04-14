@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     button: {
         width: '90%',
         height: SIZES.hp(6.1),
-        margin: 8,
+        margin: 4,
         paddingHorizontal: 16,
         justifyContent: 'center',
         alignItems: 'center',

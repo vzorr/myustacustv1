@@ -13,8 +13,8 @@ interface HorizontalImageListProps {
     images: ImageItem[];
 }
 
-const HorizontalImageList = (props:any) => {
-   const {images}= props
+const HorizontalImageList = (props: any) => {
+    const { images } = props
     return (
         <FlatList
             horizontal

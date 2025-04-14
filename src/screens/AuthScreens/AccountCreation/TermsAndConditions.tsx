@@ -18,9 +18,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const TermsAndConditions: React.FC<UserNavigationRootProps<'TermsAndConditions'>> = (props) => {
     const scrollRef = useRef<ScrollView>(null);
-    const navigation =  useNavigation()
+    const navigation = useNavigation()
     const { accountCreation }: any = useSelector((state: any) => state?.accountCreation)
-    const dispatch:any = useDispatch()
+    const dispatch: any = useDispatch()
 
     const handleAcceptedConditions = () => {
         const updateLocationData = {
@@ -44,7 +44,7 @@ const TermsAndConditions: React.FC<UserNavigationRootProps<'TermsAndConditions'>
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView ref={scrollRef} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-                <View style={{ gap: 16 }}>
+                <View style={{ gap: 10 }}>
                     <BackHeader
                         onPress={handleBackPress}
                         title='Availability & Preferences'
@@ -53,35 +53,35 @@ const TermsAndConditions: React.FC<UserNavigationRootProps<'TermsAndConditions'>
                 </View>
 
                 {/* Scrollable Content */}
-                <View style={{ gap: 16 }}>
+                <View style={{ gap: 10, paddingHorizontal: 5 }}>
                     <View>
-                        <Text style={reuseableTextStyles.title}>Acceptance of Terms</Text>
+                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[18] }]}>Acceptance of Terms</Text>
                         <Text style={reuseableTextStyles.subTitle}>
                             By using myUsta, you agree to these terms and conditions. If you do not accept these
                             terms, you may not use our platform.
                         </Text>
                     </View>
                     <View>
-                        <Text style={reuseableTextStyles.title}>User Accounts</Text>
+                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[18] }]}>User Accounts</Text>
                         <Text style={reuseableTextStyles.subTitle}>• You are responsible for maintaining the confidentiality of your account credentials.</Text>
                         <Text style={reuseableTextStyles.subTitle}>• You must provide accurate and up-to-date information during registration.</Text>
                     </View>
                     <View>
-                        <Text style={reuseableTextStyles.title}>Use of the Platform</Text>
+                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[18] }]}>Use of the Platform</Text>
                         <Text style={reuseableTextStyles.subTitle}>• Homeowners can post jobs and hire tradespeople for their services.</Text>
                         <Text style={reuseableTextStyles.subTitle}>• Tradespeople can create profiles, showcase portfolios, and connect with homeowners.</Text>
                         <Text style={reuseableTextStyles.subTitle}>• All interactions between users are conducted at their own discretion. myUsta is not responsible for disputes, damages, or service quality.</Text>
                     </View>
                     <View>
-                        <Text style={reuseableTextStyles.title}>Payments and Fees</Text>
+                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[18] }]}>Payments and Fees</Text>
                         <Text style={reuseableTextStyles.subTitle}>• myUsta may charge fees for connecting users.</Text>
-                        <Text style={reuseableTextStyles.title}>Use of the Platform</Text>
+                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[18] }]}>Use of the Platform</Text>
                         <Text style={reuseableTextStyles.subTitle}>• Homeowners can post jobs and hire tradespeople for their services.</Text>
                         <Text style={reuseableTextStyles.subTitle}>• Tradespeople can create profiles, showcase portfolios, and connect with homeowners.</Text>
                         <Text style={reuseableTextStyles.subTitle}>• All interactions between users are conducted at their own discretion. myUsta is not responsible for disputes, damages, or service quality.</Text>
                     </View>
                     <View>
-                        <Text style={reuseableTextStyles.title}>Payments and Fees</Text>
+                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[18] }]}>Payments and Fees</Text>
                         <Text style={reuseableTextStyles.subTitle}>• myUsta may charge fees for connecting users.</Text>
                         <Text style={reuseableTextStyles.subTitle}>Use of the Platform</Text>
                         <Text style={reuseableTextStyles.subTitle}>• Homeowners can post jobs and hire tradespeople for their services.</Text>
@@ -89,7 +89,7 @@ const TermsAndConditions: React.FC<UserNavigationRootProps<'TermsAndConditions'>
                         <Text style={reuseableTextStyles.subTitle}>• All interactions between users are conducted at their own discretion. myUsta is not responsible for disputes, damages, or service quality.</Text>
                     </View>
                     <View>
-                        <Text style={reuseableTextStyles.title}>Payments and Fees</Text>
+                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[18] }]}>Payments and Fees</Text>
                         <Text style={reuseableTextStyles.subTitle}>• myUsta may charge fees for connecting users.</Text>
                     </View>
                 </View>

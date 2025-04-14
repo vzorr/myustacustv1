@@ -142,6 +142,7 @@ const AccountBasicInfoUi = (props: any) => {
                             placeholder="Create Password"
                             placeholderTextColor={COLORS.Navy}
                             isPassword={true}
+                            basicInfo="basicInfo"
                             containerStyle={accountScreensStyles.inputFieldContainer}
                             inputStyle={accountScreensStyles.inputField}
                             value={values?.password}
@@ -157,6 +158,7 @@ const AccountBasicInfoUi = (props: any) => {
                             placeholder="Re-Enter Password"
                             placeholderTextColor={COLORS.Navy}
                             isPassword={true}
+                            basicInfo="basicInfo"
                             containerStyle={accountScreensStyles.inputFieldContainer}
                             inputStyle={accountScreensStyles.inputField}
                             value={values?.confirmPassword}

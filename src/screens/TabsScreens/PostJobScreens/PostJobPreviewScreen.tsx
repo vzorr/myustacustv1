@@ -62,29 +62,57 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 return
             }
 
-            // Validate that all required fields are present
-            if (!previewValue?.title || !previewValue?.description ||
-                !previewValue?.paymentMethod || !previewValue?.areaSize ||
-                !previewValue?.startDate || !previewValue?.endDate ||
-                !previewValue?.location || !previewValue?.images ||
-                previewValue.images.length === 0) {
+            // Enhanced validation with specific error messages
+            const validationErrors = [];
+            
+            if (!previewValue?.title) validationErrors.push('Job title');
+            if (!previewValue?.description) validationErrors.push('Job description');
+            if (!previewValue?.paymentMethod) validationErrors.push('Payment method');
+            if (!previewValue?.areaSize) validationErrors.push('Area size');
+            if (!previewValue?.startDate) validationErrors.push('Start date');
+            if (!previewValue?.endDate) validationErrors.push('End date');
+            if (!previewValue?.location || !previewValue?.location?.address) validationErrors.push('Location');
+            if (!previewValue?.images || previewValue.images.length === 0) validationErrors.push('Images');
+            if (!previewValue?.category) validationErrors.push('Category');
+            if (!previewValue?.materials) validationErrors.push('Materials');
 
-                Toast.show('Please fill in all required fields to post a job', Toast.SHORT);
+            if (validationErrors.length > 0) {
+                Toast.show(`Missing required fields: ${validationErrors.join(', ')}`, Toast.LONG);
                 return;
             }
 
             setIsLoading(true)
             let payload = await postJobValue(previewValue, metaData?.categories)
-            console.log('Base64 Image:', payload);
-            const response = await client(token ? token : userData?.token).post("jobs", payload);
-            console.log('Response:', response.data);
-            setIsLoading(false)
-            dispatch(setPostJobReducer({}))
-            navigation.replace("SuccessMessageScreen")
+            console.log('Payload to send:', JSON.stringify(payload, null, 2));
+            
+            try {
+                const response = await client(token ? token : userData?.token).post("jobs", payload);
+                console.log('Success Response:', response.data);
+                setIsLoading(false)
+                dispatch(setPostJobReducer({}))
+                navigation.replace("SuccessMessageScreen")
+            } catch (apiError: any) {
+                setIsLoading(false)
+                console.log('API Error Response:', apiError.response?.data);
+                console.log('API Error Status:', apiError.response?.status);
+                console.log('API Error Headers:', apiError.response?.headers);
+                
+                // Show validation error details if available
+                if (apiError.response?.data?.errors) {
+                    const errorDetails = Object.entries(apiError.response.data.errors)
+                        .map(([field, errors]: [string, any]) => `${field}: ${Array.isArray(errors) ? errors.join(', ') : errors}`)
+                        .join('; ');
+                    Toast.show(`Validation errors: ${errorDetails}`, Toast.LONG);
+                } else {
+                    const errorMessage = apiError.response?.data?.message || 'Error posting job. Please try again.';
+                    Toast.show(errorMessage, Toast.LONG);
+                }
+            }
         } catch (error: any) {
             setIsLoading(false)
-            Toast.show(error.response?.data?.message, Toast.SHORT);
-            console.log('Error:', error.response?.data?.message);
+            console.log('Error preparing payload:', error);
+            const errorMessage = error.message || 'Error preparing job data. Please try again.';
+            Toast.show(errorMessage, Toast.LONG);
         }
     }, [token, userData, previewValue, metaData, navigation, dispatch]);
 
