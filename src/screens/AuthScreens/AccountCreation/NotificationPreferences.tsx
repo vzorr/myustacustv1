@@ -75,18 +75,24 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
             console.log('Error:', error.response?.data || error.message);
         }
     }
-    console.log( accountCreation?.notificationViaApp)
+    console.log(accountCreation?.notificationViaApp)
     const handleCompleteSetup = async () => {
         setIsLoading(true)
         console.log("handle Completeee")
         if (accountCreation?.termsAndConditions) {
             try {
                 const selectedCategories = metaData?.categories?.filter((category: any) => accountCreation?.category.includes(category.name))
-                .map((category: any) => category.key);
+                    .map((category: any) => category.key);
                 let filePath = accountCreation.profileImg;
                 const actualPath = filePath.path.replace('file://', '');
                 const base64String = await RNFS.readFile(actualPath, 'base64');
                 const base64Image = `data:image/jpeg;base64,${base64String}`;
+
+                // const locationData = accountCreation.location.map((loc: any) => ({
+                //     latitude: loc.latitude,
+                //     longitude: loc.longitude,
+                //     address: loc.address,
+                // }));
 
                 let payload = {
                     basicInfo: {
@@ -103,7 +109,7 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                     notificationViaApp: accountCreation?.notificationViaApp,
                     termsAndConditions: accountCreation?.termsAndConditions
                 }
-                console.log('Base64 Image:', payload);
+                console.log('Payload:', JSON.stringify(payload, null, 2));
                 const response = await client(token).post("account/customer-creation", payload);
                 setIsLoading(false)
                 dispatch(setAccountCreation({}))
@@ -140,7 +146,7 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
             <View style={{ gap: 24 }}>
                 <AccountHeader
                     title="Notifications"
-                    subTitle="Set how you’d like to stay updated and finalize your account setup."
+                    subTitle="Set how you'd like to stay updated and finalize your account setup."
                 />
                 <View style={{ gap: 8 }}>
                     <CustomDropDown

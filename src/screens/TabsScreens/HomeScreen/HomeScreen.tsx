@@ -1,48 +1,81 @@
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image, Platform, StatusBar } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image, Platform, StatusBar, FlatList } from 'react-native'
 import React from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
-import { COLORS, FONTS, SIZES } from '../../../config/themes/theme'
+import { COLORS, FONTS, fontSize, SIZES } from '../../../config/themes/theme'
 import { SVGIcons } from '../../../config/constants/svg'
 import AppHeader from '../../../components/AppHeader/AppHeader'
+import UstaHeading from '../../../components/UstaHeading/UstaHeading'
+import ProfessionCard from '../../../components/HomeComponents/ProfessionCard'
+import CategoryItem from '../../../components/HomeComponents/CategoryItem'
 
-const CategoryItem = ({ iconName, label }: { iconName: React.ReactNode, label: string }) => {
-    return (
-        <TouchableOpacity style={styles.categoryItem}>
-            <View>
-                {iconName}
-            </View>
-            <Text style={styles.categoryLabel}>{label}</Text>
-        </TouchableOpacity>
-    )
-}
-
-const ProfessionCard = ({
-    title,
-    count,
-    icon,
-}: {
-    title: string,
-    count: number,
-    icon: React.ReactNode,
-    color?: string
-}) => {
-    return (
-        <TouchableOpacity style={[styles.professionCard]}>
-            <View style={styles.professionInfo}>
-                <Text style={styles.professionTitle}>{title}</Text>
-                <View style={styles.professionCountContainer}>
-                    <Text style={styles.professionCount}>{count} {title}s</Text>
-                    <SVGIcons.rightArrow stroke={COLORS.white} width={16} height={16} />
-                </View>
-            </View>
-            <View style={styles.professionImageContainer}>
-                {icon}
-            </View>
-        </TouchableOpacity>
-    )
-}
 
 const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
+    const { route, navigation } = props
+    const ViewPostedJobs = () => {
+        navigation.navigate("JobsStatusScreens")
+    }
+
+    // const renderItem = ({ item }: { item: typeof professionData[0] }) => (
+    //     <View style={styles.sectionContainer}>
+    //         <Text style={styles.sectionTitle}>Most Visited Professions</Text>
+    //         <ProfessionCard
+    //             title={item.title}
+    //             count={item.count}
+    //             icon={<Image source={item.image} style={styles.professionImage} />}
+    //         />
+    //     </View>
+    // );
+
+    const renderScreenContent = () => (
+        <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Most Visited Professions</Text>
+            <ProfessionCard
+                title="Plumber"
+                count={0}
+                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Plumber.png')} style={styles.professionImage} />}
+            />
+
+            <ProfessionCard
+                title="Dry Wall"
+                count={0}
+                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Drywall.png')} style={styles.dryWalImage} />}
+            // color={COLORS.Navy}
+            />
+
+            <ProfessionCard
+                title="Electrician"
+                count={0}
+                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
+            // color={COLORS.Navy}
+            />
+            <ProfessionCard
+                title="Electrician"
+                count={0}
+                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
+            // color={COLORS.Navy}
+            />
+            <ProfessionCard
+                title="Electrician"
+                count={0}
+                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
+            // color={COLORS.Navy}
+            />
+            <ProfessionCard
+                title="Electrician"
+                count={0}
+                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
+            // color={COLORS.Navy}
+            />
+            <ProfessionCard
+                title="Electrician"
+                count={0}
+                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
+            // color={COLORS.Navy}
+            />
+        </View>
+    )
+    const screenData = [{ id: '1' }];
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
@@ -53,58 +86,44 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
                 badgeCount={5}
                 isProfile={false}
             />
-            <View>
-                {/* Categories */}
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.categoriesContainer}
-                >
-                    <CategoryItem
-                        iconName={<SVGIcons.plusIcon stroke={COLORS.Navy} />}
-                        label="Plumbing"
-                    />
-                    <CategoryItem
-                        iconName={<SVGIcons.searchIcon stroke={COLORS.Navy} />}
-                        label="Electrical"
-                    />
-                    <CategoryItem
-                        iconName={<SVGIcons.HomeIcon stroke={COLORS.Navy} />}
-                        label="Carpenter"
-                    />
-                    {/* Add more categories as needed */}
-                </ScrollView>
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.scrollViewContent}
-                >
-
-                    {/* Most Visited Professions */}
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.sectionTitle}>Most Visited Professions</Text>
-
-                        <ProfessionCard
-                            title="Plumber"
-                            count={0}
-                            icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Plumber.png')} style={styles.professionImage} />}
-                        />
-
-                        <ProfessionCard
-                            title="Dry Wall"
-                            count={0}
-                            icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Drywall.png')} style={styles.dryWalImage} />}
-                            color={COLORS.Navy}
-                        />
-
-                        <ProfessionCard
-                            title="Electrician"
-                            count={0}
-                            icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-                            color={COLORS.Navy}
-                        />
-                    </View>
-                </ScrollView>
-            </View>
+            <UstaHeading
+                title="My Usta"
+                onPress={ViewPostedJobs}
+                containerStyle={{ paddingHorizontal: 20, paddingTop: 20 }}
+                style={{ fontSize: fontSize[16] }}
+            />
+            {/* Categories */}
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.categoriesContainer}
+            >
+                <CategoryItem
+                    iconName="plusIcon"
+                    label="Plumbing"
+                />
+                <CategoryItem
+                    iconName="searchIcon"
+                    label="Electrical"
+                />
+                <CategoryItem
+                    iconName="searchIcon"
+                    label="Carpenter"
+                />
+            </ScrollView>
+            {/* <FlatList
+                data={professionData}
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}
+                contentContainerStyle={{ flexGrow: 1 }}
+            /> */}
+            <FlatList
+                data={screenData}
+                keyExtractor={item => item.id}
+                renderItem={() => renderScreenContent()}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ flexGrow: 1 }}
+            />
         </SafeAreaView>
     )
 }
@@ -164,7 +183,9 @@ const styles = StyleSheet.create({
     },
     categoriesContainer: {
         padding: 16,
+        // paddingVertical: 20,
         gap: 8,
+        marginBottom: 20
     },
     categoryItem: {
         flexDirection: 'row',
@@ -183,8 +204,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     sectionContainer: {
-        marginBottom: 16,
-        paddingHorizontal: 3.9
+        paddingBottom: 80,
+        paddingHorizontal: 20,
     },
     sectionTitle: {
         fontSize: 18,
