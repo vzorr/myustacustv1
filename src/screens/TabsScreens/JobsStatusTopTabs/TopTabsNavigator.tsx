@@ -49,19 +49,22 @@ const TopTabsNavigator = (props: any) => {
     setActiveTab(tabType)
     getAllJobList()
   };
+  const handleViewButton = (status: string) => {
+
+  }
   const renderItem = ({ item, index }: { item: any, index: any }) => (
     <View>
       <JobsStatusCard
-        time={item.time}
-        jobTitle={item.jobTitle}
-        statusText={item.statusText}
-        applicationsCount={item?.applicationsCount}
+        time={item?.time ? item?.time : "Amir how to show time"}
+        jobTitle={item?.title}
+        statusText={item?.status}
         milestones={item?.milestones}
-        statusTextColor={COLORS.statusBtnBorderColor}
-        statusBgColor={COLORS.statusBtnBgColor}
-        statusBorderColor={COLORS.statusBtnBorderColor}
+        applicationsCount={item?.applicationsCount}
+        handleViewButton={handleViewButton(item?.status)}
       />
-      <LineSeparator />
+      <View style={{ paddingVertical: 16 }}>
+        <LineSeparator />
+      </View>
     </View>
   );
 
