@@ -146,7 +146,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 <LineSeparator />
                 <AccountHeader
                     title='AREA SIZE'
-                    subTitle={`${previewValue?.areaSize}m²`}
+                    subTitle={`${previewValue?.areaSize} m²`}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ marginTop: -3, gap: 2 }}
                 />
