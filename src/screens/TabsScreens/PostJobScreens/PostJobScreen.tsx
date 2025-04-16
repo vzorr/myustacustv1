@@ -26,6 +26,7 @@ import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import Toast from 'react-native-simple-toast'
 import VisibleLoader from '../../../components/Loader/VisibleLoader'
+import CustomImagePicker from '../../../components/ImagePicker/ImagePicker'
 
 // Define the ImagePicker result type
 interface ImagePickerResult {
@@ -87,7 +88,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const [areaSize, setAreaSize] = useState(35);
     const [budget, setBudget] = useState("Budget Lek...");
     const [images, setImages] = useState<ImageItem[]>([]);
-    const [showImageModal, setShowImageModal] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash' | null>(null);
     const { metaData }: any = useSelector((state: any) => state?.metaData)
     const { userData }: any = useSelector((state: any) => state?.userInfo)
@@ -194,18 +194,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         dispatch(setPostJobReducer({}))
         navigation.navigate('Tabs')
     }
-    const handleImageUpload = () => {
-        setShowImageModal(true);
-    };
 
-    // Payment method toggle
-    // const togglePaymentMethod = (method: 'card' | 'cash') => {
-    //     if (paymentMethod === method) {
-    //         setPaymentMethod(null);
-    //     } else {
-    //         setPaymentMethod(method);
-    //     }
-    // };
     const onSubmit = async (values: any) => {
         if (selectedCategories?.length === 0) {
             setCategoryError("please select category")
@@ -264,7 +253,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
             })
                 .then((selectedImages) => {
                     setFieldValue("images", [...selectedImages, ...values?.images]);
-                    setShowImageModal(false);
                 })
                 .catch((error) => {
                     if (error.code !== 'E_PICKER_CANCELLED') {
@@ -283,7 +271,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                 .then((image: any) => {
                     const newImages = [image];
                     setFieldValue("images", [...newImages, ...values?.images]);
-                    setShowImageModal(false);
                 })
                 .catch((error) => {
                     console.log("errorroooo", error)
@@ -509,12 +496,11 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             headingText='IMAGES'
                             style={{ fontSize: fontSize[16] }}
                         />
-                        <CustomSelector
-                            title={values?.images && Array.isArray(values.images) && values.images.length > 0
-                                ? `${values.images.length} Images Selected`
-                                : 'Upload Image'}
-                            iconName='uploadIcon'
-                            onPress={handleImageUpload}
+                        <CustomImagePicker 
+                            onTakePhoto={takePhotoWithCamera}
+                            onPickFromGallery={pickImageFromGallery}
+                            onCancel={() => {}}
+                            imagesCount={values?.images && Array.isArray(values.images) ? values.images.length : 0}
                         />
 
                         {/* START DATE with Calendar */}
@@ -760,30 +746,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                         />
                     </View>
                 </SafeAreaView>
-                <Modal
-                    visible={showImageModal}
-                    transparent={true}
-                    animationType="fade"
-                    onRequestClose={() => setShowImageModal(false)}
-                >
-                    <View style={styles.modalOverlay}>
-                        <View style={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>Upload Image</Text>
-                            <TouchableOpacity style={styles.modalOption} onPress={takePhotoWithCamera}>
-                                <Text style={styles.modalOptionText}>Take Photo</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.modalOption} onPress={pickImageFromGallery}>
-                                <Text style={styles.modalOptionText}>Choose from Gallery</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.modalCancel}
-                                onPress={() => setShowImageModal(false)}
-                            >
-                                <Text style={styles.modalCancelText}>Cancel</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
             </KeyboardAwareScrollView>
         )
     }
@@ -858,9 +820,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                         areaSize={areaSize}
                         budgetData={budgetData}
                     />
-
-                    {/* Image Upload Modal */}
-
                 </View>
             )}
         </Formik>
@@ -965,53 +924,6 @@ const styles = StyleSheet.create({
     mapView: {
         ...StyleSheet.absoluteFillObject,
         borderRadius: 12,
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalContainer: {
-        width: '80%',
-        backgroundColor: COLORS.white,
-        borderRadius: 10,
-        padding: 20,
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-    },
-    modalTitle: {
-        fontSize: fontSize[16],
-        fontFamily: FONTS.interBold,
-        color: COLORS.Black,
-        marginBottom: 15,
-        textAlign: 'center',
-    },
-    modalOption: {
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.inputBorder,
-    },
-    modalOptionText: {
-        fontSize: fontSize[14],
-        fontFamily: FONTS.interRegular,
-        color: COLORS.Black,
-        textAlign: 'center',
-    },
-    modalCancel: {
-        marginTop: 15,
-        paddingVertical: 10,
-        backgroundColor: COLORS.Yellow,
-        borderRadius: 8,
-    },
-    modalCancelText: {
-        fontSize: fontSize[14],
-        fontFamily: FONTS.interBold,
-        color: COLORS.white,
-        textAlign: 'center',
     },
     budgetContainer: {
         gap: 8,

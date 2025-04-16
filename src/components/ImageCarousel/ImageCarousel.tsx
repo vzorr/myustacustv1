@@ -7,7 +7,6 @@ import {
   TouchableOpacity, 
   FlatList,
   ImageSourcePropType,
-  Animated,
 } from 'react-native';
 import { COLORS } from '../../config/themes/theme';
 import { SVGIcons } from '../../config/constants/svg';
@@ -95,7 +94,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onClose, initialI
               source={item.imagePath ? item.imagePath : { uri: item.path || item.uri }}
               style={styles.image}
               resizeMode="cover"
-              // For better loading performance
               fadeDuration={0}
             />
           </View>
