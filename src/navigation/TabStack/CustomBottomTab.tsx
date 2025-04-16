@@ -1,40 +1,93 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Text, View, TouchableOpacity, Platform, Dimensions, StyleSheet, Keyboard } from 'react-native';
 import { SVGIcons } from '../../config/constants/svg';
 import { COLORS, fontSize } from '../../config/themes/theme';
 import { reuseableTextStyles } from '../../styles/reuseableTextStyles';
 
+// Define types for tab button props
+interface TabButtonProps {
+    route: any;
+    isFocused: boolean;
+    onPress: () => void;
+    label: string;
+    tabWidth: number;
+    iconComponent: React.ReactNode;
+}
+
+// Pre-render tab items to improve performance
+const TabButton = React.memo(({ 
+    route, 
+    isFocused, 
+    onPress, 
+    label, 
+    tabWidth, 
+    iconComponent 
+}: TabButtonProps) => {
+    return (
+        <TouchableOpacity
+            style={[
+                styles.tabItem,
+                { width: tabWidth },
+                isFocused ? styles.tabItemActive : null
+            ]}
+            activeOpacity={0.7}
+            onPress={onPress}
+        >
+            <View style={styles.iconContainer}>
+                {iconComponent}
+            </View>
+            <Text
+                style={[
+                    styles.tabLabel,
+                    isFocused ? styles.tabLabelActive : styles.tabLabelInactive
+                ]}
+                numberOfLines={1}
+            >
+                {label}
+            </Text>
+        </TouchableOpacity>
+    );
+});
+
 export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
-    const screenWidth = Dimensions.get('window').width;
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    
+    // Cache screen dimensions to avoid recalculating on each render
+    const screenWidth = useMemo(() => Dimensions.get('window').width, []);
+    const numberOfTabs = useMemo(() => state.routes.length, [state.routes.length]);
+    const tabWidth = useMemo(() => 
+        (screenWidth - 40 - 24) / numberOfTabs, 
+        [screenWidth, numberOfTabs]
+    );
+
+    // Optimize keyboard event handlers
+    const showKeyboard = useCallback(() => {
+        setKeyboardVisible(true);
+    }, []);
+    
+    const hideKeyboard = useCallback(() => {
+        setKeyboardVisible(false);
+    }, []);
 
     useEffect(() => {
         const keyboardWillShowListener = Keyboard.addListener(
             Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-            () => {
-                setKeyboardVisible(true);
-            }
+            showKeyboard
         );
         const keyboardWillHideListener = Keyboard.addListener(
             Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-            () => {
-                setKeyboardVisible(false);
-            }
+            hideKeyboard
         );
 
         return () => {
             keyboardWillShowListener.remove();
             keyboardWillHideListener.remove();
         };
-    }, []);
+    }, [showKeyboard, hideKeyboard]);
 
     if (isKeyboardVisible) {
         return null; // Hide the tab bar when keyboard is visible
     }
-
-    // Calculate tab widths based on screen width
-    const numberOfTabs = state.routes.length;
-    const tabWidth = (screenWidth - 40 - 24) / numberOfTabs; // Account for container padding and tab bar padding
 
     return (
         <View style={styles.container}>
@@ -49,6 +102,24 @@ export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
                                 : route.name;
                     const isFocused = state.index === index;
 
+                    // Memoize icon component to avoid recreation on each render
+                    const iconComponent = useMemo(() => {
+                        switch (route.name) {
+                            case "JobsStatusSackNav":
+                                return isFocused ? <SVGIcons.HomeWhiteIcon /> : <SVGIcons.HomeIcon />;
+                            case "SearchScreen":
+                                return isFocused ? <SVGIcons.SearchWhiteIcon /> : <SVGIcons.SearchIcon />;
+                            case "PostJobScreen":
+                                return isFocused ? <SVGIcons.PlusWhiteIcon /> : <SVGIcons.plusIcon />;
+                            case "ChatScreen":
+                                return isFocused ? <SVGIcons.ChatWhiteIcon /> : <SVGIcons.MessageIcon />;
+                            case "ProfileScreen":
+                                return isFocused ? <SVGIcons.ProfileIcon /> : <SVGIcons.UserIcon />;
+                            default:
+                                return null;
+                        }
+                    }, [route.name, isFocused]);
+
                     const onPress = () => {
                         const event = navigation.emit({
                             type: 'tabPress',
@@ -56,55 +127,24 @@ export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
                             canPreventDefault: true,
                         });
                         if (!isFocused && !event.defaultPrevented) {
-                            navigation.navigate(route.name);
+                            // Use the navigate method with more specific params for better performance
+                            navigation.navigate({
+                                name: route.name,
+                                merge: true,
+                            });
                         }
                     };
 
-                    let iconComponent;
-                    switch (route.name) {
-                        case "JobsStatusSackNav":
-                            iconComponent = isFocused ? <SVGIcons.HomeWhiteIcon /> : <SVGIcons.HomeIcon />;
-                            break;
-                        case "SearchScreen":
-                            iconComponent = isFocused ? <SVGIcons.SearchWhiteIcon /> : <SVGIcons.SearchIcon />;
-                            break;
-                        case "PostJobScreen":
-                            iconComponent = isFocused ? <SVGIcons.PlusWhiteIcon /> : <SVGIcons.plusIcon />;
-                            break;
-                        case "ChatScreen":
-                            iconComponent = isFocused ? <SVGIcons.ChatWhiteIcon /> : <SVGIcons.MessageIcon />;
-                            break;
-                        case "ProfileScreen":
-                            iconComponent = isFocused ? <SVGIcons.ProfileIcon /> : <SVGIcons.UserIcon />;
-                            break;
-                        default:
-                            break;
-                    }
-
                     return (
-                        <TouchableOpacity
+                        <TabButton
                             key={index}
-                            style={[
-                                styles.tabItem,
-                                { width: tabWidth },
-                                isFocused ? styles.tabItemActive : null
-                            ]}
-                            activeOpacity={0.7}
+                            route={route}
+                            isFocused={isFocused}
                             onPress={onPress}
-                        >
-                            <View style={styles.iconContainer}>
-                                {iconComponent}
-                            </View>
-                            <Text
-                                style={[
-                                    styles.tabLabel,
-                                    isFocused ? styles.tabLabelActive : styles.tabLabelInactive
-                                ]}
-                                numberOfLines={1}
-                            >
-                                {label}
-                            </Text>
-                        </TouchableOpacity>
+                            label={label}
+                            tabWidth={tabWidth}
+                            iconComponent={iconComponent}
+                        />
                     );
                 })}
             </View>
@@ -155,7 +195,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     tabItemActive: {
-        backgroundColor: COLORS.UstaBlack,
+        backgroundColor: COLORS.Navy,
     },
     tabLabel: {
         ...reuseableTextStyles.subTitle,
