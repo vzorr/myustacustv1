@@ -5,7 +5,7 @@ import AppHeader from '../../../components/AppHeader/AppHeader'
 import Heading from '../../../components/Heading/Heading'
 import { SVGIcons } from '../../../config/constants/svg'
 import { reuseableTextStyles } from '../../../styles/reuseableTextStyles'
-import { COLORS, FONTS, fontSize } from '../../../config/themes/theme'
+import { COLORS, FONTS, fontSize, SIZES } from '../../../config/themes/theme'
 import MultilineCustomInput from '../../../components/InputField/MultiLineInput'
 import accountScreensStyles from '../../../styles/accountScreensStyles'
 import CustomDropDown from '../../../components/DropDown/CustomDropDown'
@@ -169,15 +169,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         setNewMaterial("");
     };
 
-    const handleConfirmAdd = useCallback(() => {
-        if (newMaterial.trim()) {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            setMaterials(prevMaterials => [...prevMaterials, { id: `material-${Date.now()}`, name: newMaterial.trim() }]);
-            setNewMaterial("");
-            setShowMaterialInput(false);
-        }
-    }, [newMaterial]);
-
     const handleDeleteMaterial = useCallback((id: string) => {
         setMaterialToDelete(id);
         setShowDeleteModal(true);
@@ -196,10 +187,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         navigation.navigate("LocationScreen")
     }
 
-    const handlePreview = () => {
-        navigation.navigate("PostJobPreview")
-    }
-
     const handleCancel = () => {
         setDiscardChangesModal(true)
     }
@@ -207,52 +194,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         dispatch(setPostJobReducer({}))
         navigation.navigate('Tabs')
     }
-    // Image picker functions
-    // const pickImageFromGallery = () => {
-    //     ImagePicker.openPicker({
-    //         width: 300,
-    //         height: 300,
-    //         cropping: true,
-    //         compressImageQuality: 0.8,
-    //         multiple: true,
-    //         maxFiles: 5,
-    //     })
-    //         .then((selectedImages: ImagePickerResult | ImagePickerResult[]) => {
-    //             const newImages = Array.isArray(selectedImages)
-    //                 ? selectedImages.map(img => ({
-    //                     id: Date.now().toString() + Math.random().toString(),
-    //                     path: img.path
-    //                 }))
-    //                 : [{ id: Date.now().toString(), path: selectedImages.path }];
-
-    //             setImages([...images, ...newImages]);
-    //             setShowImageModal(false);
-    //         })
-    //         .catch((error) => {
-    //             if (error.code !== 'E_PICKER_CANCELLED') {
-    //                 Alert.alert('Error', 'Failed to pick image from gallery');
-    //             }
-    //         });
-    // };
-
-    // const takePhotoWithCamera = () => {
-    //     ImagePicker.openCamera({
-    //         width: 300,
-    //         height: 300,
-    //         cropping: true,
-    //         compressImageQuality: 0.8,
-    //     })
-    //         .then((image: ImagePickerResult) => {
-    //             setImages([...images, { id: Date.now().toString(), path: image.path }]);
-    //             setShowImageModal(false);
-    //         })
-    //         .catch((error) => {
-    //             if (error.code !== 'E_PICKER_CANCELLED') {
-    //                 Alert.alert('Error', 'Failed to take photo');
-    //             }
-    //         });
-    // };
-
     const handleImageUpload = () => {
         setShowImageModal(true);
     };
@@ -413,7 +354,8 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 style={[styles.input, { color: COLORS.Navy }]}
                                 placeholder="Write a job title..."
                                 placeholderTextColor={COLORS.Navy}
-                                multiline
+                                cursorColor={COLORS.Navy}
+                                // multiline
                                 numberOfLines={1}
                                 value={values?.title}
                                 onChangeText={handleChange('title')}
@@ -428,6 +370,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 style={[styles.input, styles.multilineInput]}
                                 placeholder="Provide a detailed job description..."
                                 placeholderTextColor={COLORS.Navy}
+                                cursorColor={COLORS.Navy}
                                 value={values?.description}
                                 multiline
                                 onChangeText={handleChange('description')}
@@ -462,6 +405,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             <CustomTextInput
                                 placeholder="Area size m²"
                                 placeholderTextColor={COLORS.Navy}
+                                cursorColor={COLORS.Navy}
                                 containerStyle={accountScreensStyles.inputFieldContainer}
                                 inputStyle={accountScreensStyles.inputField}
                                 value={values?.areaSize}
@@ -498,7 +442,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 <View style={styles.addTitleContainer}>
                                     <Text style={[reuseableTextStyles.title, { fontSize: fontSize[14] }]}>Materials</Text>
                                     <TouchableOpacity onPress={handleCancelMaterial}>
-                                        <SVGIcons.crossIcon />
+                                        <SVGIcons.stateOn />
                                     </TouchableOpacity>
                                 </View>
 
@@ -509,6 +453,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                             <CustomTextInput
                                                 placeholder='e.g Wood'
                                                 placeholderTextColor={COLORS.Navy}
+                                                cursorColor={COLORS.Navy}
                                                 containerStyle={accountScreensStyles.inputFieldContainer}
                                                 inputStyle={accountScreensStyles.inputField}
                                                 value={values?.materials}
@@ -552,7 +497,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             <CustomSelector
                                 onPress={handleAddMaterials}
                                 title="Material (Optional)"
-                                iconName="plusIcon"
+                                iconName="StateOff"
                             />
                         )}
                         {errors?.materials && touched?.materials &&
@@ -599,13 +544,13 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                     }}
                                     theme={{
                                         calendarBackground: COLORS.white,
-                                        textSectionTitleColor: COLORS.Black,
-                                        selectedDayBackgroundColor: COLORS.Yellow,
-                                        selectedDayTextColor: COLORS.white,
-                                        todayTextColor: COLORS.Yellow,
-                                        dayTextColor: COLORS.Black,
+                                        textSectionTitleColor: COLORS.Navy,
+                                        selectedDayBackgroundColor: COLORS.Black,
+                                        selectedDayTextColor: COLORS.Navy,
+                                        todayTextColor: COLORS.Navy,
+                                        dayTextColor: COLORS.Navy,
                                         textDisabledColor: COLORS.grey,
-                                        arrowColor: COLORS.Yellow,
+                                        arrowColor: COLORS.Navy,
                                         monthTextColor: COLORS.Black,
                                         textDayFontFamily: FONTS.interRegular,
                                         textMonthFontFamily: FONTS.interBold,
@@ -667,13 +612,13 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                     }}
                                     theme={{
                                         calendarBackground: COLORS.white,
-                                        textSectionTitleColor: COLORS.Black,
-                                        selectedDayBackgroundColor: COLORS.Yellow,
-                                        selectedDayTextColor: COLORS.white,
-                                        todayTextColor: COLORS.Yellow,
-                                        dayTextColor: COLORS.Black,
+                                        textSectionTitleColor: COLORS.Navy,
+                                        selectedDayBackgroundColor: COLORS.Black,
+                                        selectedDayTextColor: COLORS.Navy,
+                                        todayTextColor: COLORS.Navy,
+                                        dayTextColor: COLORS.Navy,
                                         textDisabledColor: COLORS.grey,
-                                        arrowColor: COLORS.Yellow,
+                                        arrowColor: COLORS.Navy,
                                         monthTextColor: COLORS.Black,
                                         textDayFontFamily: FONTS.interRegular,
                                         textMonthFontFamily: FONTS.interBold,

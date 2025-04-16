@@ -2,14 +2,14 @@
 import RNFS from 'react-native-fs';
 import { useSelector } from 'react-redux';
 
-export enum MAIN_CATEGORIES {
-    USED = 1,
-    NEW = 2,
-    ACCESSORIES = 3,
-    NOTIFICATION = 4,
+export enum JOBS_STATUS_TABS {
+    ONGOING = "Ongoing",
+    PENDING = "Pending",
+    COMPLETED = "Completed",
 }
 
 export const googlePlacesApi = "AIzaSyDK6xDsgrab0VzbnLeEVT1rJHsz2k1mA1c"
+export const googleLocationApiKey = "AIzaSyB8ODrHnGGYlUvHJ5omefoaIEM_M9Je0bg"
 // API Key Android AIzaSyDK6xDsgrab0VzbnLeEVT1rJHsz2k1mA1c
 const convertImagesToBase64 = async (images: any) => {
     try {

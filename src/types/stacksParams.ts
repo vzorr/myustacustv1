@@ -24,6 +24,8 @@ export type UserStackParamList = {
     NotificationPreferences: any;
     TermsAndConditions: any;
     LoadingScreen: any;
+    JobsStatusSackNav: any;
+    JobsStatusScreens: any;
 };
 
 export type UserNavigationRootProps<T extends keyof UserStackParamList> = {

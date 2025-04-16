@@ -1,4 +1,4 @@
-import { SafeAreaView, Text, View, Image, TouchableOpacity, Alert, ScrollView } from 'react-native'
+import { SafeAreaView, Text, View, Image, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState } from 'react'
 import accountScreensStyles from '../../../styles/accountScreensStyles'
 import CustomTextInput from '../../../components/InputField/InputBox'
@@ -83,10 +83,9 @@ const AccountBasicInfoUi = (props: any) => {
     }
     return (
         <SafeAreaView style={accountScreensStyles.container}>
-            <ScrollView
-                contentContainerStyle={{ flexGrow: 1 }}
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
+            <KeyboardAvoidingView
+                style={{ flexGrow: 1, justifyContent: 'space-between' }}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
             >
                 <View style={{ gap: 24 }}>
                     <AccountHeader
@@ -142,6 +141,7 @@ const AccountBasicInfoUi = (props: any) => {
                             placeholder="Create Password"
                             placeholderTextColor={COLORS.Navy}
                             isPassword={true}
+                            cursorColor={COLORS.Navy}
                             basicInfo="basicInfo"
                             containerStyle={accountScreensStyles.inputFieldContainer}
                             inputStyle={accountScreensStyles.inputField}
@@ -158,6 +158,7 @@ const AccountBasicInfoUi = (props: any) => {
                             placeholder="Re-Enter Password"
                             placeholderTextColor={COLORS.Navy}
                             isPassword={true}
+                            cursorColor={COLORS.Navy}
                             basicInfo="basicInfo"
                             containerStyle={accountScreensStyles.inputFieldContainer}
                             inputStyle={accountScreensStyles.inputField}
@@ -214,28 +215,28 @@ const AccountBasicInfoUi = (props: any) => {
                         )}
                     </View>
                 </View>
-            </ScrollView>
-            {/* Navigation Buttons */}
-            <View style={{ gap: 16 }}>
-                <TouchableOpacity style={accountScreensStyles.arrowButtonContianer} onPress={handleSubmit}>
-                    {!imageUploaded ? (
-                        <SVGIcons.unFilledRightButton />
-                    ) : (
-                        <SVGIcons.filledRightButton />
-                    )}
-                </TouchableOpacity>
-                <View style={accountScreensStyles.StatusBarContainer}>
-                    <ProgressBar
-                        backgroundColor={COLORS.Yellow}
-                    />
-                    <ProgressBar
-                        backgroundColor={COLORS.statusBarColor}
-                    />
-                    <ProgressBar
-                        backgroundColor={COLORS.statusBarColor}
-                    />
+                {/* Navigation Buttons */}
+                <View style={{ gap: 16 }}>
+                    <TouchableOpacity style={accountScreensStyles.arrowButtonContianer} onPress={handleSubmit}>
+                        {!imageUploaded ? (
+                            <SVGIcons.unFilledRightButton />
+                        ) : (
+                            <SVGIcons.filledRightButton />
+                        )}
+                    </TouchableOpacity>
+                    <View style={accountScreensStyles.StatusBarContainer}>
+                        <ProgressBar
+                            backgroundColor={COLORS.Yellow}
+                        />
+                        <ProgressBar
+                            backgroundColor={COLORS.statusBarColor}
+                        />
+                        <ProgressBar
+                            backgroundColor={COLORS.statusBarColor}
+                        />
+                    </View>
                 </View>
-            </View>
+            </KeyboardAvoidingView>
             {/* Image Upload Modal */}
             {showImageModal && (
                 <View style={accountScreensStyles.modalOverlay}>

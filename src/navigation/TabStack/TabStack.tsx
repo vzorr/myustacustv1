@@ -10,6 +10,7 @@ import PostJobScreen from '../../screens/TabsScreens/PostJobScreens/PostJobScree
 import ChatScreen from '../../screens/TabsScreens/ChatScreen/ChatScreen';
 import ProfileScreen from '../../screens/TabsScreens/ProfileScreen/ProfileScreen';
 import { COLORS } from '../../config/themes/theme';
+import JobsStatusSackNav from '../../screens/TabsScreens/JobsStatusScreens/JobsStatusStackNav';
 
 const Tab = createBottomTabNavigator<UserStackParamList>();
 
@@ -17,13 +18,13 @@ const TabStack: React.FC = () => {
     return (
         <View style={styles.container}>
             <Tab.Navigator
-                initialRouteName="Home"
+                initialRouteName="JobsStatusSackNav"
                 screenOptions={tabsScreenOptionsStyle}
                 tabBar={props => <CustomBottomTab {...props} />}
             >
                 <Tab.Screen
-                    name="Home"
-                    component={HomeScreen}
+                    name="JobsStatusSackNav"
+                    component={JobsStatusSackNav}
                     options={{ tabBarLabel: "Home" }}
                 />
                 <Tab.Screen

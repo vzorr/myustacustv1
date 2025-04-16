@@ -64,7 +64,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
 
             // Enhanced validation with specific error messages
             const validationErrors = [];
-            
+
             if (!previewValue?.title) validationErrors.push('Job title');
             if (!previewValue?.description) validationErrors.push('Job description');
             if (!previewValue?.paymentMethod) validationErrors.push('Payment method');
@@ -84,7 +84,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
             setIsLoading(true)
             let payload = await postJobValue(previewValue, metaData?.categories)
             console.log('Payload to send:', JSON.stringify(payload, null, 2));
-            
+
             try {
                 const response = await client(token ? token : userData?.token).post("jobs", payload);
                 console.log('Success Response:', response.data);
@@ -96,7 +96,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 console.log('API Error Response:', apiError.response?.data);
                 console.log('API Error Status:', apiError.response?.status);
                 console.log('API Error Headers:', apiError.response?.headers);
-                
+
                 // Show validation error details if available
                 if (apiError.response?.data?.errors) {
                     const errorDetails = Object.entries(apiError.response.data.errors)
@@ -135,13 +135,13 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                     title='Category'
                     subTitle={previewValue?.category}
                     titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2 }}
+                    containerStyle={{ gap: 2, marginTop: -1 }}
                 />
                 <AccountHeader
                     title='JOB DESCRIPTION'
                     subTitle={previewValue?.description}
                     titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2 }}
+                    containerStyle={{ gap: 2, marginTop: -1 }}
                 />
                 <LineSeparator />
                 <AccountHeader
@@ -154,7 +154,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                     title='MATERIALS'
                     subTitle={previewValue?.materials}
                     titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2 }}
+                    containerStyle={{ gap: 2, marginTop: -1 }}
                 />
                 <LineSeparator />
                 <Heading
@@ -169,13 +169,13 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                     title='START DATE'
                     subTitle={previewValue?.startDate}
                     titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2 }}
+                    containerStyle={{ gap: 2, marginTop: -1 }}
                 />
                 <AccountHeader
                     title='END DATE'
                     subTitle={previewValue?.endDate}
                     titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2 }}
+                    containerStyle={{ gap: 2, marginTop: -1 }}
                 />
                 <LineSeparator />
                 <AccountHeader
@@ -188,7 +188,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                     title='LOCATION DESCRIPTION'
                     subTitle={previewValue?.locationDescp}
                     titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2 }}
+                    containerStyle={{ gap: 2, marginTop: -1 }}
                 />
                 <View style={styles.mapContainer}>
                     <MapView

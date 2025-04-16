@@ -41,6 +41,8 @@ import infoNIPTIcon from "../../assets/icons/bx-info-circle.svg"
 import editIcon from "../../assets/icons/bx-pencil.svg"
 import EyeWhiteIcon from "../../assets/icons/bx-show-white.svg"
 import EyeHideWhiteIcon from "../../assets/icons/bx-hide-white.svg"
+import StateOff from "../../assets/icons/StateOff.svg"
+import stateOn from "../../assets/icons/StateOn.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -84,5 +86,7 @@ export const SVGIcons = {
     infoNIPTIcon,
     editIcon,
     EyeWhiteIcon,
-    EyeHideWhiteIcon
+    EyeHideWhiteIcon,
+    StateOff,
+    stateOn
 };

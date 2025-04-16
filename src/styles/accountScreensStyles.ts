@@ -11,7 +11,7 @@ const accountScreensStyles = StyleSheet.create({
     },
     basicInfoHeading: {
         fontSize: fontSize[24],
-        fontFamily: FONTS.interSemiBold,
+        fontFamily: FONTS.interBold,
         fontWeight: "600",
         fontStyle: "normal",
         color: COLORS.Navy

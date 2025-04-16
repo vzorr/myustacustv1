@@ -14,8 +14,8 @@ interface CustomTextInputProps {
   // defaultCode?: 'US' | 'PK' | 'IN' | 'GB' | 'CA' | 'AU' | 'FR' | 'DE';
 }
 
-const PhoneNumberInput = (props:any) => {
-  const {containerStyle, inputStyle, onChangeText,  onChangeFormattedText, defaultValue = '', handleBlur}= props
+const PhoneNumberInput = (props: any) => {
+  const { containerStyle, inputStyle, onChangeText, onChangeFormattedText, defaultValue = '', handleBlur } = props
   const phoneInput = useRef<PhoneInput>(null);
 
   return (
@@ -23,7 +23,7 @@ const PhoneNumberInput = (props:any) => {
       <PhoneInputComponent
         ref={phoneInput}
         defaultValue={defaultValue}
-        defaultCode="US"
+        defaultCode="GB"
         layout="first"
         onChangeText={onChangeText}
         onChangeFormattedText={onChangeFormattedText}
