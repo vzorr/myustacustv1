@@ -11,36 +11,26 @@ interface JobsStatusCardProps {
     time: string;
     jobTitle: string;
     statusText: string;
-    statusTextColor: string;
-    statusBgColor: string;
-    statusBorderColor: string;
     applicationsCount?: string;
     milestones?: string;
-    // buttonTitle?: string;
-    onPress?: () => void;
-    onButtonPress?: () => void;
-    // BtnWidth: any
+    handleCardPress?: () => void;
+    handleViewButton?: any;
 }
 
 const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
     time,
     jobTitle,
     statusText,
-    statusTextColor,
-    statusBgColor,
-    statusBorderColor,
     applicationsCount,
     milestones,
-    // buttonTitle = 'View Applications',
-    onPress,
-    onButtonPress = () => { },
-    // BtnWidth
+    handleCardPress,
+    handleViewButton,
 }) => {
     return (
         <View style={styles.cardContainer}>
             <TouchableOpacity
                 style={styles.cardInnerContainer}
-                onPress={onPress}
+                onPress={handleCardPress}
                 activeOpacity={0.7}
             >
                 <View>
@@ -51,12 +41,28 @@ const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
                     style={styles.jobTitle}
                     containerStyle={styles.jobTitleContainer}
                 />
-                <StatusUpdate
-                    text={statusText}
-                    textColor={statusTextColor}
-                    bgColor={statusBgColor}
-                    borderColor={statusBorderColor}
-                />
+                {statusText === "pending" ?
+                    <StatusUpdate
+                        text={statusText}
+                        textColor={COLORS.statusBtnBorderColor}
+                        bgColor={COLORS.statusBtnBgColor}
+                        borderColor={COLORS.statusBtnBorderColor}
+                    />
+                    : statusText === "ongoing" ?
+                        <StatusUpdate
+                            text={statusText}
+                            textColor={COLORS.ongoingStatusColor}
+                            bgColor={COLORS.ongoingBgColor}
+                            borderColor={COLORS.ongoingStatusColor}
+                        />
+                        :
+                        <StatusUpdate
+                            text={statusText}
+                            textColor={COLORS.completedTxtColor}
+                            bgColor={COLORS.completedBgColor}
+                            borderColor={COLORS.completedBgColor}
+                        />
+                }
                 {(applicationsCount || milestones) ?
                     <View style={styles.countContainer}>
                         <Text style={[reuseableTextStyles.subTitle, styles.countTxt]}>{applicationsCount ? "Applications:" : "Milestones"}</Text>
@@ -68,26 +74,23 @@ const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
                     </View>
                 }
             </TouchableOpacity>
-            {(statusText === "Ongoing" ?
+            {(statusText === "ongoing" ?
                 <CustomButton
                     title={"View Progress"}
-                    onPress={onButtonPress}
+                    onPress={handleViewButton}
                     style={{ width: SIZES.wp(45) }}
-                /> : statusText === "Pending" ?
+                /> : statusText === "pending" ?
                     <CustomButton
                         title={"View Applications"}
-                        onPress={onButtonPress}
+                        onPress={handleViewButton}
                         style={{ width: SIZES.wp(50) }}
                     /> :
                     <CustomButton
                         title={"Leave Review"}
-                        onPress={onButtonPress}
+                        onPress={handleViewButton}
                         style={{ width: SIZES.wp(45) }}
                     />
             )}
-            <View style={{ paddingVertical: 16 }}>
-                <LineSeparator />
-            </View>
         </View>
     )
 }
