@@ -11,7 +11,6 @@ import SocialLogin from '../../../components/SocialLogin/SocialLogin';
 import { Formik } from 'formik';
 import { logInSchema, SigUpSchema } from '../../../config/constants/errorMessage';
 import ErrorText from '../../../components/ErrorText';
-import auth from '@react-native-firebase/auth';
 import Toast from 'react-native-simple-toast';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
 import { client1 } from '../../../apiManager/Client';

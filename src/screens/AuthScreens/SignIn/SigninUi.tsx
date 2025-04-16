@@ -11,7 +11,6 @@ import SocialLogin from '../../../components/SocialLogin/SocialLogin';
 import { Formik } from 'formik';
 import { logInSchema, SigUpSchema } from '../../../config/constants/errorMessage';
 import ErrorText from '../../../components/ErrorText';
-import auth from '@react-native-firebase/auth';
 import { setUserInfo } from '../../../stores/reducer/userInfoReducer';
 import Toast from 'react-native-simple-toast';
 import { useDispatch, useSelector } from 'react-redux';

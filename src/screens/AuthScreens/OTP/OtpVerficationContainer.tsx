@@ -2,8 +2,6 @@ import React, { useState, FC, useEffect, useCallback } from 'react'
 import OtpVerificationUi from './OtpVerificationUi';
 import { UserNavigationRootProps } from '../../../types/stacksParams';
 
-import auth from '@react-native-firebase/auth';
-
 import Toast from 'react-native-simple-toast';
 import { Alert } from 'react-native';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
