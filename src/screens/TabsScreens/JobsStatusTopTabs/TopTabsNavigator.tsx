@@ -22,9 +22,9 @@ const TopTabsNavigator = (props: any) => {
   const getAllJobList = async () => {
     try {
       // let url = `jobs/usta/jobs?filter=${tabType === 'Recommended' ? "recommended" : tabType === 'Most Recent' ? "most_recent" : "saved"}`
-      let url = `api/jobs/user/jobs`
+      let url = `jobs/user/jobs`
       let response = await client(userData?.token).get(`${url}`)
-      console.log("ressss", response)
+      console.log("API Response:", JSON.stringify(response.data, null, 2))
       let res = response?.data
       setIsloading(false)
       if (res?.code !== 200) {
@@ -36,7 +36,7 @@ const TopTabsNavigator = (props: any) => {
       }
     } catch (error) {
       setIsloading(false)
-      console.log("errrrorr", error)
+      console.log("API Error:", JSON.stringify(error, null, 2))
     }
   }
   useEffect(() => {
