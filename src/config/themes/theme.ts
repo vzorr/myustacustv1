@@ -35,7 +35,7 @@ export const COLORS = {
     ongoingBgColor: "rgba(220,237,255,1)",
     completedBgColor: "rgba(217,255,217,1)",
     completedTxtColor: "rgba(4,170,10,1)",
-    skyBlue: "#0064C6",
+    skyBlue: "rgba(0,100,198,1)",
     grey: "#BEBEBE"
 }
 export const fontSize = {

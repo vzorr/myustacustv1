@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native';
 import { COLORS, FONTS, fontSize } from '../../../config/themes/theme';
 import RecommendedScreen from './PendingStatusScreen';
 import MostRecentScreen from './OngoingStatusScreen';
@@ -8,22 +8,76 @@ import { JOBS_STATUS_TABS } from '../../../config/constants/constants';
 import OngoingStatusScreen from './OngoingStatusScreen';
 import PendingStatusScreen from './PendingStatusScreen';
 import CompletedStatusScreen from './CompletedStatusScreen';
+import { client } from '../../../apiManager/Client';
+import { useSelector } from 'react-redux';
+import JobsStatusCard from '../../../components/HomeComponents/JobsStatusCard';
+import LineSeparator from '../../../components/LineSeparator/LineSeparator';
 
 const TopTabsNavigator = (props: any) => {
   const { activeTab, setActiveTab } = props
+  const [isLoading, setIsloading] = useState(true)
+  const [jobData, setJobData] = useState<any>([])
+  const { userData }: any = useSelector((state: any) => state?.userInfo)
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case JOBS_STATUS_TABS.ONGOING:
-        return <OngoingStatusScreen />;
-      case JOBS_STATUS_TABS.PENDING:
-        return <PendingStatusScreen />;
-      case JOBS_STATUS_TABS.COMPLETED:
-        return <CompletedStatusScreen />;
-      default:
-        return <RecommendedScreen />;
+  const getAllJobList = async () => {
+    try {
+      // let url = `jobs/usta/jobs?filter=${tabType === 'Recommended' ? "recommended" : tabType === 'Most Recent' ? "most_recent" : "saved"}`
+      let url = `api/jobs/user/jobs`
+      let response = await client(userData?.token).get(`${url}`)
+      console.log("ressss", response)
+      let res = response?.data
+      setIsloading(false)
+      if (res?.code !== 200) {
+        return
+      }
+      setIsloading(false)
+      if (res?.result?.length > 0) {
+        setJobData(res?.result)
+      }
+    } catch (error) {
+      setIsloading(false)
+      console.log("errrrorr", error)
     }
+  }
+  useEffect(() => {
+    const fetchData = async () => {
+      await getAllJobList();
+    };
+    fetchData();
+  }, []);
+  const handleActiveTab = (tabType: string) => {
+    setActiveTab(tabType)
+    getAllJobList()
   };
+  const renderItem = ({ item, index }: { item: any, index: any }) => (
+    <View>
+      <JobsStatusCard
+        time={item.time}
+        jobTitle={item.jobTitle}
+        statusText={item.statusText}
+        applicationsCount={item?.applicationsCount}
+        milestones={item?.milestones}
+        statusTextColor={COLORS.statusBtnBorderColor}
+        statusBgColor={COLORS.statusBtnBgColor}
+        statusBorderColor={COLORS.statusBtnBorderColor}
+      />
+      <LineSeparator />
+    </View>
+  );
+
+
+  // const renderTabContent = () => {
+  //   switch (activeTab) {
+  //     case JOBS_STATUS_TABS.ONGOING:
+  //       return <OngoingStatusScreen />;
+  //     case JOBS_STATUS_TABS.PENDING:
+  //       return <PendingStatusScreen />;
+  //     case JOBS_STATUS_TABS.COMPLETED:
+  //       return <CompletedStatusScreen />;
+  //     default:
+  //       return <RecommendedScreen />;
+  //   }
+  // };
 
   return (
     <View style={styles.container}>
@@ -48,7 +102,7 @@ const TopTabsNavigator = (props: any) => {
             styles.tab,
             activeTab === JOBS_STATUS_TABS.PENDING && styles.activeTab,
           ]}
-          onPress={() => setActiveTab(JOBS_STATUS_TABS.PENDING)}
+          onPress={() => handleActiveTab(JOBS_STATUS_TABS.PENDING)}
         >
           <Text style={[
             styles.tabText,
@@ -74,8 +128,17 @@ const TopTabsNavigator = (props: any) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.contentContainer}>
+      {/* <View style={styles.contentContainer}>
         {renderTabContent()}
+      </View> */}
+      <View style={styles.contentContainer}>
+        <FlatList
+          data={jobData}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        />
       </View>
     </View>
   );
@@ -118,5 +181,11 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+  },
+  content: {
+    gap: 16,
+    paddingBottom: 100,
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
 }); 
