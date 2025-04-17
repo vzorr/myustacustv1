@@ -97,19 +97,13 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
 
                             styles={{
                                 textInput: locationScreenStyles.searchText,
-                                textInputContainer: { height: SIZES.hp(6.1), paddingStart: 20, borderRadius: 8, }
-                                // height: 48,
-                                // borderRadius: 5,
-                                // paddingHorizontal: 16,
-                                // backgroundColor: '#EFEFEF',
+                                textInputContainer: {
+                                    height: SIZES.hp(6.1),
+                                    paddingHorizontal: 20,
+                                    borderRadius: 8,
+                                }
                             }}
                         />
-                        {/* <View style={{ width: "80%" }}>
-                            <Text
-                                numberOfLines={1}
-                                ellipsizeMode="tail"
-                                style={locationScreenStyles.searchText}>{address}</Text>
-                        </View> */}
                     </View>
                     <TouchableOpacity style={{
                         position: 'absolute',
