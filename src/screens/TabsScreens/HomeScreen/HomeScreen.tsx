@@ -31,46 +31,47 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
             <Text style={styles.sectionTitle}>Most Visited Professions</Text>
             <ProfessionCard
                 title="Plumber"
-                count={0}
+                count={253}
                 icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Plumber.png')} style={styles.professionImage} />}
+                suffixText=" Plumbers"
             />
 
             <ProfessionCard
                 title="Dry Wall"
-                count={0}
+                count={518}
                 icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Drywall.png')} style={styles.dryWalImage} />}
-            // color={COLORS.Navy}
+                suffixText=" Installers"
             />
 
             <ProfessionCard
                 title="Electrician"
-                count={0}
+                count={427}
                 icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-            // color={COLORS.Navy}
+                suffixText=" Electricians"
             />
             <ProfessionCard
-                title="Electrician"
-                count={0}
+                title="Carpenter"
+                count={315}
                 icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-            // color={COLORS.Navy}
+                suffixText=" Carpenters"
             />
             <ProfessionCard
-                title="Electrician"
-                count={0}
+                title="Painter"
+                count={183}
                 icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-            // color={COLORS.Navy}
+                suffixText=" Painters"
             />
             <ProfessionCard
-                title="Electrician"
-                count={0}
+                title="HVAC"
+                count={267}
                 icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-            // color={COLORS.Navy}
+                suffixText=" Technicians"
             />
             <ProfessionCard
-                title="Electrician"
-                count={0}
+                title="Roofer"
+                count={142}
                 icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-            // color={COLORS.Navy}
+                suffixText=" Professionals"
             />
         </View>
     )

@@ -85,12 +85,13 @@ export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
         };
     }, [showKeyboard, hideKeyboard]);
 
-    if (isKeyboardVisible) {
-        return null; // Hide the tab bar when keyboard is visible
-    }
-
+    // Important: render all content regardless of keyboard visibility
+    // Use conditional styling instead of conditional rendering
     return (
-        <View style={styles.container}>
+        <View style={[
+            styles.container, 
+            isKeyboardVisible && { opacity: 0, height: 0 }
+        ]}>
             <View style={styles.tabBar}>
                 {state.routes.map((route: any, index: number) => {
                     const { options } = descriptors[route.key];

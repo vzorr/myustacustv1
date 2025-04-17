@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { COLORS } from '../../config/themes/theme';
 import { SVGIcons } from '../../config/constants/svg';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface ProfessionCardProps {
     title: string;
@@ -14,6 +15,9 @@ interface ProfessionCardProps {
     cardStyle?: ViewStyle;
     titleStyle?: TextStyle;
     countStyle?: TextStyle;
+    gradientColors?: string[];
+    gradientStart?: { x: number, y: number };
+    gradientEnd?: { x: number, y: number };
 }
 
 const ProfessionCard = ({
@@ -27,37 +31,48 @@ const ProfessionCard = ({
     cardStyle,
     titleStyle,
     countStyle,
+    gradientColors = [COLORS.Navy, COLORS.skyBlue],
+    gradientStart = { x: 0, y: 0 },
+    gradientEnd = { x: 1, y: 0 },
 }: ProfessionCardProps) => {
     return (
         <TouchableOpacity
-            style={[styles.professionCard, { backgroundColor: color }, cardStyle]}
             onPress={onPress}
             activeOpacity={0.8}
+            style={styles.container}
         >
-            <View style={styles.professionInfo}>
-                <Text style={[styles.professionTitle, titleStyle]}>{title}</Text>
-                <View style={styles.professionCountContainer}>
-                    <Text style={[styles.professionCount, countStyle]}>
-                        {count} {title}{suffixText}
-                    </Text>
-                    {showArrow && (
-                        <SVGIcons.rightArrow stroke={COLORS.white} width={16} height={16} />
-                    )}
+            <LinearGradient
+                colors={gradientColors}
+                start={gradientStart}
+                end={gradientEnd}
+                style={[styles.professionCard, cardStyle]}
+            >
+                <View style={styles.professionInfo}>
+                    <Text style={[styles.professionTitle, titleStyle]}>{title}</Text>
+                    <View style={styles.professionCountContainer}>
+                        <Text style={[styles.professionCount, countStyle]}>
+                            {count} {title}{suffixText}
+                        </Text>
+                        {showArrow && (
+                            <SVGIcons.rightArrow stroke={COLORS.white} width={16} height={16} />
+                        )}
+                    </View>
                 </View>
-            </View>
-            <View style={styles.professionImageContainer}>
-                {icon}
-            </View>
+                <View style={styles.professionImageContainer}>
+                    {icon}
+                </View>
+            </LinearGradient>
         </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
+    container: {
+        marginBottom: 8,
+    },
     professionCard: {
-        backgroundColor: COLORS.skyBlue,
         borderRadius: 12,
         padding: 16,
-        marginBottom: 8,
         flexDirection: 'row',
         justifyContent: 'space-between',
         overflow: 'hidden',
