@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle, Alert } from 'react-native';
 import { COLORS, FONTS } from '../../config/themes/theme';
 import { SVGIcons } from '../../config/constants/svg';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
 
 import Toast from 'react-native-simple-toast';
 import { setUserInfo } from '../../stores/reducer/userInfoReducer';
@@ -15,12 +15,13 @@ interface socialLoginProps {
     loginType?: 'google' | 'facebook';
 };
 GoogleSignin.configure({
-    webClientId: '368410056357-hc236ivu5r6docru5kf4lok7buv1c1l0.apps.googleusercontent.com',
+    webClientId: '275075185365-50kmseb4b5lmnouvg9qhv7vblcuuqlab.apps.googleusercontent.com',
+    iosClientId:"275075185365-2ik983eqskl48acteeh8as8u602s5qif.apps.googleusercontent.com",
     offlineAccess: true,
     scopes: ['profile', 'email'],
 });
 const SocialLogin: React.FC<socialLoginProps> = ({ title, style, textStyle, loginType }) => {
-const dispatch = useDispatch()
+    const dispatch = useDispatch()
     const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {
 
@@ -31,6 +32,7 @@ const dispatch = useDispatch()
             console.log('Play Services Available:', isAvailable);
             const userInfo = await GoogleSignin.signIn();
             console.log('Google ID Token:', userInfo);
+       
             setIsLoading(true)
             // let payload = {
             //     Provider: "Google",
@@ -49,7 +51,7 @@ const dispatch = useDispatch()
             // }
             console.log('User Info:', userInfo);
 
-        } catch (error:any) {
+        } catch (error: any) {
             setIsLoading(false)
             console.log('Google Sign-In Error:dddddddddddddd', error.code, error.message, error);
         }
