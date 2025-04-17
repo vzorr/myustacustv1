@@ -29,6 +29,7 @@ export const COLORS = {
     otpBoxColor: "rgba(128, 143, 159, 1)",
     inputBorder: "rgba(0, 0, 0, 0.20)",
     modalBgColor: "rgba(55, 55, 55, 0.50)",
+    budgetModalBgColor: "rgba(55, 55, 55, 0.60)",
     statusBtnBgColor: "rgba(255,241,218,1)",
     statusBtnBorderColor: "rgba(255,160,7,1)",
     ongoingStatusColor: "rgba(0,123,255,1)",
