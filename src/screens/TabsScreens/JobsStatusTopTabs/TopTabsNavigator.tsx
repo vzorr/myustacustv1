@@ -19,9 +19,16 @@ const TopTabsNavigator = (props: any) => {
   const [jobData, setJobData] = useState<any>([])
   const { userData }: any = useSelector((state: any) => state?.userInfo)
 
-  const getAllJobList = async () => {
+  const getAllJobList = async (tabType: any) => {
     try {
       // let url = `jobs/usta/jobs?filter=${tabType === 'Recommended' ? "recommended" : tabType === 'Most Recent' ? "most_recent" : "saved"}`
+      if (tabType === JOBS_STATUS_TABS.ONGOING) {
+        setJobData([])
+        return
+      } else if (tabType === JOBS_STATUS_TABS.COMPLETED) {
+        setJobData([])
+        return
+      }
       let url = `jobs/user/jobs`
       let response = await client(userData?.token).get(`${url}`)
       console.log("API Response:", JSON.stringify(response.data, null, 2))
@@ -41,13 +48,13 @@ const TopTabsNavigator = (props: any) => {
   }
   useEffect(() => {
     const fetchData = async () => {
-      await getAllJobList();
+      await getAllJobList(activeTab);
     };
     fetchData();
   }, []);
   const handleActiveTab = (tabType: string) => {
     setActiveTab(tabType)
-    getAllJobList()
+    getAllJobList(tabType)
   };
   const handleViewButton = (status: string) => {
 
@@ -55,7 +62,7 @@ const TopTabsNavigator = (props: any) => {
   const renderItem = ({ item, index }: { item: any, index: any }) => (
     <View>
       <JobsStatusCard
-        time={item?.time ? item?.time : "Amir how to show time"}
+        time={item?.createdAt}
         jobTitle={item?.title}
         statusText={item?.status}
         milestones={item?.milestones}
@@ -90,7 +97,7 @@ const TopTabsNavigator = (props: any) => {
             styles.tab,
             activeTab === JOBS_STATUS_TABS.ONGOING && styles.activeTab,
           ]}
-          onPress={() => setActiveTab(JOBS_STATUS_TABS.ONGOING)}
+          onPress={() => handleActiveTab(JOBS_STATUS_TABS.ONGOING)}
         >
           <Text style={[
             styles.tabText,
@@ -120,7 +127,7 @@ const TopTabsNavigator = (props: any) => {
             styles.tab,
             activeTab === JOBS_STATUS_TABS.COMPLETED && styles.activeTab,
           ]}
-          onPress={() => setActiveTab(JOBS_STATUS_TABS.COMPLETED)}
+          onPress={() => handleActiveTab(JOBS_STATUS_TABS.COMPLETED)}
         >
           <Text style={[
             styles.tabText,
