@@ -15,7 +15,7 @@ interface socialLoginProps {
     loginType?: 'google' | 'facebook';
 };
 GoogleSignin.configure({
-    webClientId: '368410056357-hc236ivu5r6docru5kf4lok7buv1c1l0.apps.googleusercontent.com',
+    webClientId: '275075185365-50kmseb4b5lmnouvg9qhv7vblcuuqlab.apps.googleusercontent.com',
     offlineAccess: true,
     scopes: ['profile', 'email'],
 });
