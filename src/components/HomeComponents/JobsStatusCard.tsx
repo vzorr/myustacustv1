@@ -6,6 +6,7 @@ import CustomButton from '../Buttons/CustomButton'
 import { reuseableTextStyles } from '../../styles/reuseableTextStyles'
 import StatusUpdate from './StatusUpdate'
 import LineSeparator from '../LineSeparator/LineSeparator'
+import { getCustomTimeAgo } from '../../config/constants/constants'
 
 interface JobsStatusCardProps {
     time: string;
@@ -26,6 +27,8 @@ const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
     handleCardPress,
     handleViewButton,
 }) => {
+console.log("timeeee", time)
+    const timeAgo = getCustomTimeAgo(time)
     return (
         <View style={styles.cardContainer}>
             <TouchableOpacity
@@ -34,7 +37,7 @@ const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
                 activeOpacity={0.7}
             >
                 <View>
-                    <Text style={styles.timeStyle}>{time}</Text>
+                    <Text style={styles.timeStyle}>{timeAgo}</Text>
                 </View>
                 <Heading
                     headingText={jobTitle}

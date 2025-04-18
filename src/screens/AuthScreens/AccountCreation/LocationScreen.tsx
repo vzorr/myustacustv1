@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAccountCreation } from '../../../stores/reducer/AccountCreationReducer';
 import { googlePlacesApi } from '../../../config/constants/constants';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { SIZES } from '../../../config/themes/theme';
 const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> = (props) => {
 
     const mapViewRef = useRef(null);
@@ -57,7 +58,13 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
             <View style={locationScreenStyles.mapContainer}>
                 <View style={locationScreenStyles.searchBar}>
                     <View style={locationScreenStyles.locationTextContainer}>
-                        <View style={{ left: -10 }}>
+                        <View style={{
+                            position: 'absolute',
+                            top: 10,
+                            left: 0,
+                            bottom: 0,
+                            zIndex: 2
+                        }}>
                             <SVGIcons.locationIcon />
                         </View>
                         <GooglePlacesAutocomplete
@@ -89,7 +96,8 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
                             predefinedPlaces={[]}
 
                             styles={{
-                                textInput: locationScreenStyles.searchText
+                                textInput: locationScreenStyles.searchText,
+                                textInputContainer: { height: SIZES.hp(6.1), paddingStart: 20, borderRadius: 8, }
                                 // height: 48,
                                 // borderRadius: 5,
                                 // paddingHorizontal: 16,
@@ -103,7 +111,13 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
                                 style={locationScreenStyles.searchText}>{address}</Text>
                         </View> */}
                     </View>
-                    <TouchableOpacity >
+                    <TouchableOpacity style={{
+                        position: 'absolute',
+                        top: 10,
+                        right: 10,
+                        bottom: 0,
+                        zIndex: 2
+                    }}>
                         <SVGIcons.crossIcon />
                     </TouchableOpacity>
                 </View>

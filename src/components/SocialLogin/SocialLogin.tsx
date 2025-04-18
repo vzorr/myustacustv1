@@ -16,6 +16,7 @@ interface socialLoginProps {
 };
 GoogleSignin.configure({
     webClientId: '275075185365-50kmseb4b5lmnouvg9qhv7vblcuuqlab.apps.googleusercontent.com',
+    
     iosClientId:"275075185365-2ik983eqskl48acteeh8as8u602s5qif.apps.googleusercontent.com",
     offlineAccess: true,
     scopes: ['profile', 'email'],
@@ -27,6 +28,8 @@ const SocialLogin: React.FC<socialLoginProps> = ({ title, style, textStyle, logi
 
     }, []);
     const signInGoogle = async () => {
+        const isAvailable = await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+        console.log("Play Services Status:", isAvailable);
         try {
             const isAvailable = await GoogleSignin.hasPlayServices();
             console.log('Play Services Available:', isAvailable);
@@ -53,7 +56,16 @@ const SocialLogin: React.FC<socialLoginProps> = ({ title, style, textStyle, logi
 
         } catch (error: any) {
             setIsLoading(false)
-            console.log('Google Sign-In Error:dddddddddddddd', error.code, error.message, error);
+
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+              console.log('User cancelled the login flow.');
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+              console.log('Sign in is in progress.');
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+              console.log('Play Services not available or outdated.');
+            } else {
+              console.log('Some other error: ', error);
+            }
         }
     }
     const signInMeta = () => {
