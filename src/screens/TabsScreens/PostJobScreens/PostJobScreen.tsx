@@ -496,10 +496,10 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             headingText='IMAGES'
                             style={{ fontSize: fontSize[16] }}
                         />
-                        <CustomImagePicker 
+                        <CustomImagePicker
                             onTakePhoto={takePhotoWithCamera}
                             onPickFromGallery={pickImageFromGallery}
-                            onCancel={() => {}}
+                            onCancel={() => { }}
                             imagesCount={values?.images && Array.isArray(values.images) ? values.images.length : 0}
                         />
 
@@ -526,13 +526,13 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                         setShowStartCalendar(false);
                                     }}
                                     markedDates={{
-                                        [values?.startDate]: { selected: true, selectedColor: COLORS.Yellow }
+                                        [values?.startDate]: { selected: true, selectedColor: COLORS.Navy }
                                     }}
                                     theme={{
                                         calendarBackground: COLORS.white,
                                         textSectionTitleColor: COLORS.Navy,
                                         selectedDayBackgroundColor: COLORS.Black,
-                                        selectedDayTextColor: COLORS.Navy,
+                                        selectedDayTextColor: COLORS.white,
                                         todayTextColor: COLORS.Navy,
                                         dayTextColor: COLORS.Navy,
                                         textDisabledColor: COLORS.grey,
@@ -591,16 +591,16 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                         setShowEndCalendar(false);
                                     }}
                                     markedDates={{
-                                        [values?.endDate]: { selected: true, selectedColor: COLORS.Yellow },
+                                        [values?.endDate]: { selected: true, selectedColor: COLORS.Navy },
                                         ...(values?.startDate && {
-                                            [values?.startDate]: { selected: true, selectedColor: COLORS.Yellow }
+                                            [values?.startDate]: { selected: true, selectedColor: COLORS.Navy }
                                         })
                                     }}
                                     theme={{
                                         calendarBackground: COLORS.white,
                                         textSectionTitleColor: COLORS.Navy,
                                         selectedDayBackgroundColor: COLORS.Black,
-                                        selectedDayTextColor: COLORS.Navy,
+                                        selectedDayTextColor: COLORS.white,
                                         todayTextColor: COLORS.Navy,
                                         dayTextColor: COLORS.Navy,
                                         textDisabledColor: COLORS.grey,

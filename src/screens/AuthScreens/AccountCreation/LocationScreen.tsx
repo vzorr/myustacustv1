@@ -11,6 +11,7 @@ import { setAccountCreation } from '../../../stores/reducer/AccountCreationReduc
 import { googlePlacesApi } from '../../../config/constants/constants';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { SIZES } from '../../../config/themes/theme';
+
 const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> = (props) => {
 
     const mapViewRef = useRef(null);
@@ -94,7 +95,6 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
                                 onChangeText: text => console.log('Typing:', text),
                             }}
                             predefinedPlaces={[]}
-
                             styles={{
                                 textInput: locationScreenStyles.searchText,
                                 textInputContainer: {

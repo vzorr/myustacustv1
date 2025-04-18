@@ -43,6 +43,7 @@ import EyeWhiteIcon from "../../assets/icons/bx-show-white.svg"
 import EyeHideWhiteIcon from "../../assets/icons/bx-hide-white.svg"
 import StateOff from "../../assets/icons/StateOff.svg"
 import stateOn from "../../assets/icons/StateOn.svg"
+import BackArrow from "../../assets/icons/chevron/chevron-back-white.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -88,5 +89,6 @@ export const SVGIcons = {
     EyeWhiteIcon,
     EyeHideWhiteIcon,
     StateOff,
-    stateOn
+    stateOn,
+    BackArrow
 };
