@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle, Alert } from 'react-native';
 import { COLORS, FONTS } from '../../config/themes/theme';
 import { SVGIcons } from '../../config/constants/svg';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, statusCodes, } from '@react-native-google-signin/google-signin';
 
 import Toast from 'react-native-simple-toast';
 import { setUserInfo } from '../../stores/reducer/userInfoReducer';
@@ -35,6 +35,7 @@ const SocialLogin: React.FC<socialLoginProps> = ({ title, style, textStyle, logi
             console.log('Play Services Available:', isAvailable);
             const userInfo = await GoogleSignin.signIn();
             console.log('Google ID Token:', userInfo);
+       
             setIsLoading(true)
             // let payload = {
             //     Provider: "Google",
