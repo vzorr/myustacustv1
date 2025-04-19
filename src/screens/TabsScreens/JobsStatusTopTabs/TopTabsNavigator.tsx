@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native';
 import { COLORS, FONTS, fontSize } from '../../../config/themes/theme';
-import RecommendedScreen from './PendingStatusScreen';
-import MostRecentScreen from './OngoingStatusScreen';
-import SavedScreen from './CompletedStatusScreen';
 import { JOBS_STATUS_TABS } from '../../../config/constants/constants';
-import OngoingStatusScreen from './OngoingStatusScreen';
-import PendingStatusScreen from './PendingStatusScreen';
-import CompletedStatusScreen from './CompletedStatusScreen';
 import { client } from '../../../apiManager/Client';
 import { useSelector } from 'react-redux';
 import JobsStatusCard from '../../../components/HomeComponents/JobsStatusCard';
 import LineSeparator from '../../../components/LineSeparator/LineSeparator';
+import { statusTabsStyles } from '../../../styles/statusTabsStyles';
 
 const TopTabsNavigator = (props: any) => {
   const { activeTab, setActiveTab } = props
@@ -76,32 +71,20 @@ const TopTabsNavigator = (props: any) => {
   );
 
 
-  // const renderTabContent = () => {
-  //   switch (activeTab) {
-  //     case JOBS_STATUS_TABS.ONGOING:
-  //       return <OngoingStatusScreen />;
-  //     case JOBS_STATUS_TABS.PENDING:
-  //       return <PendingStatusScreen />;
-  //     case JOBS_STATUS_TABS.COMPLETED:
-  //       return <CompletedStatusScreen />;
-  //     default:
-  //       return <RecommendedScreen />;
-  //   }
-  // };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.tabsContainer}>
+    <View style={statusTabsStyles.container}>
+      <View style={statusTabsStyles.tabsContainer}>
         <TouchableOpacity
           style={[
-            styles.tab,
-            activeTab === JOBS_STATUS_TABS.ONGOING && styles.activeTab,
+            statusTabsStyles.tab,
+            activeTab === JOBS_STATUS_TABS.ONGOING && statusTabsStyles.activeTab,
           ]}
           onPress={() => handleActiveTab(JOBS_STATUS_TABS.ONGOING)}
         >
           <Text style={[
-            styles.tabText,
-            activeTab === JOBS_STATUS_TABS.ONGOING && styles.activeTabText
+            statusTabsStyles.tabText,
+            activeTab === JOBS_STATUS_TABS.ONGOING && statusTabsStyles.activeTabText
           ]}>
             {JOBS_STATUS_TABS.ONGOING}
           </Text>
@@ -109,14 +92,14 @@ const TopTabsNavigator = (props: any) => {
 
         <TouchableOpacity
           style={[
-            styles.tab,
-            activeTab === JOBS_STATUS_TABS.PENDING && styles.activeTab,
+            statusTabsStyles.tab,
+            activeTab === JOBS_STATUS_TABS.PENDING && statusTabsStyles.activeTab,
           ]}
           onPress={() => handleActiveTab(JOBS_STATUS_TABS.PENDING)}
         >
           <Text style={[
-            styles.tabText,
-            activeTab === JOBS_STATUS_TABS.PENDING && styles.activeTabText
+            statusTabsStyles.tabText,
+            activeTab === JOBS_STATUS_TABS.PENDING && statusTabsStyles.activeTabText
           ]}>
             {JOBS_STATUS_TABS.PENDING}
           </Text>
@@ -124,30 +107,30 @@ const TopTabsNavigator = (props: any) => {
 
         <TouchableOpacity
           style={[
-            styles.tab,
-            activeTab === JOBS_STATUS_TABS.COMPLETED && styles.activeTab,
+            statusTabsStyles.tab,
+            activeTab === JOBS_STATUS_TABS.COMPLETED && statusTabsStyles.activeTab,
           ]}
           onPress={() => handleActiveTab(JOBS_STATUS_TABS.COMPLETED)}
         >
           <Text style={[
-            styles.tabText,
-            activeTab === JOBS_STATUS_TABS.COMPLETED && styles.activeTabText
+            statusTabsStyles.tabText,
+            activeTab === JOBS_STATUS_TABS.COMPLETED && statusTabsStyles.activeTabText
           ]}>
             {JOBS_STATUS_TABS.COMPLETED}
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* <View style={styles.contentContainer}>
+      {/* <View style={statusTabsStyles.contentContainer}>
         {renderTabContent()}
       </View> */}
-      <View style={styles.contentContainer}>
+      <View style={statusTabsStyles.contentContainer}>
         <FlatList
           data={jobData}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={statusTabsStyles.content}
         />
       </View>
     </View>
@@ -155,45 +138,3 @@ const TopTabsNavigator = (props: any) => {
 };
 
 export default TopTabsNavigator;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.white,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-    justifyContent: 'space-between',
-  },
-  tab: {
-    paddingVertical: 5,
-    // paddingHorizontal: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  activeTab: {
-    borderBottomWidth: 3,
-    borderBottomColor: COLORS.Navy,
-  },
-  tabText: {
-    fontSize: fontSize[12],
-    color: COLORS.Navy,
-    fontWeight: '400',
-    textAlign: 'center',
-  },
-  activeTabText: {
-    color: COLORS.Navy,
-    fontWeight: '600',
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  content: {
-    paddingBottom: 100,
-    paddingTop: 16,
-  },
-}); 

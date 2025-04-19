@@ -88,7 +88,7 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
                 isProfile={false}
             />
             <UstaHeading
-                title="My Usta"
+                title="My Jobs"
                 onPress={ViewPostedJobs}
                 containerStyle={{ paddingHorizontal: 20, paddingTop: 20 }}
                 style={{ fontSize: fontSize[16] }}
