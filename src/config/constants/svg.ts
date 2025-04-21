@@ -44,6 +44,11 @@ import EyeHideWhiteIcon from "../../assets/icons/bx-hide-white.svg"
 import StateOff from "../../assets/icons/StateOff.svg"
 import stateOn from "../../assets/icons/StateOn.svg"
 import BackArrow from "../../assets/icons/chevron/chevron-back-white.svg"
+import badgeCheckIcon from "../../assets/icons/bx-badge-check.svg"
+import calenderIcon from "../../assets/icons/bx-calendar.svg"
+import moneyIcon from "../../assets/icons/bx-money.svg"
+import startFillIcon from "../../assets/icons/star/star-filled.svg"
+import yellowStarIcon from "../../assets/icons/star/Yellow-Start.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -90,5 +95,10 @@ export const SVGIcons = {
     EyeHideWhiteIcon,
     StateOff,
     stateOn,
-    BackArrow
+    BackArrow,
+    badgeCheckIcon,
+    calenderIcon,
+    moneyIcon,
+    startFillIcon,
+    yellowStarIcon,
 };

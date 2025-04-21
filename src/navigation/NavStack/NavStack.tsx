@@ -21,6 +21,8 @@ import { client1 } from '../../apiManager/Client';
 import { useDispatch } from 'react-redux';
 import { setMetaData } from '../../stores/reducer/GeneralMetaDataReducer';
 import LoadingScreen from '../../components/Loader/LoadingScreen';
+import PostedJobDetailScreen from '../../screens/TabsScreens/JobsStatusTopTabs/PostedJobDetailScreen';
+import ApplicationsList from '../../screens/TabsScreens/Applications/ApplicationsList';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
@@ -40,7 +42,7 @@ const NavStack: React.FC = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='Splash'
+            initialRouteName='PostedJobDetailScreen'
         >
             <Stack.Screen name="Tabs" component={TabStack} />
             <Stack.Screen name="Splash" component={SplashScreen} />
@@ -59,6 +61,8 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="PostJobPreview" component={PostJobPreviewScreen} />
             <Stack.Screen name="SuccessMessageScreen" component={SuccessMessageScreen} />
             <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
+            <Stack.Screen name="PostedJobDetailScreen" component={PostedJobDetailScreen} />
+            <Stack.Screen name="ApplicationsList" component={ApplicationsList} />
         </Stack.Navigator>
     )
 }

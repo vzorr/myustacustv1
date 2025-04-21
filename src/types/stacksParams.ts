@@ -26,6 +26,8 @@ export type UserStackParamList = {
     LoadingScreen: any;
     JobsStatusSackNav: any;
     JobsStatusScreens: any;
+    PostedJobDetailScreen: any;
+    ApplicationsList: any;
 };
 
 export type UserNavigationRootProps<T extends keyof UserStackParamList> = {

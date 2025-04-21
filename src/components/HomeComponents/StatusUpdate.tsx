@@ -8,15 +8,16 @@ interface StatusUpdateProps {
     textColor: string;
     bgColor: string;
     borderColor: string;
+    isArrow?: boolean;
 }
 
-const StatusUpdate: React.FC<StatusUpdateProps> = ({ text, textColor, bgColor, borderColor }) => {
+const StatusUpdate: React.FC<StatusUpdateProps> = ({ text, textColor, bgColor, borderColor, isArrow = true }) => {
     return (
         <View style={styles.updateContainer}>
             <View style={[styles.statusUpdateContainer, { backgroundColor: bgColor, borderColor }]}>
                 <Text style={[styles.statusBtnText, { color: textColor }]}>{text}</Text>
             </View>
-            <SVGIcons.rightArrow />
+            {isArrow && <SVGIcons.rightArrow />}
         </View>
     );
 };

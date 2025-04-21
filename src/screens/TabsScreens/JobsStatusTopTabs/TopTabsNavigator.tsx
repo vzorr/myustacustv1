@@ -52,7 +52,13 @@ const TopTabsNavigator = (props: any) => {
     getAllJobList(tabType)
   };
   const handleViewButton = (status: string) => {
-
+    if (status === "pending") {
+      return () => props.navigation.navigate("ApplicationsList")
+    } else if (status === "ongoing") {
+      // return () => props.navigation.navigate("JobStatusUpdateScreen")
+    } else if (status === "completed") {
+      // return () => props.navigation.navigate("JobStatusUpdateScreen")
+    }
   }
   const renderItem = ({ item, index }: { item: any, index: any }) => (
     <View>
@@ -63,6 +69,15 @@ const TopTabsNavigator = (props: any) => {
         milestones={item?.milestones}
         applicationsCount={item?.applicationsCount}
         handleViewButton={handleViewButton(item?.status)}
+        handleCardPress={() =>
+          props.navigation.navigate("AppliedJobDetailScreen", {
+            jobDetails: {
+              id: item?.id,
+              status: item?.status,
+              applicationsCount: item?.applicationsCount,
+            }
+          })
+        }
       />
       <View style={{ paddingVertical: 16 }}>
         <LineSeparator />
