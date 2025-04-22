@@ -28,6 +28,10 @@ export type UserStackParamList = {
     JobsStatusScreens: any;
     PostedJobDetailScreen: any;
     ApplicationsList: any;
+    ApplicationDetail: any;
+    UstaProfile: any;
+    UstaPortfolio: any;
+    UstaPortfolioList: any;
 };
 
 export type UserNavigationRootProps<T extends keyof UserStackParamList> = {

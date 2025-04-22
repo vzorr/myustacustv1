@@ -67,7 +67,7 @@ const ApplicationsList: React.FC<UserNavigationRootProps<"ApplicationsList">> = 
     }, []);
     const handlePress = (applicationId: number) => {
         console.log(`Pressed application ${applicationId}`);
-        // props.navigation.navigate('ApplicationDetails', { applicationId });
+        props.navigation.navigate('ApplicationDetail', { applicationId });
     };
     const time = getCustomTimeAgo(appData?.jobCreatedAt)
     return (

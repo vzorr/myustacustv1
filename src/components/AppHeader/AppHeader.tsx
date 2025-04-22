@@ -3,6 +3,7 @@ import React from 'react'
 import { SVGIcons } from '../../config/constants/svg'
 import { COLORS, FONTS, fontSize, SIZES } from '../../config/themes/theme'
 import { reuseableTextStyles } from '../../styles/reuseableTextStyles'
+import { useNavigation } from '@react-navigation/native'
 
 type HeaderProps = {
     onMenuPress?: () => void
@@ -22,7 +23,8 @@ type HeaderProps = {
     isOnPreview?: boolean;
     jobTitle?: string;
     jobProviderName?: string;
-    time?: string
+    time?: string;
+    isChat?: boolean;
 }
 
 const AppHeader = ({
@@ -42,8 +44,14 @@ const AppHeader = ({
     jobTitle,
     jobProviderName,
     time,
+    isChat,
     handleEditJobPost
 }: HeaderProps) => {
+    const navigation = useNavigation<any>()
+    const handleHomeLogo = () => {
+        navigation.navigate("Home")
+    }
+
     return (
         <View style={[styles.header, headerContainer]}>
             <View style={styles.menuContainer}>
@@ -51,9 +59,9 @@ const AppHeader = ({
                     <SVGIcons.menuIcon />
                 </TouchableOpacity>
 
-                <View style={styles.logoContainer}>
+                <TouchableOpacity style={styles.logoContainer} onPress={handleHomeLogo}>
                     <SVGIcons.MyUstaLogo width={logoWidth} height={logoHeight} />
-                </View>
+                </TouchableOpacity>
 
                 <TouchableOpacity style={styles.notificationButton} onPress={onNotificationPress}>
                     <SVGIcons.bellIcon />
@@ -80,7 +88,11 @@ const AppHeader = ({
                             </View>
                         </View>
                     </View>
-                    <View></View>
+                    {isChat &&
+                        <TouchableOpacity>
+                            <SVGIcons.chatIcon />
+                        </TouchableOpacity>
+                    }
                 </View>
             }
             {isOnPreview &&
