@@ -7,12 +7,14 @@ import { useSelector } from 'react-redux';
 import JobsStatusCard from '../../../components/HomeComponents/JobsStatusCard';
 import LineSeparator from '../../../components/LineSeparator/LineSeparator';
 import { statusTabsStyles } from '../../../styles/statusTabsStyles';
+import { useNavigation } from '@react-navigation/native';
 
 const TopTabsNavigator = (props: any) => {
   const { activeTab, setActiveTab } = props
   const [isLoading, setIsloading] = useState(true)
   const [jobData, setJobData] = useState<any>([])
   const { userData }: any = useSelector((state: any) => state?.userInfo)
+  const navigation: any = useNavigation()
 
   const getAllJobList = async (tabType: any) => {
     try {
@@ -51,9 +53,9 @@ const TopTabsNavigator = (props: any) => {
     setActiveTab(tabType)
     getAllJobList(tabType)
   };
-  const handleViewButton = (status: string) => {
+  const handleViewButton = (status: string, id: any) => {
     if (status === "pending") {
-      return () => props.navigation.navigate("ApplicationsList")
+      navigation.navigate("ApplicationsList", {jobId: id})
     } else if (status === "ongoing") {
       // return () => props.navigation.navigate("JobStatusUpdateScreen")
     } else if (status === "completed") {
@@ -67,16 +69,16 @@ const TopTabsNavigator = (props: any) => {
         jobTitle={item?.title}
         statusText={item?.status}
         milestones={item?.milestones}
-        applicationsCount={item?.applicationsCount}
-        handleViewButton={handleViewButton(item?.status)}
-        handleCardPress={() =>
-          props.navigation.navigate("AppliedJobDetailScreen", {
-            jobDetails: {
-              id: item?.id,
-              status: item?.status,
-              applicationsCount: item?.applicationsCount,
-            }
-          })
+        applicationsCount={item?.jobProposalsCount}
+        handleViewButton={() => handleViewButton(item?.status, item?.id)}
+        handleCardPress={() => console.log("herree")
+          // navigation.navigate("AppliedJobDetailScreen", {
+          //   jobDetails: {
+          //     id: item?.id,
+          //     status: item?.status,
+          //     applicationsCount: item?.applicationsCount,
+          //   }
+          // })
         }
       />
       <View style={{ paddingVertical: 16 }}>

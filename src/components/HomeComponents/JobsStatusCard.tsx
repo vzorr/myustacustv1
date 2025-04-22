@@ -27,7 +27,6 @@ const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
     handleCardPress,
     handleViewButton,
 }) => {
-console.log("timeeee", time)
     const timeAgo = getCustomTimeAgo(time)
     return (
         <View style={styles.cardContainer}>

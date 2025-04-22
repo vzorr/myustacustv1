@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { UserNavigationRootProps } from '../../../types/stacksParams';
 import ApplicationListCard from '../../../components/ApplicationListCard/ApplicationListCard';
 import { COLORS, fontSize } from '../../../config/themes/theme';
 import JobDetailHeader from '../../../components/AppHeader/JobDetailHeader';
 import { reuseableTextStyles } from '../../../styles/reuseableTextStyles';
+import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { client } from '../../../apiManager/Client';
+import { getCustomTimeAgo } from '../../../config/constants/constants';
+import VisibleLoader from '../../../components/Loader/VisibleLoader';
+import LoadingScreen from '../../../components/Loader/LoadingScreen';
 
 const ApplicationsList: React.FC<UserNavigationRootProps<"ApplicationsList">> = (props) => {
+    const [isLoading, setIsloading] = useState(true)
+    const [appData, setAppData] = useState<any>([])
+    const { userData }: any = useSelector((state: any) => state?.userInfo)
+    const id = props.route?.params?.jobId
+    const navigation: any = useNavigation()
     const applications = [
         {
             id: 1,
@@ -29,41 +40,71 @@ const ApplicationsList: React.FC<UserNavigationRootProps<"ApplicationsList">> = 
             // imageSource: { uri: 'https://example.com/besnik.jpg' } // Remote image example
         },
     ];
+    const getAllAppList = async () => {
+        try {
 
+            let url = `jobs/${id}/applications`
+            let response = await client(userData?.token).get(`${url}`)
+            let res = response?.data
+            setIsloading(false)
+            if (res?.code !== 200) {
+                return
+            }
+            if (res?.result?.applications?.length > 0) {
+                setAppData(res?.result)
+            }
+            setIsloading(false)
+        } catch (error) {
+            setIsloading(false)
+            console.log("API Error:", JSON.stringify(error, null, 2))
+        }
+    }
+    useEffect(() => {
+        const fetchData = async () => {
+            await getAllAppList();
+        };
+        fetchData();
+    }, []);
     const handlePress = (applicationId: number) => {
         console.log(`Pressed application ${applicationId}`);
         // props.navigation.navigate('ApplicationDetails', { applicationId });
     };
-
+    const time = getCustomTimeAgo(appData?.jobCreatedAt)
     return (
-        <View style={styles.container}>
-            <JobDetailHeader
-                headingTitle='My Jobs'
-                jobTitle='Tile installations'
-                jobProviderName='Igli Faslija'
-                time='2 minutes ago'
-            />
-            <View style={styles.listContent}>
-                <Text style={[reuseableTextStyles.title, { fontSize: fontSize[16] }]}>JOB APPLICATIONS (12)</Text>
-                <FlatList
-                    data={applications}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <ApplicationListCard
-                            name={item.name}
-                            startDate={item.startDate}
-                            endDate={item.endDate}
-                            amount={item.amount}
-                            rating={item.rating}
-                            status={item.status}
-                            // imageSource={item.imageSource}
-                            onPress={() => handlePress(item.id)}
+        <>
+            {isLoading ?
+                <LoadingScreen /> :
+                <View style={styles.container}>
+                    <JobDetailHeader
+                        headingTitle='My Jobs'
+                        jobTitle='Tile installations'
+                        jobProviderName={appData?.customerName}
+                        time={time}
+                    />
+                    <View style={styles.listContent}>
+                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[16] }]}>JOB APPLICATIONS ({appData?.totalProposals})</Text>
+                        <FlatList
+                            data={appData?.applications}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item }) => (
+                                <ApplicationListCard
+                                    name={item?.ustaName}
+                                    startDate={item?.proposalStartDate}
+                                    endDate={item?.proposalEndDate}
+                                    amount={item?.totalPrice}
+                                    rating={item?.rating}
+                                    status={item?.status}
+                                    profileImg={item?.ustaProfilePic}
+                                    // imageSource={item?.imageSource}
+                                    onPress={() => handlePress(item?.id)}
+                                />
+                            )}
+                            showsVerticalScrollIndicator={false}
                         />
-                    )}
-                    showsVerticalScrollIndicator={false}
-                />
-            </View>
-        </View>
+                    </View>
+                </View>
+            }
+        </>
     );
 };
 

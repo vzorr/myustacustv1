@@ -15,7 +15,7 @@ const StatusUpdate: React.FC<StatusUpdateProps> = ({ text, textColor, bgColor, b
     return (
         <View style={styles.updateContainer}>
             <View style={[styles.statusUpdateContainer, { backgroundColor: bgColor, borderColor }]}>
-                <Text style={[styles.statusBtnText, { color: textColor }]}>{text}</Text>
+                <Text style={[styles.statusBtnText, { color: textColor, textTransform:"capitalize" }]}>{text}</Text>
             </View>
             {isArrow && <SVGIcons.rightArrow />}
         </View>
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     },
     statusUpdateContainer: {
         backgroundColor: COLORS.statusBtnBgColor,
-        paddingHorizontal: 10,
+        paddingHorizontal: 9,
         paddingVertical: 5,
         // height: 24,
         borderRadius: 50,

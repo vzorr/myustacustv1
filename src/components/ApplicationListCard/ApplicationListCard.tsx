@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { COLORS, fontSize } from '../../config/themes/theme';
 import { SVGIcons } from '../../config/constants/svg';
 import { reuseableTextStyles } from '../../styles/reuseableTextStyles';
+import { getCustomTimeAgo } from '../../config/constants/constants';
 
 interface ApplicationListCardProps {
     name: string;
@@ -13,6 +14,7 @@ interface ApplicationListCardProps {
     currency?: string;
     status?: 'approved' | 'pending' | 'rejected';
     onPress?: () => void;
+    profileImg?: any
 }
 
 const ApplicationListCard: React.FC<ApplicationListCardProps> = ({
@@ -24,7 +26,10 @@ const ApplicationListCard: React.FC<ApplicationListCardProps> = ({
     currency = 'ALL',
     status,
     onPress,
+    profileImg
 }) => {
+    const startDuration = getCustomTimeAgo(startDate)
+    const endDuration = getCustomTimeAgo(endDate)
     return (
         <TouchableOpacity
             style={styles.container}
@@ -35,7 +40,7 @@ const ApplicationListCard: React.FC<ApplicationListCardProps> = ({
                 <View style={styles.imgNameContainer}>
                     <View style={styles.imgContainer}>
                         <Image
-                            source={require('../../assets/images/MostVisitedProfessions/Plumber.png')}
+                            source={{uri: profileImg}}
                             style={{ width: 40, height: 40, borderRadius: 20 }}
                         />
                     </View>
@@ -46,7 +51,7 @@ const ApplicationListCard: React.FC<ApplicationListCardProps> = ({
                         </View>
                         <View style={styles.headingContainer}>
                             <SVGIcons.calenderIcon width={16} height={16} />
-                            <Text style={reuseableTextStyles.subTitle}>{startDate} - {endDate}</Text>
+                            <Text style={reuseableTextStyles.subTitle}>{startDuration} - {endDuration}</Text>
                         </View>
                         <View style={styles.headingContainer}>
                             <SVGIcons.moneyIcon width={16} height={16} />
