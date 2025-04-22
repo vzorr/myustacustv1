@@ -23,6 +23,9 @@ import { setMetaData } from '../../stores/reducer/GeneralMetaDataReducer';
 import LoadingScreen from '../../components/Loader/LoadingScreen';
 import PostedJobDetailScreen from '../../screens/TabsScreens/JobsStatusTopTabs/PostedJobDetailScreen';
 import ApplicationsList from '../../screens/TabsScreens/Applications/ApplicationsList';
+import ApplicationDetailScreen from '../../screens/TabsScreens/Applications/ApplicationDetailScreen';
+import UstaProfileScreen from '../../screens/UstaProfile/UstaProfileScreen';
+import UstaPortfolioList from '../../screens/UstaProfile/UstaPortfolioList';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
@@ -42,7 +45,7 @@ const NavStack: React.FC = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='PostedJobDetailScreen'
+            initialRouteName='Tabs'
         >
             <Stack.Screen name="Tabs" component={TabStack} />
             <Stack.Screen name="Splash" component={SplashScreen} />
@@ -63,6 +66,9 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
             <Stack.Screen name="PostedJobDetailScreen" component={PostedJobDetailScreen} />
             <Stack.Screen name="ApplicationsList" component={ApplicationsList} />
+            <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} />
+            <Stack.Screen name="UstaProfile" component={UstaProfileScreen} />
+            <Stack.Screen name="UstaPortfolioList" component={UstaPortfolioList} />
         </Stack.Navigator>
     )
 }
