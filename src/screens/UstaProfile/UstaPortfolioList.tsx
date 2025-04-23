@@ -21,7 +21,7 @@ const UstaPortfolioList = (propa:any) => {
             imageData={item.media}
             workText={item.title}
             workTypeTxt={item.category}
-            handleCardPress={handlePortfolio(item)}
+            handleCardPress={handlePortfolio(item?.id)}
         />
     );
 

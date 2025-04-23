@@ -20,9 +20,8 @@ const ApplicationDetailScreen: React.FC<UserNavigationRootProps<"ApplicationDeta
     const [isLoading, setIsloading] = useState<boolean>(false);
     const [appDetail, setAppDetails] = useState<any>("");
     const applicationId = props?.route.params?.proposalId
-    console.log("ididididididid", userData)
     const handleViewProfile = () => {
-        props.navigation.navigate('UstaProfile', { otherUserId: appDetail?.usta?.id });
+        props.navigation.navigate('UstaProfile', { otherUserId: appDetail?.usta?.id, jobId: appDetail?.job?.id});
     };
     const handleInterview = () => {
         // props.navigation.navigate('ApplicationDetail');

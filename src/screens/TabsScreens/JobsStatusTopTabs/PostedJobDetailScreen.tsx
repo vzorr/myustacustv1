@@ -35,7 +35,6 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
     const { route, navigation } = props
     // const { id, applicationsCount } = route?.params?.jobDetails || {};
     const mapRef = useRef<MapView>(null);
-    console.log("ididididididid", userData?.token)
     const jobId = route.params?.jobId
 
     const handleViewButton = () => {
@@ -126,7 +125,6 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
                 longitudeDelta: 0.05,
             }
             : null;
-        console.log(status)
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.innerContainer}>
@@ -279,7 +277,6 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
 
     const screenData = [{ id: '1' }];
     const timeAgo = getCustomTimeAgo(jobsDetail?.createdAt)
-    console.log("jobDetail", jobsDetail?.jobProposalsCount)
     return (
         <>
             {isLoading ?

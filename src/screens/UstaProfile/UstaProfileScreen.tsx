@@ -175,36 +175,36 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
             amount: '130,000 ALL',
         }
     ];
-    const skills = [
-        'Construction & Repairs',
-        'Tile Installation',
-        'Bathroom Remodeling',
-        'Kitchen Renovation',
-        'Flooring Installation',
-        'Painting Services',
-        'Plumbing Work',
-        'Electrical Work',
-        'Drywall Installation',
-        'Carpentry',
-        'Masonry',
-        'Roofing',
-        'Demolition',
-        'Concrete Work',
-        'Home Maintenance'
-    ];
-    const handlePortfolio = (portFolio: any) => () => {
-        props.navigation.navigate('UstaPortfolioDetail', {portfolioData: portFolio });
-    }
-
+    // const skills = [
+    //     'Construction & Repairs',
+    //     'Tile Installation',
+    //     'Bathroom Remodeling',
+    //     'Kitchen Renovation',
+    //     'Flooring Installation',
+    //     'Painting Services',
+    //     'Plumbing Work',
+    //     'Electrical Work',
+    //     'Drywall Installation',
+    //     'Carpentry',
+    //     'Masonry',
+    //     'Roofing',
+    //     'Demolition',
+    //     'Concrete Work',
+    //     'Home Maintenance'
+    // ];
+    
     const { userData }: any = useSelector((state: any) => state?.userInfo)
     const { token }: any = useSelector((state: any) => state?.accessToken)
     const [isLoading, setIsloading] = useState<boolean>(true);
     const [otherUserData, setOtherUserData] = useState<any>("");
     const otherUserId = props?.route.params?.otherUserId
-    console.log("otherUserId", otherUserId)
+    const jobId = props?.route.params?.jobId
     const handleViewProfile = () => {
         // props.navigation.navigate('UstaProfile', { otherUserId: appDetail?.usta?.id });
     };
+    const handlePortfolio = (id: any) => () => {
+        props.navigation.navigate('UstaPortfolioDetail', {portfolioId: id, jobId:jobId });
+    }
     const handleInterview = () => {
         // props.navigation.navigate('ApplicationDetail');
     };
@@ -216,8 +216,6 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
                 if (userData?.token) {
                     let response = await client(userToken).get(`account/usta-profile/${otherUserId}`)
                     let res = response?.data
-                    console.log("resresresres", res)
-                    console.log('')
                     setIsloading(false)
                     if (res?.code !== 200) {
                         return
@@ -240,6 +238,7 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
         fetchData();
 
     }, [userData?.token, token]);
+    const skills = otherUserData?.professionalDetail?.experiences
     const renderScreenContent = () => (
         <View style={styles.contentContainer}>
             <View>
@@ -274,9 +273,10 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
             />
             {/* Skills grid using map and flexWrap */}
             <View style={styles.skillsContainer}>
-                {skills.map((skill, index) => (
+         
+                {skills?.map((skill:any, index:any) => (
                     <View key={index} style={styles.skillItem}>
-                        <SkillsItem label={skill} />
+                        <SkillsItem label={skill.category} />
                     </View>
                 ))}
             </View>
@@ -297,7 +297,7 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
                         isProfile={true}
                         isChat={true}
                         userName={otherUserData?.firstName + " " + otherUserData?.lastName}
-                        userLocation={'Tirana, AL'}
+                        userLocation={otherUserData && otherUserData?.locations && otherUserData?.locations[0]?.address}
                         imageUrl={otherUserData?.profilePicture}
                     />
                     <FlatList
