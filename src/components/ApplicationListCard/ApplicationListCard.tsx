@@ -4,6 +4,7 @@ import { COLORS, fontSize } from '../../config/themes/theme';
 import { SVGIcons } from '../../config/constants/svg';
 import { reuseableTextStyles } from '../../styles/reuseableTextStyles';
 import { getCustomTimeAgo } from '../../config/constants/constants';
+import moment from 'moment';
 
 interface ApplicationListCardProps {
     name: string;
@@ -28,8 +29,6 @@ const ApplicationListCard: React.FC<ApplicationListCardProps> = ({
     onPress,
     profileImg
 }) => {
-    const startDuration = getCustomTimeAgo(startDate)
-    const endDuration = getCustomTimeAgo(endDate)
     return (
         <TouchableOpacity
             style={styles.container}
@@ -51,7 +50,7 @@ const ApplicationListCard: React.FC<ApplicationListCardProps> = ({
                         </View>
                         <View style={styles.headingContainer}>
                             <SVGIcons.calenderIcon width={16} height={16} />
-                            <Text style={reuseableTextStyles.subTitle}>{startDuration} - {endDuration}</Text>
+                            <Text style={reuseableTextStyles.subTitle}>{moment(startDate).format('MMM DD, YYYY')} - {moment(endDate).format('MMM DD, YYYY')}</Text>
                         </View>
                         <View style={styles.headingContainer}>
                             <SVGIcons.moneyIcon width={16} height={16} />
