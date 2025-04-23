@@ -87,7 +87,7 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
                             text={status}
                             textColor={COLORS.completedTxtColor}
                             bgColor={COLORS.completedBgColor}
-                            borderColor={COLORS.completedBgColor}
+                            borderColor={COLORS.completedTxtColor}
                             isArrow={false}
                         />
                 }

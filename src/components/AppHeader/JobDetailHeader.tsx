@@ -14,6 +14,7 @@ type HeaderProps = {
     time?: string;
     handleEditJobPost?: () => void;
     isEdit?: boolean;
+    isPortfolio?: boolean;
 }
 
 const JobDetailHeader = ({
@@ -23,7 +24,8 @@ const JobDetailHeader = ({
     jobProviderName,
     time,
     handleEditJobPost,
-    isEdit = false
+    isEdit = false,
+    isPortfolio = false
 }: HeaderProps) => {
     const navigation = useNavigation();
     const handleBackBtn = () => {
@@ -41,17 +43,23 @@ const JobDetailHeader = ({
                 <View>
                     <Text style={[reuseableTextStyles.title, { fontSize: fontSize[16], color: COLORS.Yellow }]}>{jobTitle}</Text>
                 </View>
-                <View style={styles.nameContainer}>
-                    <View style={{ gap: 2 }}>
-                        <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[14], color: COLORS.white, fontFamily: FONTS.interMedium }]}>From:{jobProviderName}</Text>
-                        <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[12], color: COLORS.grey }]}>{time}</Text>
+                {isPortfolio ?
+                    <View>
+                        <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[12], color: COLORS.grey, marginStart: 2 }]}>Published: {time}</Text>
                     </View>
-                    {isEdit &&
-                        <TouchableOpacity style={styles.editContainer} onPress={handleEditJobPost}>
-                            <SVGIcons.editIcon />
-                        </TouchableOpacity>
-                    }
-                </View>
+                    :
+                    <View style={styles.nameContainer}>
+                        <View style={{ gap: 2 }}>
+                            <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[14], color: COLORS.white, fontFamily: FONTS.interMedium }]}>From:{jobProviderName}</Text>
+                            <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[12], color: COLORS.grey }]}>{time}</Text>
+                        </View>
+                        {isEdit &&
+                            <TouchableOpacity style={styles.editContainer} onPress={handleEditJobPost}>
+                                <SVGIcons.editIcon />
+                            </TouchableOpacity>
+                        }
+                    </View>
+                }
             </View>
         </View>
     )

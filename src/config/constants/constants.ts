@@ -8,6 +8,10 @@ export enum JOBS_STATUS_TABS {
     PENDING = "Pending",
     COMPLETED = "Completed",
 }
+export enum WORK_HISTORY_TABS {
+    FINISHED_JOBS = "Finshed Jobs",
+    ACTIVE_JOBS = "Active Jobs",
+}
 
 export const googlePlacesApi = "AIzaSyDK6xDsgrab0VzbnLeEVT1rJHsz2k1mA1c"
 export const googleLocationApiKey = "AIzaSyB8ODrHnGGYlUvHJ5omefoaIEM_M9Je0bg"
@@ -50,31 +54,31 @@ export const postJobValue = async (previewValue: any, categories?: any) => {
     return payload
 }
 
- export const getCustomTimeAgo = (createdAt: any) => {
-        const now = moment();
-        const created = moment(createdAt);
-        const diffInSeconds = now.diff(created, 'seconds');
-        const diffInMinutes = now.diff(created, 'minutes');
-        const diffInHours = now.diff(created, 'hours');
-        const diffInDays = now.diff(created, 'days');
-        const diffInWeeks = now.diff(created, 'weeks');
-        const diffInMonths = now.diff(created, 'months');
-        const diffInYears = now.diff(created, 'years');
-        if (diffInYears >= 1) {
-            return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
-        } else if (diffInMonths >= 1) {
-            return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
-        } else if (diffInWeeks >= 1) {
-            return `${diffInWeeks} week${diffInWeeks > 1 ? 's' : ''} ago`;
-        } else if (diffInDays >= 1) {
-            return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-        } else if (diffInHours >= 1) {
-            return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-        } else if (diffInMinutes >= 1) {
-            return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
-        } else if (diffInSeconds >= 1) {
-            return `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`;
-        } else {
-            return 'just now';
-        }
-    };
+export const getCustomTimeAgo = (createdAt: any) => {
+    const now = moment();
+    const created = moment(createdAt);
+    const diffInSeconds = now.diff(created, 'seconds');
+    const diffInMinutes = now.diff(created, 'minutes');
+    const diffInHours = now.diff(created, 'hours');
+    const diffInDays = now.diff(created, 'days');
+    const diffInWeeks = now.diff(created, 'weeks');
+    const diffInMonths = now.diff(created, 'months');
+    const diffInYears = now.diff(created, 'years');
+    if (diffInYears >= 1) {
+        return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
+    } else if (diffInMonths >= 1) {
+        return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
+    } else if (diffInWeeks >= 1) {
+        return `${diffInWeeks} week${diffInWeeks > 1 ? 's' : ''} ago`;
+    } else if (diffInDays >= 1) {
+        return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    } else if (diffInHours >= 1) {
+        return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    } else if (diffInMinutes >= 1) {
+        return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds >= 1) {
+        return `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`;
+    } else {
+        return 'just now';
+    }
+};

@@ -50,6 +50,7 @@ import moneyIcon from "../../assets/icons/bx-money.svg"
 import startFillIcon from "../../assets/icons/star/star-filled.svg"
 import yellowStarIcon from "../../assets/icons/star/Yellow-Start.svg"
 import chatIcon from "../../assets/icons/bx-chat.svg"
+import starOutlined from "../../assets/icons/star/star-outlined.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -103,4 +104,5 @@ export const SVGIcons = {
     startFillIcon,
     yellowStarIcon,
     chatIcon,
+    starOutlined
 };
