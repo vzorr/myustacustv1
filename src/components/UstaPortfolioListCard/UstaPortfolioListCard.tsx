@@ -9,17 +9,22 @@ interface porfolioProps {
     handleCardPress: () => void;
 }
 
-const UstaPortfolioListCard: React.FC<porfolioProps> = ({
-    imageUrl,
-    workText,
-    workTypeTxt,
-    handleCardPress
-}) => {
+const UstaPortfolioListCard = (props: any) => {
+    const { imageUrl, workText, workTypeTxt, handleCardPress, imageData } = props
     return (
         <TouchableOpacity style={styles.container} onPress={handleCardPress}>
-            <View style={styles.imgContainer}>
+            {imageData?.length > 0 ?
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                    <Image
+                        source={{ uri: imageData[0]?.url }}
+                        style={{
+                            width: 136,
+                            height: 102,
+                            borderRadius: 8,
+                        }}
+                    />
+                </View> :
                 <Image
-                    // source={{ uri: imageUrl }}
                     source={require('../../assets/images/office.jpg')}
                     style={{
                         width: 136,
@@ -27,7 +32,18 @@ const UstaPortfolioListCard: React.FC<porfolioProps> = ({
                         borderRadius: 8,
                     }}
                 />
-            </View>
+            }
+            {/* <View style={styles.imgContainer}>
+                <Image
+                    source={{ uri: imageUrl }}
+                    // source={require('../../assets/images/office.jpg')}
+                    style={{
+                        width: 136,
+                        height: 102,
+                        borderRadius: 8,
+                    }}
+                />
+            </View> */}
             <View style={styles.textContainer}>
                 <Text style={[reuseableTextStyles.subTitle, styles.subtitle]}>{workText}</Text>
                 <Text style={[reuseableTextStyles.subTitle, styles.subtitle]}>{workTypeTxt}</Text>

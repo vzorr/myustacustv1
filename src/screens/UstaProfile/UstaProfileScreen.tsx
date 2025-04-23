@@ -192,8 +192,8 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
         'Concrete Work',
         'Home Maintenance'
     ];
-    const handlePortfolio = (id: any) => () => {
-        props.navigation.navigate('UstaPortfolioDetail', { id });
+    const handlePortfolio = (portFolio: any) => () => {
+        props.navigation.navigate('UstaPortfolioDetail', {portfolioData: portFolio });
     }
 
     const { userData }: any = useSelector((state: any) => state?.userInfo)
@@ -201,8 +201,7 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
     const [isLoading, setIsloading] = useState<boolean>(true);
     const [otherUserData, setOtherUserData] = useState<any>("");
     const otherUserId = props?.route.params?.otherUserId
-    console.log("ididididididid", otherUserId)
-    console.log("ididididididid", userData)
+    console.log("otherUserId", otherUserId)
     const handleViewProfile = () => {
         // props.navigation.navigate('UstaProfile', { otherUserId: appDetail?.usta?.id });
     };
@@ -217,6 +216,8 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
                 if (userData?.token) {
                     let response = await client(userToken).get(`account/usta-profile/${otherUserId}`)
                     let res = response?.data
+                    console.log("resresresres", res)
+                    console.log('')
                     setIsloading(false)
                     if (res?.code !== 200) {
                         return
@@ -254,7 +255,7 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
                 headingText='PORTFOLIO'
                 style={{ fontSize: fontSize[16] }}
             />
-            <UstaPortfolioList data={portfolioData} handlePortfolio={handlePortfolio} />
+            <UstaPortfolioList data={otherUserData?.portfolios} handlePortfolio={handlePortfolio} />
             <Heading
                 headingText='WORK HISTORY'
                 style={{ fontSize: fontSize[16] }}

@@ -53,7 +53,7 @@ const HorizontalImageList = (props: HorizontalImageListProps) => {
                         onPress={() => handleImagePress(index, item)}
                     >
                         <Image
-                            source={item.imagePath ? item.imagePath : { uri: item.path }}
+                            source={item.imagePath ? item.imagePath : { uri: item }}
                             style={styles.image}
                             resizeMode='cover'
                         />

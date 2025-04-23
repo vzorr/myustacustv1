@@ -14,6 +14,8 @@ const skills = [
 ];
 
 const UstaPortfolioDetailScreen: React.FC<UserNavigationRootProps<"UstaPortfolioDetail">> = (props) => {
+    const portfolioData = props.route.params?.portfolioData
+    console.log("portfolioData", portfolioData)
 
     const renderScreenContent = () => (
         <View style={styles.contentContainer}>
@@ -62,7 +64,7 @@ const UstaPortfolioDetailScreen: React.FC<UserNavigationRootProps<"UstaPortfolio
                 headingText='RELATED PROJECT'
                 style={{ fontSize: fontSize[16] }}
             />
-            <TouchableOpacity onPress={() => props.navigation.replace('PostedJobDetailScreen')}>
+            <TouchableOpacity onPress={() => props.navigation.navigate('PostedJobDetailScreen')}>
                 <SubHeading
                     subHeadingText='4 days ago'
                 />

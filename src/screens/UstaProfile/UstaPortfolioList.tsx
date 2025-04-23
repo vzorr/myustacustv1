@@ -14,13 +14,14 @@ type Props = {
     handlePortfolio: (id: any) => () => void; // Assuming handlePortfolio is a function that takes an id and returns a function
 };
 
-const UstaPortfolioList: React.FC<Props> = ({ data, handlePortfolio }) => {
-    const renderItem = ({ item }: { item: PortfolioItem }) => (
+const UstaPortfolioList = (propa:any) => {
+    const { data, handlePortfolio } = propa; 
+    const renderItem = ({ item }: { item: any }) => (
         <UstaPortfolioListCard
-            imageUrl={item.imageUrl}
-            workText={item.workText}
-            workTypeTxt={item.workTypeTxt}
-            handleCardPress={handlePortfolio(item.id)} // Assuming handlePortfolio is a function that takes an id
+            imageData={item.media}
+            workText={item.title}
+            workTypeTxt={item.category}
+            handleCardPress={handlePortfolio(item)}
         />
     );
 
@@ -31,7 +32,7 @@ const UstaPortfolioList: React.FC<Props> = ({ data, handlePortfolio }) => {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ gap: 8 }}
                 data={data}
-                keyExtractor={item => item.id}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItem}
             />
         </View>

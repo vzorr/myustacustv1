@@ -16,6 +16,7 @@ interface JobsStatusCardProps {
     milestones?: string;
     handleCardPress?: () => void;
     handleViewButton?: any;
+    handleJobDetail?: any;
 }
 
 const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
@@ -26,6 +27,7 @@ const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
     milestones,
     handleCardPress,
     handleViewButton,
+    handleJobDetail
 }) => {
     const timeAgo = getCustomTimeAgo(time)
     return (
@@ -38,11 +40,16 @@ const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
                 <View>
                     <Text style={styles.timeStyle}>{timeAgo}</Text>
                 </View>
-                <Heading
-                    headingText={jobTitle}
-                    style={styles.jobTitle}
-                    containerStyle={styles.jobTitleContainer}
-                />
+                <TouchableOpacity
+                    onPress={handleJobDetail }
+                >
+
+                    <Heading
+                        headingText={jobTitle}
+                        style={styles.jobTitle}
+                        containerStyle={styles.jobTitleContainer}
+                    />
+                </TouchableOpacity>
                 {statusText === "pending" ?
                     <StatusUpdate
                         text={statusText}

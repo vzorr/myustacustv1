@@ -62,6 +62,9 @@ const TopTabsNavigator = (props: any) => {
       // return () => props.navigation.navigate("JobStatusUpdateScreen")
     }
   }
+  const handlejobDetail = (jobId: any) => {
+    navigation.navigate("PostedJobDetailScreen", { jobId: jobId })
+  }
   const renderItem = ({ item, index }: { item: any, index: any }) => (
     <View>
       <JobsStatusCard
@@ -71,6 +74,7 @@ const TopTabsNavigator = (props: any) => {
         milestones={item?.milestones}
         applicationsCount={item?.jobProposalsCount}
         handleViewButton={() => handleViewButton(item?.status, item?.id)}
+        handleJobDetail={() => handlejobDetail(item?.id)}
         handleCardPress={() => console.log("herree")
           // navigation.navigate("AppliedJobDetailScreen", {
           //   jobDetails: {
