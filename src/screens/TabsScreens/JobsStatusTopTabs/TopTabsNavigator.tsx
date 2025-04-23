@@ -35,8 +35,8 @@ const TopTabsNavigator = (props: any) => {
         return
       }
       setIsloading(false)
-      if (res?.result?.length > 0) {
-        setJobData(res?.result)
+      if (res?.result?.data?.length > 0) {
+        setJobData(res?.result?.data)
       }
     } catch (error) {
       setIsloading(false)

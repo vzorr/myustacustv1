@@ -76,7 +76,7 @@ const AppHeader = ({
                 <View style={styles.profileContainer}>
                     <View style={styles.profileSubContainer}>
                         <View style={styles.profileImgContainer}>
-                            <Image source={require('../../assets/images/MostVisitedProfessions/Plumber.png')} style={styles.img} />
+                            <Image source={{uri: imageUrl}} style={styles.img} />
                         </View>
                         <View style={{ gap: 4 }}>
                             <View>
