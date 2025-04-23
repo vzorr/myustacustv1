@@ -16,6 +16,9 @@ const skills = [
 const UstaPortfolioDetailScreen: React.FC<UserNavigationRootProps<"UstaPortfolioDetail">> = (props) => {
     const portfolioData = props.route.params?.portfolioData
     console.log("portfolioData", portfolioData)
+    const handleNav = () => {
+        props.navigation.replace('PostedJobDetailScreen')
+    }
 
     const renderScreenContent = () => (
         <View style={styles.contentContainer}>
@@ -60,27 +63,30 @@ const UstaPortfolioDetailScreen: React.FC<UserNavigationRootProps<"UstaPortfolio
             <View style={{ paddingTop: 10 }}>
                 <LineSeparator />
             </View>
-            <Heading
-                headingText='RELATED PROJECT'
-                style={{ fontSize: fontSize[16] }}
-            />
-            <TouchableOpacity onPress={() => props.navigation.navigate('PostedJobDetailScreen')}>
+            <View style={{ gap: 4 }}>
+
+                <Heading
+                    headingText='RELATED PROJECT'
+                    style={{ fontSize: fontSize[16] }}
+                />
                 <SubHeading
                     subHeadingText='4 days ago'
                 />
-                <View style={{ gap: 4 }}>
-                    <Heading
-                        headingText='Experienced Mason Wanted'
-                        style={{ fontSize: fontSize[16] }}
-                    />
-                    <StatusUpdate
-                        text={"Completed"}
-                        textColor={COLORS.completedTxtColor}
-                        bgColor={COLORS.completedBgColor}
-                        borderColor={COLORS.completedTxtColor}
-                    />
-                </View>
-            </TouchableOpacity>
+                <TouchableOpacity onPress={handleNav}>
+                    <View style={{ gap: 8 }}>
+                        <Heading
+                            headingText='Experienced Mason Wanted'
+                            style={{ fontSize: fontSize[16] }}
+                        />
+                        <StatusUpdate
+                            text={"Completed"}
+                            textColor={COLORS.completedTxtColor}
+                            bgColor={COLORS.completedBgColor}
+                            borderColor={COLORS.completedTxtColor}
+                        />
+                    </View>
+                </TouchableOpacity>
+            </View>
         </View>
     )
     const screenData = [{ id: '1' }];

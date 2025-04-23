@@ -40,7 +40,13 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
 
     const handleViewButton = () => {
         if (jobsDetail?.status === "pending") {
-            // props.navigation.navigate("ApplicationsList")
+            navigation.navigate('Tabs', {
+                screen: 'JobsStatusSackNav',
+                params: {
+                    screen: 'ApplicationsList',
+                    params: { jobId: jobId },
+                },
+            });
         }
         else if (jobsDetail?.status === JOBS_STATUS_TABS.ONGOING) {
         }
@@ -120,7 +126,7 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
                 longitudeDelta: 0.05,
             }
             : null;
-            console.log(status)
+        console.log(status)
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.innerContainer}>
@@ -166,7 +172,7 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
                                 style={{ width: SIZES.wp(45), marginStart: 0 }}
                             />
                         </View>
-                        : status === 'pending'?
+                        : status === 'pending' ?
                             <View>
                                 <View>
                                     <Text style={[reuseableTextStyles.title, { fontSize: fontSize[16] }]}>JOB APPLICATIONS({jobProposalsCount})</Text>
@@ -327,7 +333,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 20,
         paddingTop: 16,
-        paddingBottom: 50
+        paddingBottom: 100,
     },
     innerContainer: {
         gap: 10

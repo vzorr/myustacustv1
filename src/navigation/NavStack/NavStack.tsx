@@ -45,7 +45,7 @@ const NavStack: React.FC = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='Tabs'
+            initialRouteName='Splash'
         >
             <Stack.Screen name="Tabs" component={TabStack} />
             <Stack.Screen name="Splash" component={SplashScreen} />
@@ -65,8 +65,8 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="SuccessMessageScreen" component={SuccessMessageScreen} />
             <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
             <Stack.Screen name="PostedJobDetailScreen" component={PostedJobDetailScreen} />
-            <Stack.Screen name="ApplicationsList" component={ApplicationsList} />
-            <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} />
+            {/* <Stack.Screen name="ApplicationsList" component={ApplicationsList} /> */}
+            {/* <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} /> */}
             <Stack.Screen name="UstaProfile" component={UstaProfileScreen} />
             <Stack.Screen name="UstaPortfolioDetail" component={UstaPortfolioDetailScreen} />
         </Stack.Navigator>

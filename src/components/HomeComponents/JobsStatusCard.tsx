@@ -14,7 +14,6 @@ interface JobsStatusCardProps {
     statusText: string;
     applicationsCount?: string;
     milestones?: string;
-    handleCardPress?: () => void;
     handleViewButton?: any;
     handleJobDetail?: any;
 }
@@ -25,7 +24,6 @@ const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
     statusText,
     applicationsCount,
     milestones,
-    handleCardPress,
     handleViewButton,
     handleJobDetail
 }) => {
@@ -34,22 +32,17 @@ const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
         <View style={styles.cardContainer}>
             <TouchableOpacity
                 style={styles.cardInnerContainer}
-                onPress={handleCardPress}
+                onPress={handleJobDetail}
                 activeOpacity={0.7}
             >
                 <View>
                     <Text style={styles.timeStyle}>{timeAgo}</Text>
                 </View>
-                <TouchableOpacity
-                    onPress={handleJobDetail }
-                >
-
-                    <Heading
-                        headingText={jobTitle}
-                        style={styles.jobTitle}
-                        containerStyle={styles.jobTitleContainer}
-                    />
-                </TouchableOpacity>
+                <Heading
+                    headingText={jobTitle}
+                    style={styles.jobTitle}
+                    containerStyle={styles.jobTitleContainer}
+                />
                 {statusText === "pending" ?
                     <StatusUpdate
                         text={statusText}
@@ -112,7 +105,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
     },
     cardInnerContainer: {
-        gap: 8
+        gap: 8,
     },
     jobTitleContainer: {
         width: "90%",
@@ -125,7 +118,8 @@ const styles = StyleSheet.create({
         color: COLORS.GreyedOut,
         fontFamily: FONTS.interRegular,
         fontStyle: 'normal',
-        fontWeight: '400'
+        fontWeight: '400',
+        marginBottom: -2
     },
     countContainer: {
         flexDirection: 'row',

@@ -55,7 +55,7 @@ const TopTabsNavigator = (props: any) => {
   };
   const handleViewButton = (status: string, id: any) => {
     if (status === "pending") {
-      navigation.navigate("ApplicationsList", {jobId: id})
+      navigation.navigate("ApplicationsList", { jobId: id })
     } else if (status === "ongoing") {
       // return () => props.navigation.navigate("JobStatusUpdateScreen")
     } else if (status === "completed") {
@@ -75,15 +75,15 @@ const TopTabsNavigator = (props: any) => {
         applicationsCount={item?.jobProposalsCount}
         handleViewButton={() => handleViewButton(item?.status, item?.id)}
         handleJobDetail={() => handlejobDetail(item?.id)}
-        handleCardPress={() => console.log("herree")
-          // navigation.navigate("AppliedJobDetailScreen", {
-          //   jobDetails: {
-          //     id: item?.id,
-          //     status: item?.status,
-          //     applicationsCount: item?.applicationsCount,
-          //   }
-          // })
-        }
+      // handleCardPress={() => console.log("herree")
+      //   // navigation.navigate("AppliedJobDetailScreen", {
+      //   //   jobDetails: {
+      //   //     id: item?.id,
+      //   //     status: item?.status,
+      //   //     applicationsCount: item?.applicationsCount,
+      //   //   }
+      //   // })
+      // }
       />
       <View style={{ paddingVertical: 16 }}>
         <LineSeparator />
