@@ -14,16 +14,17 @@ const UstaPortfolioListCard = (props: any) => {
     return (
         <TouchableOpacity style={styles.container} onPress={handleCardPress}>
             {imageData?.length > 0 ?
-                <View style={{ flexDirection: 'row', gap: 8 }}>
-                    <Image
-                        source={{ uri: imageData[0]?.url }}
-                        style={{
-                            width: 136,
-                            height: 102,
-                            borderRadius: 8,
-                        }}
-                    />
-                </View> :
+                // <View style={{ flexDirection: 'row', gap: 8 }}>
+                <Image
+                    source={{ uri: imageData[0]?.url }}
+                    style={{
+                        width: 136,
+                        height: 102,
+                        borderRadius: 8,
+                    }}
+                />
+                // </View> 
+                :
                 <Image
                     source={require('../../assets/images/office.jpg')}
                     style={{
@@ -66,6 +67,7 @@ const styles = StyleSheet.create({
     },
     textContainer: {
         justifyContent: 'center',
+        marginStart: 3,
     },
     subtitle: {
         fontSize: fontSize[12],

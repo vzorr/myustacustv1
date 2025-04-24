@@ -68,7 +68,7 @@ const UstaPortfolioDetailScreen: React.FC<UserNavigationRootProps<"UstaPortfolio
     // const customer = jobDetail?.customer
 
     const handleNav = () => {
-        props.navigation.replace('PostedJobDetailScreen',{jobId:jobId})
+        props.navigation.replace('PostedJobDetailScreen', { jobId: jobId })
     }
 
     const renderScreenContent = () => (
@@ -82,22 +82,24 @@ const UstaPortfolioDetailScreen: React.FC<UserNavigationRootProps<"UstaPortfolio
                     subHeadingText='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
                 />
             </View>
-            <Heading
-                headingText='SKILLS'
-                style={{ fontSize: fontSize[16] }}
-            />
-            {/* Skills grid using map and flexWrap */}
-            <View style={styles.skillsContainer}>
-                <View style={styles.skillItem}>
-                    <SkillsItem label={portFolioDetail?.category} />
-                </View>
-                {/* {skills.map((skill, index) => (
-                    <View key={index} style={styles.skillItem}>
-                        <SkillsItem label={skill} />
+            <View>
+                <Heading
+                    headingText='SKILLS'
+                    style={{ fontSize: fontSize[16] }}
+                />
+                {/* Skills grid using map and flexWrap */}
+                <View style={styles.skillsContainer}>
+                    <View style={styles.skillItem}>
+                        <SkillsItem label={portFolioDetail?.category} />
                     </View>
-                ))} */}
+                    {/* {skills.map((skill, index) => (
+                    <View key={index} style={styles.skillItem}>
+                    <SkillsItem label={skill} />
+                    </View>
+                    ))} */}
+                </View>
             </View>
-            <View style={{ gap: 2 }}>
+            <View>
                 {portFolioDetail?.media?.map((item: any, index: any) => (
                     <View style={styles.imgContainer}
                         key={index}
@@ -158,8 +160,8 @@ const UstaPortfolioDetailScreen: React.FC<UserNavigationRootProps<"UstaPortfolio
                 time={moment(portFolioDetail?.createdAt).format('MMM DD, YYYY')}
                 isPortfolio={true}
                 jobTitle={portFolioDetail?.title}
-                // jobProviderName={customer?.firstName + " " + customer?.lastName}
-                // time={time}
+            // jobProviderName={customer?.firstName + " " + customer?.lastName}
+            // time={time}
             />
             <FlatList
                 data={screenData}
@@ -192,11 +194,12 @@ const styles = StyleSheet.create({
     },
     skillItem: {
         paddingHorizontal: 2,
-        paddingVertical: 5,
+        paddingVertical: 4,
     },
     imgContainer: {
         width: "100%",
         height: 251.25,
         borderRadius: 8,
+        marginBottom: 5
     },
 })

@@ -64,11 +64,11 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="PostJobPreview" component={PostJobPreviewScreen} />
             <Stack.Screen name="SuccessMessageScreen" component={SuccessMessageScreen} />
             <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
-            <Stack.Screen name="PostedJobDetailScreen" component={PostedJobDetailScreen} />
+            {/* <Stack.Screen name="PostedJobDetailScreen" component={PostedJobDetailScreen} /> */}
             {/* <Stack.Screen name="ApplicationsList" component={ApplicationsList} /> */}
             {/* <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} /> */}
-            <Stack.Screen name="UstaProfile" component={UstaProfileScreen} />
-            <Stack.Screen name="UstaPortfolioDetail" component={UstaPortfolioDetailScreen} />
+            {/* <Stack.Screen name="UstaProfile" component={UstaProfileScreen} />
+            <Stack.Screen name="UstaPortfolioDetail" component={UstaPortfolioDetailScreen} /> */}
         </Stack.Navigator>
     )
 }

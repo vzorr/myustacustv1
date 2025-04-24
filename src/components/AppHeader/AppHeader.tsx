@@ -76,7 +76,7 @@ const AppHeader = ({
                 <View style={styles.profileContainer}>
                     <View style={styles.profileSubContainer}>
                         <View style={styles.profileImgContainer}>
-                            <Image source={{uri: imageUrl}} style={styles.img} />
+                            <Image source={{ uri: imageUrl }} style={styles.img} />
                         </View>
                         <View style={{ gap: 4 }}>
                             <View>
@@ -84,7 +84,13 @@ const AppHeader = ({
                             </View>
                             <View style={styles.userDataContainer}>
                                 <SVGIcons.locationYellowIcon />
-                                <Text style={[reuseableTextStyles.subTitle, { color: COLORS.white }]}>{userLocation}</Text>
+                                <Text
+                                    style={[reuseableTextStyles.subTitle, styles.locationText, { color: COLORS.white }]}
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                >
+                                    {userLocation}
+                                </Text>
                             </View>
                         </View>
                     </View>
@@ -203,6 +209,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: "center",
         justifyContent: "center",
-        gap: 4
-    }
+        gap: 4,
+        flexShrink: 1,
+    },
+    locationText: {
+        flexShrink: 1,
+        maxWidth: SIZES.width * 0.5,
+    },
 })
