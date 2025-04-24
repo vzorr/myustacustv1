@@ -39,7 +39,7 @@ const ApplicationListCard: React.FC<ApplicationListCardProps> = ({
                 <View style={styles.imgNameContainer}>
                     <View style={styles.imgContainer}>
                         <Image
-                            source={{uri: profileImg}}
+                            source={{ uri: profileImg }}
                             style={{ width: 40, height: 40, borderRadius: 20 }}
                         />
                     </View>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         padding: 12,
-        marginBottom: 12,
+        marginBottom: 8,
         borderWidth: 1,
         borderColor: COLORS.inputBorder,
         borderRadius: 8,

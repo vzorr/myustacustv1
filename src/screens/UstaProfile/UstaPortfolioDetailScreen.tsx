@@ -168,7 +168,7 @@ const UstaPortfolioDetailScreen: React.FC<UserNavigationRootProps<"UstaPortfolio
                 keyExtractor={item => item.id}
                 renderItem={() => renderScreenContent()}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ flexGrow: 1 }}
+                contentContainerStyle={{ flexGrow: 1, paddingBottom: 90 }}
             />
         </SafeAreaView>
     )

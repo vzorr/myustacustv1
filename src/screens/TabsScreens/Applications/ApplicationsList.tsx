@@ -66,6 +66,7 @@ const ApplicationsList: React.FC<UserNavigationRootProps<"ApplicationsList">> = 
                         <FlatList
                             data={appData?.data}
                             keyExtractor={(item, index) => index.toString()}
+                            contentContainerStyle={{ paddingBottom: 80 }}
                             renderItem={({ item }) => (
                                 <ApplicationListCard
                                     name={item?.ustaName}
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     listContent: {
         flex: 1,
         padding: 20,
-        gap: 16,
+        gap: 10,
     },
 });
 
