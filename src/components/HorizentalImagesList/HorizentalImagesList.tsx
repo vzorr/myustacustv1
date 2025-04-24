@@ -18,12 +18,12 @@ interface HorizontalImageListProps {
 }
 
 const HorizontalImageList = (props: HorizontalImageListProps) => {
-    const { 
-        images, 
+    const {
+        images,
         enableModal = true, // Enable modal by default for PostJobPreviewScreen
-        onImagePress 
+        onImagePress
     } = props;
-    
+
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
@@ -33,7 +33,7 @@ const HorizontalImageList = (props: HorizontalImageListProps) => {
             onImagePress(index, item);
             return;
         }
-        
+
         // Otherwise, if modal is enabled, show the modal
         if (enableModal) {
             setSelectedImageIndex(index);
@@ -48,12 +48,12 @@ const HorizontalImageList = (props: HorizontalImageListProps) => {
                 data={images}
                 keyExtractor={(item, index) => item.id?.toString() || index.toString()}
                 renderItem={({ item, index }) => (
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={styles.imageContainer}
                         onPress={() => handleImagePress(index, item)}
                     >
                         <Image
-                            source={item.imagePath ? item.imagePath : { uri: item }}
+                            source={item.imagePath ? item.imagePath : { uri: item?.path ? item.path : item }}
                             style={styles.image}
                             resizeMode='cover'
                         />
