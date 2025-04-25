@@ -81,17 +81,17 @@ const JobsStatusCard: React.FC<JobsStatusCardProps> = ({
                     title={"View Progress"}
                     onPress={handleViewButton}
                     style={{ width: SIZES.wp(45) }}
-                /> : statusText === "pending" ?
+                /> : statusText === "pending" && applicationsCount ?
                     <CustomButton
                         title={"View Applications"}
                         onPress={handleViewButton}
                         style={{ width: SIZES.wp(50) }}
-                    /> :
-                    <CustomButton
-                        title={"Leave Review"}
-                        onPress={handleViewButton}
-                        style={{ width: SIZES.wp(45) }}
-                    />
+                    /> : statusText === "completed" ?
+                        <CustomButton
+                            title={"Leave Review"}
+                            onPress={handleViewButton}
+                            style={{ width: SIZES.wp(45) }}
+                        /> : null
             )}
         </View>
     )

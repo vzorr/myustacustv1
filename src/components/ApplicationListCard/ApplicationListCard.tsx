@@ -29,6 +29,8 @@ const ApplicationListCard: React.FC<ApplicationListCardProps> = ({
     onPress,
     profileImg
 }) => {
+    console.log("rating", rating)
+
     return (
         <TouchableOpacity
             style={styles.container}

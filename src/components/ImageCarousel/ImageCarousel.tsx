@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  View, 
-  Image, 
-  StyleSheet, 
-  Dimensions, 
-  TouchableOpacity, 
+import {
+  View,
+  Image,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
   FlatList,
   ImageSourcePropType,
 } from 'react-native';
@@ -48,14 +48,14 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onClose, initialI
       setIsTransitioning(true);
       const newIndex = currentIndex + 1;
       setCurrentIndex(newIndex);
-      
+
       if (flatListRef.current) {
         flatListRef.current.scrollToIndex({
           index: newIndex,
           animated: true,
           viewPosition: 0.5,
         });
-        
+
         // Reset transitioning state after animation completes
         setTimeout(() => {
           setIsTransitioning(false);
@@ -69,14 +69,14 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onClose, initialI
       setIsTransitioning(true);
       const newIndex = currentIndex - 1;
       setCurrentIndex(newIndex);
-      
+
       if (flatListRef.current) {
         flatListRef.current.scrollToIndex({
           index: newIndex,
           animated: true,
           viewPosition: 0.5,
         });
-        
+
         // Reset transitioning state after animation completes
         setTimeout(() => {
           setIsTransitioning(false);
@@ -117,7 +117,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onClose, initialI
   const isSingleImage = images.length <= 1;
   const isFirstImage = currentIndex === 0;
   const isLastImage = currentIndex === images.length - 1;
-  
+
   // Calculate which buttons to show
   const showLeftArrow = !isSingleImage && !isFirstImage;
   const showRightArrow = !isSingleImage && !isLastImage;
@@ -151,7 +151,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onClose, initialI
         initialNumToRender={3}
         extraData={currentIndex}
       />
-      
+
       {/* Close button overlaid on image top right corner */}
       <TouchableOpacity style={styles.closeButton} onPress={onClose}>
         <View style={styles.closeButtonCircle}>
@@ -160,11 +160,11 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onClose, initialI
           </View>
         </View>
       </TouchableOpacity>
-      
+
       {/* Navigation buttons overlaid on image */}
       {showLeftArrow && (
-        <TouchableOpacity 
-          style={[styles.navigationButton, styles.leftButton]} 
+        <TouchableOpacity
+          style={[styles.navigationButton, styles.leftButton]}
           onPress={handlePrevious}
           disabled={isTransitioning}
         >
@@ -173,10 +173,10 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, onClose, initialI
           </View>
         </TouchableOpacity>
       )}
-      
+
       {showRightArrow && (
-        <TouchableOpacity 
-          style={[styles.navigationButton, styles.rightButton]} 
+        <TouchableOpacity
+          style={[styles.navigationButton, styles.rightButton]}
           onPress={handleNext}
           disabled={isTransitioning}
         >

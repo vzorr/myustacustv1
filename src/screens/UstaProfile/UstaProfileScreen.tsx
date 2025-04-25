@@ -192,7 +192,7 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
     //     'Concrete Work',
     //     'Home Maintenance'
     // ];
-    
+
     const { userData }: any = useSelector((state: any) => state?.userInfo)
     const { token }: any = useSelector((state: any) => state?.accessToken)
     const [isLoading, setIsloading] = useState<boolean>(true);
@@ -203,7 +203,7 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
         // props.navigation.navigate('UstaProfile', { otherUserId: appDetail?.usta?.id });
     };
     const handlePortfolio = (id: any) => () => {
-        props.navigation.navigate('UstaPortfolioDetail', {portfolioId: id, jobId:jobId });
+        props.navigation.navigate('UstaPortfolioDetail', { portfolioId: id, jobId: jobId });
     }
     const handleInterview = () => {
         // props.navigation.navigate('ApplicationDetail');
@@ -273,8 +273,8 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
             />
             {/* Skills grid using map and flexWrap */}
             <View style={styles.skillsContainer}>
-         
-                {skills?.map((skill:any, index:any) => (
+
+                {skills?.map((skill: any, index: any) => (
                     <View key={index} style={styles.skillItem}>
                         <SkillsItem label={skill.category} />
                     </View>
@@ -323,6 +323,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         padding: 20,
         gap: 10,
+        paddingBottom: 120
     },
     skillsContainer: {
         flexDirection: 'row',

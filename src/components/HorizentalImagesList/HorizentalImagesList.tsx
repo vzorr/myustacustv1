@@ -23,6 +23,7 @@ const HorizontalImageList = (props: HorizontalImageListProps) => {
         enableModal = true, // Enable modal by default for PostJobPreviewScreen
         onImagePress
     } = props;
+    console.log("images...................", images)
 
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);

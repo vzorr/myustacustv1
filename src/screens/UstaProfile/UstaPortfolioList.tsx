@@ -14,8 +14,8 @@ type Props = {
     handlePortfolio: (id: any) => () => void; // Assuming handlePortfolio is a function that takes an id and returns a function
 };
 
-const UstaPortfolioList = (propa:any) => {
-    const { data, handlePortfolio } = propa; 
+const UstaPortfolioList = (propa: any) => {
+    const { data, handlePortfolio } = propa;
     const renderItem = ({ item }: { item: any }) => (
         <UstaPortfolioListCard
             imageData={item.media}

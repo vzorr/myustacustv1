@@ -1,4 +1,4 @@
-import { FlatList, LayoutAnimation, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View, KeyboardAvoidingView, Alert, Modal, StatusBar } from 'react-native'
+import { FlatList, LayoutAnimation, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View, KeyboardAvoidingView, Alert, Modal, StatusBar, Image, ScrollView } from 'react-native'
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import AppHeader from '../../../components/AppHeader/AppHeader'
@@ -86,9 +86,9 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const [materialToDelete, setMaterialToDelete] = useState<string | null>(null);
     const [showBudgetModal, setShowBudgetModal] = useState(false);
     const [areaSize, setAreaSize] = useState(35);
-    const [budget, setBudget] = useState("Budget Lek...");
-    const [images, setImages] = useState<ImageItem[]>([]);
-    const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash' | null>(null);
+    // const [budget, setBudget] = useState("Budget Lek...");
+    // const [images, setImages] = useState<ImageItem[]>([]);
+    // const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash' | null>(null);
     const { metaData }: any = useSelector((state: any) => state?.metaData)
     const { userData }: any = useSelector((state: any) => state?.userInfo)
     console.log("userData", userData)
@@ -301,11 +301,11 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
             >
                 <SafeAreaView style={styles.container}>
                     <View style={styles.innerContainer}>
-                        <Heading
+                        {/* <Heading
                             headingText='PAYMENT METHOD'
                             style={{ fontSize: fontSize[16] }}
-                        />
-                        <View style={styles.radioMainContainer}>
+                        /> */}
+                        {/* <View style={styles.radioMainContainer}>
                             <View style={styles.radioContainer}>
                                 <TouchableOpacity onPress={() => setFieldValue('paymentMethod', 'card')}>
                                     {values.paymentMethod === 'card' ? (
@@ -331,7 +331,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             <ErrorText
                                 error={errors.paymentMethod}
                             />
-                        }
+                        } */}
                         <Heading
                             headingText='JOB DETAILS'
                             style={{ fontSize: fontSize[16] }}
@@ -502,7 +502,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             onCancel={() => { }}
                             imagesCount={values?.images && Array.isArray(values.images) ? values.images.length : 0}
                         />
-
                         {/* START DATE with Calendar */}
                         <Heading
                             headingText='START DATE'

@@ -1,5 +1,5 @@
-import { SafeAreaView, Text, View, Image, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useState } from 'react'
+import { SafeAreaView, Text, View, Image, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import accountScreensStyles from '../../../styles/accountScreensStyles'
 import CustomTextInput from '../../../components/InputField/InputBox'
 import { COLORS } from '../../../config/themes/theme'
@@ -22,6 +22,21 @@ const AccountBasicInfoUi = (props: any) => {
     const [image, setImage] = useState<string | null>(null);
     const [showImageModal, setShowImageModal] = useState(false);
     const [imageUploaded, setImageUploaded] = useState(false);
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+            setKeyboardVisible(true);
+        });
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            setKeyboardVisible(false);
+        });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
+
 
     const pickImageFromGallery = () => {
         ImagePicker.openPicker({
@@ -216,26 +231,28 @@ const AccountBasicInfoUi = (props: any) => {
                     </View>
                 </View>
                 {/* Navigation Buttons */}
-                <View style={{ gap: 16 }}>
-                    <TouchableOpacity style={accountScreensStyles.arrowButtonContianer} onPress={handleSubmit}>
-                        {!imageUploaded ? (
-                            <SVGIcons.unFilledRightButton />
-                        ) : (
-                            <SVGIcons.filledRightButton />
-                        )}
-                    </TouchableOpacity>
-                    <View style={accountScreensStyles.StatusBarContainer}>
-                        <ProgressBar
-                            backgroundColor={COLORS.Yellow}
-                        />
-                        <ProgressBar
-                            backgroundColor={COLORS.statusBarColor}
-                        />
-                        <ProgressBar
-                            backgroundColor={COLORS.statusBarColor}
-                        />
+                {!isKeyboardVisible && (
+                    <View style={{ gap: 16 }}>
+                        <TouchableOpacity style={accountScreensStyles.arrowButtonContianer} onPress={handleSubmit}>
+                            {!imageUploaded ? (
+                                <SVGIcons.unFilledRightButton />
+                            ) : (
+                                <SVGIcons.filledRightButton />
+                            )}
+                        </TouchableOpacity>
+                        <View style={accountScreensStyles.StatusBarContainer}>
+                            <ProgressBar
+                                backgroundColor={COLORS.Yellow}
+                            />
+                            <ProgressBar
+                                backgroundColor={COLORS.statusBarColor}
+                            />
+                            <ProgressBar
+                                backgroundColor={COLORS.statusBarColor}
+                            />
+                        </View>
                     </View>
-                </View>
+                )}
             </KeyboardAvoidingView>
             {/* Image Upload Modal */}
             {showImageModal && (

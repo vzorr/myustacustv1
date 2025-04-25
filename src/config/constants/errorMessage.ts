@@ -65,7 +65,7 @@ export const accountCreationSchema = yup.object().shape({
 export const jobPostValidationSchema = yup.object().shape({
     title: yup.string().required('Title is required'),
     description: yup.string().required('Description is required').min(20, 'minmum 20 characters Description'),
-    paymentMethod: yup.string().required('Payment method is required'),
+    // paymentMethod: yup.string().required('Payment method is required'),
     // category: yup.string().required('Category is required'),
     areaSize: yup.number()
         .typeError('Area size must be a number')

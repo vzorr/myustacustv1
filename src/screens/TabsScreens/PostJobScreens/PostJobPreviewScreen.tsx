@@ -121,16 +121,17 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
             screen: 'PostJobScreen',
         });
     }, [navigation]);
-    console.log("previewValue", previewValue)
+    console.log("previewValue imagesssssssssssssssssssssss", previewValue?.images)
+
     const renderScreenContent = useCallback(() => (
         <SafeAreaView style={styles.container}>
             <View style={styles.innerContainer}>
-                <AccountHeader
+                {/* <AccountHeader
                     title='PAYMENT METHOD'
                     subTitle={`By ${previewValue?.paymentMethod}`}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
-                />
+                /> */}
                 <AccountHeader
                     title='Category'
                     subTitle={previewValue?.category}
