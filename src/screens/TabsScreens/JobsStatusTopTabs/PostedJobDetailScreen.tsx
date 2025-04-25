@@ -200,22 +200,26 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
                         title='Category'
                         subTitle={category}
                         titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                        subTitleStyle={{ marginTop: -8 }}
                     />
                     <AccountHeader
                         title='JOB DESCRIPTION'
                         subTitle={description}
                         titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                        subTitleStyle={{ marginTop: -8 }}
                     />
                     <LineSeparator />
                     <AccountHeader
                         title='AREA SIZE'
                         subTitle={`${areaSize} m²`}
                         titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                        subTitleStyle={{ marginTop: -8 }}
                     />
                     <AccountHeader
                         title='MATERIALS'
                         subTitle={materials}
                         titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                        subTitleStyle={{ marginTop: -8 }}
                     />
                     <LineSeparator />
                     <Heading
@@ -230,22 +234,26 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
                         title='START DATE'
                         subTitle={moment(startDate)?.format('DD MMMM YYYY')}
                         titleStyle={{ fontSize: fontSize[16] }}
+                        subTitleStyle={{ marginTop: -8 }}
                     />
                     <AccountHeader
                         title='END DATE'
                         subTitle={moment(endDate)?.format('DD MMMM YYYY')}
                         titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                        subTitleStyle={{ marginTop: -8 }}
                     />
                     <LineSeparator />
                     <AccountHeader
                         title='LOCATION'
                         subTitle={location?.address}
                         titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                        subTitleStyle={{ marginTop: -8 }}
                     />
                     <AccountHeader
                         title='LOCATION DESCRIPTION'
                         subTitle={location?.address}
                         titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                        subTitleStyle={{ marginTop: -8 }}
                     />
                     <View style={styles.mapContainer}>
                         {region &&
