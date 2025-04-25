@@ -11,7 +11,7 @@ interface HeadingProps {
 const SubHeading: React.FC<HeadingProps> = ({ subHeadingText, subTitle, containerStyle }) => {
     return (
         <View style={[containerStyle]}>
-            <Text style={[reuseableTextStyles.subTitle, subTitle]}>
+            <Text style={[reuseableTextStyles.subTitle]}>
                 {subHeadingText}
             </Text>
         </View>
