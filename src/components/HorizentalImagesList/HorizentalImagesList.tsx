@@ -23,7 +23,6 @@ const HorizontalImageList = (props: HorizontalImageListProps) => {
         enableModal = true, // Enable modal by default for PostJobPreviewScreen
         onImagePress
     } = props;
-    console.log("images...................", images)
 
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -78,7 +77,8 @@ const HorizontalImageList = (props: HorizontalImageListProps) => {
 
 const styles = StyleSheet.create({
     listContainer: {
-        gap: 8
+        gap: 8,
+        paddingHorizontal: 20,
     },
     imageContainer: {
         backgroundColor: COLORS.white,

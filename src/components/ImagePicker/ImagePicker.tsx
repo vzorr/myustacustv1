@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
   Modal
 } from 'react-native';
 import { COLORS, FONTS, fontSize } from '../../config/themes/theme';
@@ -13,26 +13,31 @@ import CustomSelector from '../Selector/CustomSelector';
 interface ImagePickerProps {
   onTakePhoto: () => void;
   onPickFromGallery: () => void;
-  onCancel: () => void;
+  handleCancel: () => void;
+  // handleCancel: () => void;
   imagesCount?: number;
+  showImageModal: boolean;
+  setShowImageModal: any
 }
 
-const ImagePicker: React.FC<ImagePickerProps> = ({ 
-  onTakePhoto, 
-  onPickFromGallery, 
-  onCancel,
+const ImagePicker: React.FC<ImagePickerProps> = ({
+  onTakePhoto,
+  onPickFromGallery,
+  handleCancel,
+  showImageModal,
+  setShowImageModal,
   imagesCount = 0
 }) => {
-  const [showImageModal, setShowImageModal] = useState(false);
+  // const [showImageModal, setShowImageModal] = useState(false);
 
-  const handleImageUpload = () => {
-    setShowImageModal(true);
-  };
+  // const handleImageUpload = () => {
+  //   setShowImageModal(true);
+  // };
 
-  const handleCancel = () => {
-    setShowImageModal(false);
-    onCancel();
-  };
+  // const handleCancel = () => {
+  //   setShowImageModal(false);
+  //   onCancel();
+  // };
 
   const handleTakePhoto = () => {
     setShowImageModal(false);
@@ -50,11 +55,11 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 
   return (
     <>
-      <CustomSelector
+      {/* <CustomSelector
         title={imagesCount > 0 ? `${imagesCount} Images Selected` : 'Upload Image'}
         iconName='uploadIcon'
         onPress={handleImageUpload}
-      />
+      /> */}
 
       <Modal
         visible={showImageModal}
@@ -106,7 +111,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize[16],
     fontFamily: FONTS.interBold,
     color: COLORS.Black,
-    marginBottom: 15,
+    marginBottom: 10,
     textAlign: 'center',
   },
   modalOption: {

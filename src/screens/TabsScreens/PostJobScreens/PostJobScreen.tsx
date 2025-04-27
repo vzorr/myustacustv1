@@ -56,6 +56,7 @@ interface ImageItem {
 const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props) => {
     const { postJob }: any = useSelector((state: any) => state?.postJob)
     const { route, navigation } = props
+    const EditPostJob = route?.params?.EditPostJob
     const [selectedCategories, setSelectedCategories] = useState<string[]>(postJob?.category || []);
     const [selectedArea, setSelectedArea] = useState<string[]>(postJob?.areaType || []);
     const [selectLocation, setSelectLocation] = useState<string[]>(postJob?.locationDescp || []);
@@ -74,6 +75,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const [locationError, setLocationError] = useState<string>("");
     const [budgetError, setBudgetError] = useState<string>("");
     const [discardChangesModel, setDiscardChangesModal] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false);
     const [materials, setMaterials] = useState<MaterialItem[]>(
         postJob?.materials ?
             postJob.materials.split(',').map((mat: string, index: number) => ({
@@ -86,9 +88,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const [materialToDelete, setMaterialToDelete] = useState<string | null>(null);
     const [showBudgetModal, setShowBudgetModal] = useState(false);
     const [areaSize, setAreaSize] = useState(35);
-    // const [budget, setBudget] = useState("Budget Lek...");
-    // const [images, setImages] = useState<ImageItem[]>([]);
-    // const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash' | null>(null);
+    const [selectedIndex, setSelectedIndex] = useState<any>(0);
     const { metaData }: any = useSelector((state: any) => state?.metaData)
     const { userData }: any = useSelector((state: any) => state?.userInfo)
     console.log("userData", userData)
@@ -288,6 +288,44 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
             }
         }, [values?.materials]);
 
+        const handleImageUpload = () => {
+            setShowImageModal(true);
+        };
+        const handleCancelModal = () => {
+            setShowImageModal(false);
+        };
+
+        const handleSelectImage = (index: number) => {
+            setSelectedIndex(index); // only update selected index manually
+        };
+
+        const handleDeleteImage = (indexToDelete: number) => {
+            if (!Array.isArray(values.images)) return;
+
+            const updatedImages = values.images.filter((_: { path: string }, idx: number) => idx !== indexToDelete);
+            setFieldValue('images', updatedImages);
+
+            if (updatedImages.length > 0) {
+                // If deleting first image, select the new first image (index 0)
+                if (indexToDelete === 0) {
+                    setSelectedIndex(0);
+                }
+                // If deleting last image, select the new last image
+                else if (indexToDelete === values.images.length - 1) {
+                    setSelectedIndex(updatedImages.length - 1);
+                }
+                // If deleted image was before the selected image
+                else if (indexToDelete < selectedIndex) {
+                    setSelectedIndex((prev: number) => prev - 1);
+                }
+                // If deleted image was after selected image, selected index remains same
+            } else {
+                setSelectedIndex(null); // no images left
+            }
+        };
+
+        // const imagesCount = values?.images && Array.isArray(values.images) ? values.images.length : 0
+        const imagesCount = Array.isArray(values?.images) ? values.images.length : 0;
         return (
             <KeyboardAwareScrollView
                 enableOnAndroid={true}
@@ -332,417 +370,519 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 error={errors.paymentMethod}
                             />
                         } */}
-                        <Heading
-                            headingText='JOB DETAILS'
-                            style={{ fontSize: fontSize[16] }}
-                        />
-                        <View style={{ gap: 8 }}>
-                            <TextInput
-                                style={[styles.input, { color: COLORS.Navy }]}
-                                placeholder="Write a job title..."
-                                placeholderTextColor={COLORS.Navy}
-                                cursorColor={COLORS.Navy}
-                                // multiline
-                                numberOfLines={1}
-                                value={values?.title}
-                                onChangeText={handleChange('title')}
-                                onBlur={handleBlur("title")}
+                        <View style={{ paddingHorizontal: 20, gap: 10 }}>
+                            <Heading
+                                headingText='JOB DETAILS'
+                                style={{ fontSize: fontSize[16] }}
                             />
-                            {errors?.title && touched?.title &&
-                                <ErrorText
-                                    error={errors.title}
-                                />
-                            }
-                            <TextInput
-                                style={[styles.input, styles.multilineInput]}
-                                placeholder="Provide a detailed job description..."
-                                placeholderTextColor={COLORS.Navy}
-                                cursorColor={COLORS.Navy}
-                                value={values?.description}
-                                multiline
-                                onChangeText={handleChange('description')}
-                                onBlur={handleBlur("description")}
-                            />
-                            {errors?.description && touched?.description &&
-                                <ErrorText
-                                    error={errors.description}
-                                />
-                            }
-                            <CustomDropDown
-                                data={categories}
-                                placeholder="Categories"
-                                selectedItems={selectedCategories}
-                                onSelectionChange={setSelectedCategories}
-                                boxStyles={accountScreensStyles.dropdownBox}
-                                isMultiSelect={true}
-                                isSearch={false}
-                                zIndex={1000}
-                            />
-                            {categoryError &&
-                                <ErrorText
-                                    error={categoryError}
-                                />
-                            }
-                        </View>
-                        <Heading
-                            headingText='PROJECT SPECIFICATIONS'
-                            style={{ fontSize: fontSize[16] }}
-                        />
-                        <View style={{ gap: 8 }}>
-                            <CustomTextInput
-                                placeholder="Area size m²"
-                                placeholderTextColor={COLORS.Navy}
-                                cursorColor={COLORS.Navy}
-                                containerStyle={accountScreensStyles.inputFieldContainer}
-                                inputStyle={accountScreensStyles.inputField}
-                                value={values?.areaSize}
-                                onChangeText={handleChange('areaSize')}
-                                onBlur={handleBlur("areaSize")}
-                                keyboardType='numeric'
-                            />
-                            {errors?.areaSize && touched?.areaSize &&
-                                <ErrorText
-                                    error={errors.areaSize}
-                                />
-                            }
-                            <CustomDropDown
-                                data={areaType}
-                                placeholder="Area Type"
-                                selectedItems={selectedArea}
-                                onSelectionChange={setSelectedArea}
-                                boxStyles={accountScreensStyles.dropdownBox}
-                                isMultiSelect={false}
-                                isSearch={false}
-                                zIndex={1000}
-                            />
-                            {console.log("areaError", areaError)}
-                            {areaError &&
-                                <ErrorText
-                                    error={areaError}
-                                />
-                            }
-                        </View>
-
-                        {/* Materials Section */}
-                        {showAddForm ? (
-                            <View style={styles.addExperienceContainer}>
-                                <View style={styles.addTitleContainer}>
-                                    <Text style={[reuseableTextStyles.title, { fontSize: fontSize[14] }]}>Materials</Text>
-                                    <TouchableOpacity onPress={handleCancelMaterial}>
-                                        <SVGIcons.stateOn />
-                                    </TouchableOpacity>
-                                </View>
-
-                                {/* Show input and buttons only when adding new material */}
-                                {showMaterialInput && (
-                                    <>
-                                        <View style={{ gap: 8 }}>
-                                            <CustomTextInput
-                                                placeholder='e.g Wood'
-                                                placeholderTextColor={COLORS.Navy}
-                                                cursorColor={COLORS.Navy}
-                                                containerStyle={accountScreensStyles.inputFieldContainer}
-                                                inputStyle={accountScreensStyles.inputField}
-                                                value={values?.materials}
-                                                onChangeText={handleChange('materials')}
-                                                onBlur={handleBlur("materials")}
-                                            />
-                                        </View>
-
-                                        <ConfirmationButtons
-                                            cancelText='Cancel'
-                                            onCancel={() => {
-                                                setNewMaterial("");
-                                                setShowMaterialInput(false);
-                                            }}
-                                            confirmText='Add'
-                                            onConfirm={handleConfirmAdd}
-                                            confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
-                                            containerStyle={{ gap: 12 }}
-                                        />
-                                    </>
-                                )}
-                                {/* List of added materials */}
-                                {materials.map((material) => (
-                                    <CustomSelector
-                                        key={material.id}
-                                        title={material.name}
-                                        iconName="deleteIcon"
-                                        onPress={() => handleDeleteMaterial(material.id)}
-                                    />
-                                ))}
-                                {/* Show plus button when not adding new material */}
-                                {!showMaterialInput && (
-                                    <CustomSelector
-                                        onPress={() => setShowMaterialInput(true)}
-                                        title="Add Material"
-                                        iconName="plusIcon"
-                                    />
-                                )}
-                            </View>
-                        ) : (
-                            <CustomSelector
-                                onPress={handleAddMaterials}
-                                title="Material (Optional)"
-                                iconName="StateOff"
-                            />
-                        )}
-                        {errors?.materials && touched?.materials &&
-                            <ErrorText
-                                error={errors.materials}
-                            />
-                        }
-                        <Heading
-                            headingText='IMAGES'
-                            style={{ fontSize: fontSize[16] }}
-                        />
-                        <CustomImagePicker
-                            onTakePhoto={takePhotoWithCamera}
-                            onPickFromGallery={pickImageFromGallery}
-                            onCancel={() => { }}
-                            imagesCount={values?.images && Array.isArray(values.images) ? values.images.length : 0}
-                        />
-                        {/* START DATE with Calendar */}
-                        <Heading
-                            headingText='START DATE'
-                            style={{ fontSize: fontSize[16] }}
-                        />
-                        <CustomSelector
-                            onPress={() => {
-                                setShowStartCalendar(!showStartCalendar);
-                                setShowEndCalendar(false);
-                            }}
-                            title={values?.startDate ? formatDate(values?.startDate) : "Select Start Date"}
-                            iconName={showStartCalendar ? 'ArrowUp' : 'ArrowDown'}
-                        />
-                        {showStartCalendar && (
-                            <View style={styles.calendarContainer}>
-                                <Calendar
-                                    current={values?.startDate || new Date().toISOString().split('T')[0]}
-                                    minDate={new Date().toISOString().split('T')[0]}
-                                    onDayPress={(day) => {
-                                        setFieldValue("startDate", day.dateString);
-                                        setShowStartCalendar(false);
-                                    }}
-                                    markedDates={{
-                                        [values?.startDate]: { selected: true, selectedColor: COLORS.Navy }
-                                    }}
-                                    theme={{
-                                        calendarBackground: COLORS.white,
-                                        textSectionTitleColor: COLORS.Navy,
-                                        selectedDayBackgroundColor: COLORS.Black,
-                                        selectedDayTextColor: COLORS.white,
-                                        todayTextColor: COLORS.Navy,
-                                        dayTextColor: COLORS.Navy,
-                                        textDisabledColor: COLORS.grey,
-                                        arrowColor: COLORS.Navy,
-                                        monthTextColor: COLORS.Black,
-                                        textDayFontFamily: FONTS.interRegular,
-                                        textMonthFontFamily: FONTS.interBold,
-                                        textDayHeaderFontFamily: FONTS.interRegular,
-                                        textDayFontSize: fontSize[14],
-                                        textMonthFontSize: fontSize[16],
-                                        textDayHeaderFontSize: fontSize[12],
-                                    }}
-                                    style={styles.calendar}
-                                    headerStyle={{
-                                        backgroundColor: COLORS.white,
-                                        borderTopLeftRadius: 10,
-                                        borderTopRightRadius: 10,
-                                        paddingHorizontal: 10,
-                                        paddingVertical: 5,
-                                    }}
-                                    renderHeader={(date) => (
-                                        <View style={styles.calendarHeader}>
-                                            <Text style={styles.calendarHeaderText}>
-                                                {date.toString('MMMM yyyy')}
-                                            </Text>
-                                        </View>
-                                    )}
-                                />
-                            </View>
-                        )}
-                        {errors?.startDate && touched?.startDate &&
-                            <ErrorText
-                                error={errors.startDate}
-                            />
-                        }
-                        {/* END DATE with Calendar */}
-                        <Heading
-                            headingText='END DATE'
-                            style={{ fontSize: fontSize[16] }}
-                        />
-                        <CustomSelector
-                            onPress={() => {
-                                setShowEndCalendar(!showEndCalendar);
-                                setShowStartCalendar(false);
-                            }}
-                            title={values.endDate ? formatDate(values?.endDate) : "Select End Date"}
-                            iconName={showEndCalendar ? 'ArrowUp' : 'ArrowDown'}
-                        />
-                        {showEndCalendar && (
-                            <View style={styles.calendarContainer}>
-                                <Calendar
-                                    current={values.endDate || values?.startDate || new Date().toISOString().split('T')[0]}
-                                    minDate={values?.startDate || new Date().toISOString().split('T')[0]}
-                                    onDayPress={(day) => {
-                                        setFieldValue("endDate", day.dateString);
-                                        setShowEndCalendar(false);
-                                    }}
-                                    markedDates={{
-                                        [values?.endDate]: { selected: true, selectedColor: COLORS.Navy },
-                                        ...(values?.startDate && {
-                                            [values?.startDate]: { selected: true, selectedColor: COLORS.Navy }
-                                        })
-                                    }}
-                                    theme={{
-                                        calendarBackground: COLORS.white,
-                                        textSectionTitleColor: COLORS.Navy,
-                                        selectedDayBackgroundColor: COLORS.Black,
-                                        selectedDayTextColor: COLORS.white,
-                                        todayTextColor: COLORS.Navy,
-                                        dayTextColor: COLORS.Navy,
-                                        textDisabledColor: COLORS.grey,
-                                        arrowColor: COLORS.Navy,
-                                        monthTextColor: COLORS.Black,
-                                        textDayFontFamily: FONTS.interRegular,
-                                        textMonthFontFamily: FONTS.interBold,
-                                        textDayHeaderFontFamily: FONTS.interRegular,
-                                        textDayFontSize: fontSize[14],
-                                        textMonthFontSize: fontSize[16],
-                                        textDayHeaderFontSize: fontSize[12],
-                                    }}
-                                    style={styles.calendar}
-                                    headerStyle={{
-                                        backgroundColor: COLORS.white,
-                                        borderTopLeftRadius: 10,
-                                        borderTopRightRadius: 10,
-                                        paddingHorizontal: 10,
-                                        paddingVertical: 5,
-                                    }}
-                                    renderHeader={(date) => (
-                                        <View style={styles.calendarHeader}>
-                                            <Text style={styles.calendarHeaderText}>
-                                                {date.toString('MMMM yyyy')}
-                                            </Text>
-                                        </View>
-                                    )}
-                                />
-                            </View>
-                        )}
-                        {errors?.endDate && touched?.endDate &&
-                            <ErrorText
-                                error={errors.endDate}
-                            />
-                        }
-                        <Heading
-                            headingText='LOCATION'
-                            style={{ fontSize: fontSize[16] }}
-                        />
-                        <View style={{ gap: 8 }}>
-                            <CustomDropDown
-                                data={UKLocations}
-                                placeholder="Select Location"
-                                selectedItems={selectLocation}
-                                onSelectionChange={setSelectLocation}
-                                boxStyles={accountScreensStyles.dropdownBox}
-                                isMultiSelect={false}
-                                isSearch={false}
-                                zIndex={1000}
-                                isAddLocation={true}
-                                handleAddLocation={handleAddNewLocation}
-                            />
-                            {console.log("locationError", locationError)}
-                            {locationError &&
-                                <ErrorText
-                                    error={locationError}
-                                />
-                            }
-                            <View>
+                            <View style={{ gap: 8 }}>
                                 <TextInput
-                                    style={[styles.input, { minHeight: 100, color: COLORS.Navy }]}
-                                    placeholder={"Location Description..."}
-                                    multiline={true}
+                                    style={[styles.input, { color: COLORS.Navy }]}
+                                    placeholder="Write a job title..."
                                     placeholderTextColor={COLORS.Navy}
-                                    textAlignVertical={'top'}
-                                    textAlign="left"
-                                    value={values?.locationDescp}
-                                    onChangeText={handleChange('locationDescp')}
-                                    onBlur={handleBlur("locationDescp")}
+                                    cursorColor={COLORS.Navy}
+                                    // multiline
+                                    numberOfLines={1}
+                                    value={values?.title}
+                                    onChangeText={handleChange('title')}
+                                    onBlur={handleBlur("title")}
                                 />
+                                {errors?.title && touched?.title &&
+                                    <ErrorText
+                                        error={errors.title}
+                                    />
+                                }
+                                <TextInput
+                                    style={[styles.input, styles.multilineInput]}
+                                    placeholder="Provide a detailed job description..."
+                                    placeholderTextColor={COLORS.Navy}
+                                    cursorColor={COLORS.Navy}
+                                    value={values?.description}
+                                    multiline
+                                    onChangeText={handleChange('description')}
+                                    onBlur={handleBlur("description")}
+                                />
+                                {errors?.description && touched?.description &&
+                                    <ErrorText
+                                        error={errors.description}
+                                    />
+                                }
+                                <CustomDropDown
+                                    data={categories}
+                                    placeholder="Categories"
+                                    selectedItems={selectedCategories}
+                                    onSelectionChange={setSelectedCategories}
+                                    boxStyles={accountScreensStyles.dropdownBox}
+                                    isMultiSelect={true}
+                                    isSearch={false}
+                                    zIndex={1000}
+                                />
+                                {categoryError &&
+                                    <ErrorText
+                                        error={categoryError}
+                                    />
+                                }
                             </View>
-                            {errors?.locationDescp && touched?.locationDescp &&
-                                <ErrorText
-                                    error={errors.locationDescp}
-                                />
-                            }
-                        </View>
-                        <View>
-                            <Text style={reuseableTextStyles.subTitle}>Place the marker in the exact location</Text>
-                        </View>
-                        <View style={styles.mapContainer}>
-                            <MapView
-                                ref={mapRef}
-                                provider={PROVIDER_GOOGLE}
-                                style={styles.mapView}
-                                initialRegion={initialRegion}
-                                scrollEnabled={true}
-                                zoomEnabled={true}
-                                pitchEnabled={true}
-                                rotateEnabled={true}
-                                shouldRasterizeIOS={true}
-                                cacheEnabled={true}
-                            >
-                                <Marker coordinate={initialRegion} />
-                            </MapView>
-                        </View>
-                        <Heading
-                            headingText='BUDGET'
-                            style={{ fontSize: fontSize[16] }}
-                        />
-                        <View style={styles.budgetContainer}>
-                            <CustomDropDown
-                                data={currency}
-                                placeholder="Currency"
-                                selectedItems={selectedBudget}
-                                onSelectionChange={setSelectedBudget}
-                                boxStyles={accountScreensStyles.dropdownBox}
-                                isMultiSelect={false}
-                                isSearch={false}
-                                zIndex={1000}
+                            <Heading
+                                headingText='PROJECT SPECIFICATIONS'
+                                style={{ fontSize: fontSize[16] }}
                             />
-                            {budgetError &&
-                                <ErrorText
-                                    error={budgetError}
-                                />
-                            }
-                            <View style={styles.budgetInputContainer}>
+                            <View style={{ gap: 8 }}>
                                 <CustomTextInput
-                                    placeholder="Budget Lek..."
+                                    placeholder="Area size m²"
                                     placeholderTextColor={COLORS.Navy}
-                                    containerStyle={[accountScreensStyles.inputFieldContainer, styles.budgetInput]}
+                                    cursorColor={COLORS.Navy}
+                                    containerStyle={accountScreensStyles.inputFieldContainer}
                                     inputStyle={accountScreensStyles.inputField}
-                                    value={values?.budgetDesc}
-                                    onChangeText={handleChange('budgetDesc')}
-                                    onBlur={handleBlur("budgetDesc")}
+                                    value={values?.areaSize}
+                                    onChangeText={handleChange('areaSize')}
+                                    onBlur={handleBlur("areaSize")}
                                     keyboardType='numeric'
                                 />
-                                <TouchableOpacity
-                                    style={styles.NIPTContainer}
-                                    onPress={() => setShowBudgetModal(true)}
-                                >
-                                    <SVGIcons.infoNIPTIcon />
-                                </TouchableOpacity>
+                                {errors?.areaSize && touched?.areaSize &&
+                                    <ErrorText
+                                        error={errors.areaSize}
+                                    />
+                                }
+                                <CustomDropDown
+                                    data={areaType}
+                                    placeholder="Area Type"
+                                    selectedItems={selectedArea}
+                                    onSelectionChange={setSelectedArea}
+                                    boxStyles={accountScreensStyles.dropdownBox}
+                                    isMultiSelect={false}
+                                    isSearch={false}
+                                    zIndex={1000}
+                                />
+                                {console.log("areaError", areaError)}
+                                {areaError &&
+                                    <ErrorText
+                                        error={areaError}
+                                    />
+                                }
                             </View>
+
+                            {/* Materials Section */}
+                            {showAddForm ? (
+                                <View style={styles.addExperienceContainer}>
+                                    <View style={styles.addTitleContainer}>
+                                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[14] }]}>Materials</Text>
+                                        <TouchableOpacity onPress={handleCancelMaterial}>
+                                            <SVGIcons.stateOn />
+                                        </TouchableOpacity>
+                                    </View>
+
+                                    {/* Show input and buttons only when adding new material */}
+                                    {showMaterialInput && (
+                                        <>
+                                            <View style={{ gap: 8 }}>
+                                                <CustomTextInput
+                                                    placeholder='e.g Wood'
+                                                    placeholderTextColor={COLORS.Navy}
+                                                    cursorColor={COLORS.Navy}
+                                                    containerStyle={accountScreensStyles.inputFieldContainer}
+                                                    inputStyle={accountScreensStyles.inputField}
+                                                    value={values?.materials}
+                                                    onChangeText={handleChange('materials')}
+                                                    onBlur={handleBlur("materials")}
+                                                />
+                                            </View>
+
+                                            <ConfirmationButtons
+                                                cancelText='Cancel'
+                                                onCancel={() => {
+                                                    setNewMaterial("");
+                                                    setShowMaterialInput(false);
+                                                }}
+                                                confirmText='Add'
+                                                onConfirm={handleConfirmAdd}
+                                                confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
+                                                containerStyle={{ gap: 12 }}
+                                            />
+                                        </>
+                                    )}
+                                    {/* List of added materials */}
+                                    {materials.map((material) => (
+                                        <CustomSelector
+                                            key={material.id}
+                                            title={material.name}
+                                            iconName="deleteIcon"
+                                            onPress={() => handleDeleteMaterial(material.id)}
+                                        />
+                                    ))}
+                                    {/* Show plus button when not adding new material */}
+                                    {!showMaterialInput && (
+                                        <CustomSelector
+                                            onPress={() => setShowMaterialInput(true)}
+                                            title="Add Material"
+                                            iconName="plusIcon"
+                                        />
+                                    )}
+                                </View>
+                            ) : (
+                                <CustomSelector
+                                    onPress={handleAddMaterials}
+                                    title="Material (Optional)"
+                                    iconName="StateOff"
+                                />
+                            )}
+                            {errors?.materials && touched?.materials &&
+                                <ErrorText
+                                    error={errors.materials}
+                                />
+                            }
+                            <Heading
+                                headingText='IMAGES'
+                                style={{ fontSize: fontSize[16] }}
+                            />
                         </View>
-                        <ConfirmationButtons
-                            cancelText='Cancel'
-                            onCancel={handleCancel}
-                            confirmText='Review Details'
-                            onConfirm={handleSubmit}
-                            // onConfirm={handlePreview}
-                            confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
-                        />
+                        {EditPostJob === "EditPostJob" ? (
+                            <View style={{ gap: 8 }}>
+                                <ScrollView
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={{
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        paddingHorizontal: 20,
+                                        gap: 8,
+                                    }}
+                                >
+                                    <TouchableOpacity
+                                        style={{
+                                            borderRadius: 8,
+                                            borderWidth: 1,
+                                            borderColor: COLORS.inputBorder,
+                                            width: 64,
+                                            height: 64,
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                        onPress={handleImageUpload}
+                                    >
+                                        <SVGIcons.plusIcon />
+                                    </TouchableOpacity>
+
+                                    {Array.isArray(values?.images) && values.images.map((item: { path: string }, index: number) => (
+                                        <View key={index} style={{ position: 'relative' }}>
+                                            <TouchableOpacity
+                                                onPress={() => handleSelectImage(index)}
+                                                style={{
+                                                    borderRadius: 8,
+                                                    width: 64,
+                                                    height: 64,
+                                                    position: 'relative',
+                                                    overflow: 'hidden',
+                                                }}
+                                            >
+                                                <Image
+                                                    source={{ uri: item.path }}
+                                                    style={{
+                                                        width: 64,
+                                                        height: 64,
+                                                        borderRadius: 8,
+                                                        // borderWidth: index === selectedIndex ? 1.5 : 0,
+                                                        // borderColor: index === selectedIndex ? COLORS.Yellow : 'transparent',
+                                                    }}
+                                                    resizeMode="cover"
+                                                />
+                                            </TouchableOpacity>
+
+                                            {/* Show cross icon on selected image */}
+                                            {index === selectedIndex && (
+                                                <View
+                                                    style={{
+                                                        ...StyleSheet.absoluteFillObject, // cover entire image
+                                                        backgroundColor: 'rgba(0,0,0,0.4)', // transparent dark layer
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        width: 64,
+                                                        height: 64,
+                                                        borderRadius: 8,
+                                                    }}
+                                                >
+                                                    <TouchableOpacity
+                                                        onPress={() => handleDeleteImage(index)}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            top: '30%',
+                                                            left: '32%',
+                                                            width: 24,
+                                                            height: 24,
+                                                            backgroundColor: COLORS.white,
+                                                            borderRadius: 12,
+                                                        }}
+                                                    >
+                                                        <SVGIcons.crossIcon />
+                                                    </TouchableOpacity>
+                                                </View>
+                                            )}
+                                        </View>
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        ) : (
+                            <View style={{ paddingHorizontal: 20, marginTop: -10 }}>
+                                <CustomSelector
+                                    title={imagesCount > 0 ? `${imagesCount} Images Selected` : 'Upload Image'}
+                                    iconName="uploadIcon"
+                                    onPress={handleImageUpload}
+                                />
+                            </View>
+                        )}
+                        <View style={{ paddingHorizontal: 20, gap: 10 }}>
+                            <CustomImagePicker
+                                onTakePhoto={takePhotoWithCamera}
+                                onPickFromGallery={pickImageFromGallery}
+                                handleCancel={handleCancelModal}
+                                showImageModal={showImageModal}
+                                setShowImageModal={setShowImageModal}
+                            // imagesCount={values?.images && Array.isArray(values.images) ? values.images.length : 0}
+                            />
+                            {/* START DATE with Calendar */}
+                            <Heading
+                                headingText='START DATE'
+                                style={{ fontSize: fontSize[16] }}
+                            />
+                            <CustomSelector
+                                onPress={() => {
+                                    setShowStartCalendar(!showStartCalendar);
+                                    setShowEndCalendar(false);
+                                }}
+                                title={values?.startDate ? formatDate(values?.startDate) : "Select Start Date"}
+                                iconName={showStartCalendar ? 'ArrowUp' : 'ArrowDown'}
+                            />
+                            {showStartCalendar && (
+                                <View style={styles.calendarContainer}>
+                                    <Calendar
+                                        current={values?.startDate || new Date().toISOString().split('T')[0]}
+                                        minDate={new Date().toISOString().split('T')[0]}
+                                        onDayPress={(day) => {
+                                            setFieldValue("startDate", day.dateString);
+                                            setShowStartCalendar(false);
+                                        }}
+                                        markedDates={{
+                                            [values?.startDate]: { selected: true, selectedColor: COLORS.Navy }
+                                        }}
+                                        theme={{
+                                            calendarBackground: COLORS.white,
+                                            textSectionTitleColor: COLORS.Navy,
+                                            selectedDayBackgroundColor: COLORS.Black,
+                                            selectedDayTextColor: COLORS.white,
+                                            todayTextColor: COLORS.Navy,
+                                            dayTextColor: COLORS.Navy,
+                                            textDisabledColor: COLORS.grey,
+                                            arrowColor: COLORS.Navy,
+                                            monthTextColor: COLORS.Black,
+                                            textDayFontFamily: FONTS.interRegular,
+                                            textMonthFontFamily: FONTS.interBold,
+                                            textDayHeaderFontFamily: FONTS.interRegular,
+                                            textDayFontSize: fontSize[14],
+                                            textMonthFontSize: fontSize[16],
+                                            textDayHeaderFontSize: fontSize[12],
+                                        }}
+                                        style={styles.calendar}
+                                        headerStyle={{
+                                            backgroundColor: COLORS.white,
+                                            borderTopLeftRadius: 10,
+                                            borderTopRightRadius: 10,
+                                            paddingHorizontal: 10,
+                                            paddingVertical: 5,
+                                        }}
+                                        renderHeader={(date) => (
+                                            <View style={styles.calendarHeader}>
+                                                <Text style={styles.calendarHeaderText}>
+                                                    {date.toString('MMMM yyyy')}
+                                                </Text>
+                                            </View>
+                                        )}
+                                    />
+                                </View>
+                            )}
+                            {errors?.startDate && touched?.startDate &&
+                                <ErrorText
+                                    error={errors.startDate}
+                                />
+                            }
+                            {/* END DATE with Calendar */}
+                            <Heading
+                                headingText='END DATE'
+                                style={{ fontSize: fontSize[16] }}
+                            />
+                            <CustomSelector
+                                onPress={() => {
+                                    setShowEndCalendar(!showEndCalendar);
+                                    setShowStartCalendar(false);
+                                }}
+                                title={values.endDate ? formatDate(values?.endDate) : "Select End Date"}
+                                iconName={showEndCalendar ? 'ArrowUp' : 'ArrowDown'}
+                            />
+                            {showEndCalendar && (
+                                <View style={styles.calendarContainer}>
+                                    <Calendar
+                                        current={values.endDate || values?.startDate || new Date().toISOString().split('T')[0]}
+                                        minDate={values?.startDate || new Date().toISOString().split('T')[0]}
+                                        onDayPress={(day) => {
+                                            setFieldValue("endDate", day.dateString);
+                                            setShowEndCalendar(false);
+                                        }}
+                                        markedDates={{
+                                            [values?.endDate]: { selected: true, selectedColor: COLORS.Navy },
+                                            ...(values?.startDate && {
+                                                [values?.startDate]: { selected: true, selectedColor: COLORS.Navy }
+                                            })
+                                        }}
+                                        theme={{
+                                            calendarBackground: COLORS.white,
+                                            textSectionTitleColor: COLORS.Navy,
+                                            selectedDayBackgroundColor: COLORS.Black,
+                                            selectedDayTextColor: COLORS.white,
+                                            todayTextColor: COLORS.Navy,
+                                            dayTextColor: COLORS.Navy,
+                                            textDisabledColor: COLORS.grey,
+                                            arrowColor: COLORS.Navy,
+                                            monthTextColor: COLORS.Black,
+                                            textDayFontFamily: FONTS.interRegular,
+                                            textMonthFontFamily: FONTS.interBold,
+                                            textDayHeaderFontFamily: FONTS.interRegular,
+                                            textDayFontSize: fontSize[14],
+                                            textMonthFontSize: fontSize[16],
+                                            textDayHeaderFontSize: fontSize[12],
+                                        }}
+                                        style={styles.calendar}
+                                        headerStyle={{
+                                            backgroundColor: COLORS.white,
+                                            borderTopLeftRadius: 10,
+                                            borderTopRightRadius: 10,
+                                            paddingHorizontal: 10,
+                                            paddingVertical: 5,
+                                        }}
+                                        renderHeader={(date) => (
+                                            <View style={styles.calendarHeader}>
+                                                <Text style={styles.calendarHeaderText}>
+                                                    {date.toString('MMMM yyyy')}
+                                                </Text>
+                                            </View>
+                                        )}
+                                    />
+                                </View>
+                            )}
+                            {errors?.endDate && touched?.endDate &&
+                                <ErrorText
+                                    error={errors.endDate}
+                                />
+                            }
+                            <Heading
+                                headingText='LOCATION'
+                                style={{ fontSize: fontSize[16] }}
+                            />
+                            <View style={{ gap: 8 }}>
+                                <CustomDropDown
+                                    data={UKLocations}
+                                    placeholder="Select Location"
+                                    selectedItems={selectLocation}
+                                    onSelectionChange={setSelectLocation}
+                                    boxStyles={accountScreensStyles.dropdownBox}
+                                    isMultiSelect={false}
+                                    isSearch={false}
+                                    zIndex={1000}
+                                    isAddLocation={true}
+                                    handleAddLocation={handleAddNewLocation}
+                                />
+                                {console.log("locationError", locationError)}
+                                {locationError &&
+                                    <ErrorText
+                                        error={locationError}
+                                    />
+                                }
+                                <View>
+                                    <TextInput
+                                        style={[styles.input, { minHeight: 100, color: COLORS.Navy }]}
+                                        placeholder={"Location Description..."}
+                                        multiline={true}
+                                        placeholderTextColor={COLORS.Navy}
+                                        textAlignVertical={'top'}
+                                        textAlign="left"
+                                        value={values?.locationDescp}
+                                        onChangeText={handleChange('locationDescp')}
+                                        onBlur={handleBlur("locationDescp")}
+                                    />
+                                </View>
+                                {errors?.locationDescp && touched?.locationDescp &&
+                                    <ErrorText
+                                        error={errors.locationDescp}
+                                    />
+                                }
+                            </View>
+                            <View>
+                                <Text style={reuseableTextStyles.subTitle}>Place the marker in the exact location</Text>
+                            </View>
+                            <View style={styles.mapContainer}>
+                                <MapView
+                                    ref={mapRef}
+                                    provider={PROVIDER_GOOGLE}
+                                    style={styles.mapView}
+                                    initialRegion={initialRegion}
+                                    scrollEnabled={true}
+                                    zoomEnabled={true}
+                                    pitchEnabled={true}
+                                    rotateEnabled={true}
+                                    shouldRasterizeIOS={true}
+                                    cacheEnabled={true}
+                                >
+                                    <Marker coordinate={initialRegion} />
+                                </MapView>
+                            </View>
+                            <Heading
+                                headingText='BUDGET'
+                                style={{ fontSize: fontSize[16] }}
+                            />
+                            <View style={styles.budgetContainer}>
+                                <CustomDropDown
+                                    data={currency}
+                                    placeholder="Currency"
+                                    selectedItems={selectedBudget}
+                                    onSelectionChange={setSelectedBudget}
+                                    boxStyles={accountScreensStyles.dropdownBox}
+                                    isMultiSelect={false}
+                                    isSearch={false}
+                                    zIndex={1000}
+                                />
+                                {budgetError &&
+                                    <ErrorText
+                                        error={budgetError}
+                                    />
+                                }
+                                <View style={styles.budgetInputContainer}>
+                                    <CustomTextInput
+                                        placeholder="Budget Lek..."
+                                        placeholderTextColor={COLORS.Navy}
+                                        containerStyle={[accountScreensStyles.inputFieldContainer, styles.budgetInput]}
+                                        inputStyle={accountScreensStyles.inputField}
+                                        value={values?.budgetDesc}
+                                        onChangeText={handleChange('budgetDesc')}
+                                        onBlur={handleBlur("budgetDesc")}
+                                        keyboardType='numeric'
+                                    />
+                                    <TouchableOpacity
+                                        style={styles.NIPTContainer}
+                                        onPress={() => setShowBudgetModal(true)}
+                                    >
+                                        <SVGIcons.infoNIPTIcon />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            <ConfirmationButtons
+                                cancelText='Cancel'
+                                onCancel={handleCancel}
+                                confirmText='Review Details'
+                                onConfirm={handleSubmit}
+                                // onConfirm={handlePreview}
+                                confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
+                            />
+                        </View>
                     </View>
                 </SafeAreaView>
             </KeyboardAwareScrollView>
@@ -765,7 +905,8 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                 materials: postJob?.materials ? postJob?.materials : "",
                 location: postJob?.location?.address ? postJob?.location?.address : "",
                 budget: postJob?.budget ? postJob?.budget : 0,
-                images: postJob?.images ? postJob?.images : "",
+                // images: postJob?.images ? postJob?.images : "",
+                images: postJob?.images ? (Array.isArray(postJob.images) ? postJob.images : [postJob.images]) : [],
                 locationDescp: postJob?.location?.address ? postJob?.location?.address : "",
                 budgetDesc: postJob?.budget ? postJob?.budget : 0
             }}
@@ -787,7 +928,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                         onMenuPress={() => { }}
                         onNotificationPress={() => { }}
                         showNotificationBadge={true}
-                        badgeCount={5}
+                        badgeCount={0}
                         isProfile={true}
                         userName={`${userData?.firstName || ''} ${userData?.lastName || ''}`}
                         userLocation={'Tirana, AL'}
@@ -829,7 +970,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
         paddingTop: 16,
         paddingBottom: 150
     },

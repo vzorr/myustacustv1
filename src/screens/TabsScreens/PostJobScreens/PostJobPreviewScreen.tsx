@@ -119,6 +119,9 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const handleEditJobPost = useCallback(() => {
         navigation.navigate('Tabs', {
             screen: 'PostJobScreen',
+            params: {
+                EditPostJob: "EditPostJob"
+            },
         });
     }, [navigation]);
     console.log("previewValue imagesssssssssssssssssssssss", previewValue?.images)
@@ -126,101 +129,106 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const renderScreenContent = useCallback(() => (
         <SafeAreaView style={styles.container}>
             <View style={styles.innerContainer}>
-                {/* <AccountHeader
+                <View style={{ paddingHorizontal: 20, gap: 10 }}>
+                    {/* <AccountHeader
                     title='PAYMENT METHOD'
                     subTitle={`By ${previewValue?.paymentMethod}`}
                     titleStyle={{ fontSize: fontSize[16] }}
                     containerStyle={{ gap: 2 }}
                 /> */}
-                <AccountHeader
-                    title='Category'
-                    subTitle={previewValue?.category}
-                    titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2, marginTop: -1 }}
-                />
-                <AccountHeader
-                    title='JOB DESCRIPTION'
-                    subTitle={previewValue?.description}
-                    titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2, marginTop: -1 }}
-                />
-                <LineSeparator />
-                <AccountHeader
-                    title='AREA SIZE'
-                    subTitle={`${previewValue?.areaSize} m²`}
-                    titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ marginTop: -3, gap: 2 }}
-                />
-                <AccountHeader
-                    title='MATERIALS'
-                    subTitle={previewValue?.materials}
-                    titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2, marginTop: -1 }}
-                />
-                <LineSeparator />
-                <Heading
-                    headingText='IMAGES'
-                    style={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2 }}
-                />
+                    <AccountHeader
+                        title='Category'
+                        subTitle={previewValue?.category}
+                        titleStyle={{ fontSize: fontSize[16] }}
+                        containerStyle={{ gap: 2, marginTop: -1 }}
+                    />
+                    <AccountHeader
+                        title='JOB DESCRIPTION'
+                        subTitle={previewValue?.description}
+                        titleStyle={{ fontSize: fontSize[16] }}
+                        containerStyle={{ gap: 2, marginTop: -1 }}
+                    />
+                    <LineSeparator />
+                    <AccountHeader
+                        title='AREA SIZE'
+                        subTitle={`${previewValue?.areaSize} m²`}
+                        titleStyle={{ fontSize: fontSize[16] }}
+                        containerStyle={{ marginTop: -3, gap: 2 }}
+                    />
+                    <AccountHeader
+                        title='MATERIALS'
+                        subTitle={previewValue?.materials}
+                        titleStyle={{ fontSize: fontSize[16] }}
+                        containerStyle={{ gap: 2, marginTop: -1 }}
+                    />
+                    <LineSeparator />
+                    <Heading
+                        headingText='IMAGES'
+                        style={{ fontSize: fontSize[16] }}
+                        containerStyle={{ gap: 2 }}
+                    />
+                </View>
                 <HorizontalImageList
                     images={previewValue?.images}
                 />
-                <AccountHeader
-                    title='START DATE'
-                    subTitle={previewValue?.startDate}
-                    titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2, marginTop: -1 }}
-                />
-                <AccountHeader
-                    title='END DATE'
-                    subTitle={previewValue?.endDate}
-                    titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2, marginTop: -1 }}
-                />
-                <LineSeparator />
-                <AccountHeader
-                    title='LOCATION'
-                    subTitle={previewValue?.location?.address}
-                    titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ marginTop: -3, gap: 2 }}
-                />
-                <AccountHeader
-                    title='LOCATION DESCRIPTION'
-                    subTitle={previewValue?.locationDescp}
-                    titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2, marginTop: -1 }}
-                />
-                <View style={styles.mapContainer}>
-                    <MapView
-                        ref={mapRef}
-                        provider={PROVIDER_GOOGLE}
-                        style={styles.mapView}
-                        initialRegion={initialRegion}
-                        scrollEnabled={true}
-                        zoomEnabled={true}
-                        pitchEnabled={true}
-                        rotateEnabled={true}
-                        shouldRasterizeIOS={true}
-                        showsUserLocation={true}
-                        cacheEnabled={true}
-                    >
-                        <Marker coordinate={initialRegion} />
-                    </MapView>
+                <View style={{ paddingHorizontal: 20, gap: 10 }}>
+
+                    <AccountHeader
+                        title='START DATE'
+                        subTitle={previewValue?.startDate}
+                        titleStyle={{ fontSize: fontSize[16] }}
+                        containerStyle={{ gap: 2 }}
+                    />
+                    <AccountHeader
+                        title='END DATE'
+                        subTitle={previewValue?.endDate}
+                        titleStyle={{ fontSize: fontSize[16] }}
+                        containerStyle={{ gap: 2, marginTop: -1 }}
+                    />
+                    <LineSeparator />
+                    <AccountHeader
+                        title='LOCATION'
+                        subTitle={previewValue?.location?.address}
+                        titleStyle={{ fontSize: fontSize[16] }}
+                        containerStyle={{ marginTop: -3, gap: 2 }}
+                    />
+                    <AccountHeader
+                        title='LOCATION DESCRIPTION'
+                        subTitle={previewValue?.locationDescp}
+                        titleStyle={{ fontSize: fontSize[16] }}
+                        containerStyle={{ gap: 2, marginTop: -1 }}
+                    />
+                    <View style={styles.mapContainer}>
+                        <MapView
+                            ref={mapRef}
+                            provider={PROVIDER_GOOGLE}
+                            style={styles.mapView}
+                            initialRegion={initialRegion}
+                            scrollEnabled={true}
+                            zoomEnabled={true}
+                            pitchEnabled={true}
+                            rotateEnabled={true}
+                            shouldRasterizeIOS={true}
+                            showsUserLocation={true}
+                            cacheEnabled={true}
+                        >
+                            <Marker coordinate={initialRegion} />
+                        </MapView>
+                    </View>
+                    <AccountHeader
+                        title='BUDGET'
+                        subTitle={previewValue?.budget}
+                        titleStyle={{ fontSize: fontSize[16] }}
+                        containerStyle={{ gap: 2 }}
+                    />
+                    <ConfirmationButtons
+                        cancelText='Discard'
+                        onCancel={handleDiscard}
+                        confirmText='Post Job'
+                        onConfirm={handlePostJob}
+                        confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
+                    />
                 </View>
-                <AccountHeader
-                    title='BUDGET'
-                    subTitle={previewValue?.budget}
-                    titleStyle={{ fontSize: fontSize[16] }}
-                    containerStyle={{ gap: 2 }}
-                />
-                <ConfirmationButtons
-                    cancelText='Discard'
-                    onCancel={handleDiscard}
-                    confirmText='Post Job'
-                    onConfirm={handlePostJob}
-                    confirmContainerStyle={{ backgroundColor: COLORS.Yellow }}
-                />
             </View>
         </SafeAreaView>
     ), [previewValue, initialRegion, handleDiscard, handlePostJob]);
@@ -269,12 +277,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
         paddingTop: 16,
         paddingBottom: 50
     },
     innerContainer: {
-        gap: 16
+        gap: 10
     },
     radioMainContainer: {
         flexDirection: 'row',
