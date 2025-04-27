@@ -128,156 +128,160 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.innerContainer}>
-                    <Heading
-                        headingText='JOB STATUS'
-                        style={{ fontSize: fontSize[16] }}
-                    />
-                    {status === 'pending' ?
-                        <StatusUpdate
-                            text={status}
-                            textColor={COLORS.statusBtnBorderColor}
-                            bgColor={COLORS.statusBtnBgColor}
-                            borderColor={COLORS.statusBtnBorderColor}
-                            isArrow={false}
+                    <View style={{ paddingHorizontal: 20, gap: 10 }}>
+                        <Heading
+                            headingText='JOB STATUS'
+                            style={{ fontSize: fontSize[16] }}
                         />
-                        : status === JOBS_STATUS_TABS.ONGOING ?
+                        {status === 'pending' ?
                             <StatusUpdate
                                 text={status}
-                                textColor={COLORS.ongoingStatusColor}
-                                bgColor={COLORS.ongoingBgColor}
-                                borderColor={COLORS.ongoingStatusColor}
+                                textColor={COLORS.statusBtnBorderColor}
+                                bgColor={COLORS.statusBtnBgColor}
+                                borderColor={COLORS.statusBtnBorderColor}
                                 isArrow={false}
                             />
-                            :
-                            <StatusUpdate
-                                text={status}
-                                textColor={COLORS.completedTxtColor}
-                                bgColor={COLORS.completedBgColor}
-                                borderColor={COLORS.completedTxtColor}
-                                isArrow={false}
-                            />
-                    }
-                    <LineSeparator />
-                    {(status === "ongoing" ?
-                        <View>
-                            <Heading
-                                headingText='JOB PROGRESS'
-                                style={{ fontSize: fontSize[16] }}
-                            />
-                            <CustomButton
-                                title={"View Progress"}
-                                onPress={handleViewButton}
-                                style={{ width: SIZES.wp(45), marginStart: 0 }}
-                            />
-                        </View>
-                        : status === 'pending' ?
-                            <View>
-                                <View>
-                                    <Text style={[reuseableTextStyles.title, { fontSize: fontSize[16] }]}>JOB APPLICATIONS({jobProposalsCount})</Text>
-                                </View>
-                                <CustomButton
-                                    title={"View my Applications"}
-                                    onPress={handleViewButton}
-                                    style={{ width: SIZES.wp(50), marginStart: 0 }}
+                            : status === JOBS_STATUS_TABS.ONGOING ?
+                                <StatusUpdate
+                                    text={status}
+                                    textColor={COLORS.ongoingStatusColor}
+                                    bgColor={COLORS.ongoingBgColor}
+                                    borderColor={COLORS.ongoingStatusColor}
+                                    isArrow={false}
                                 />
-                            </View>
-                            :
+                                :
+                                <StatusUpdate
+                                    text={status}
+                                    textColor={COLORS.completedTxtColor}
+                                    bgColor={COLORS.completedBgColor}
+                                    borderColor={COLORS.completedTxtColor}
+                                    isArrow={false}
+                                />
+                        }
+                        <LineSeparator />
+                        {(status === "ongoing" ?
                             <View>
-                                <UstaHeading
-                                    title='JOB REVIEWS'
-                                    onPress={handleViewButton}
+                                <Heading
+                                    headingText='JOB PROGRESS'
                                     style={{ fontSize: fontSize[16] }}
                                 />
                                 <CustomButton
-                                    title={"Leave Review"}
+                                    title={"View Progress"}
                                     onPress={handleViewButton}
                                     style={{ width: SIZES.wp(45), marginStart: 0 }}
                                 />
                             </View>
-                    )}
-                    <LineSeparator />
-                    <AccountHeader
-                        title='Category'
-                        subTitle={category}
-                        titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
-                        subTitleStyle={{ marginTop: -8 }}
-                    />
-                    <AccountHeader
-                        title='JOB DESCRIPTION'
-                        subTitle={description}
-                        titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
-                        subTitleStyle={{ marginTop: -8 }}
-                    />
-                    <LineSeparator />
-                    <AccountHeader
-                        title='AREA SIZE'
-                        subTitle={`${areaSize} m²`}
-                        titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
-                        subTitleStyle={{ marginTop: -8 }}
-                    />
-                    <AccountHeader
-                        title='MATERIALS'
-                        subTitle={materials}
-                        titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
-                        subTitleStyle={{ marginTop: -8 }}
-                    />
-                    <LineSeparator />
-                    <Heading
-                        headingText='IMAGES'
-                        style={{ fontSize: fontSize[16] }}
-                        containerStyle={{ gap: 2 }}
-                    />
+                            : status === 'pending' ?
+                                <View>
+                                    <View>
+                                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[16] }]}>JOB APPLICATIONS({jobProposalsCount})</Text>
+                                    </View>
+                                    <CustomButton
+                                        title={"View my Applications"}
+                                        onPress={handleViewButton}
+                                        style={{ width: SIZES.wp(50), marginStart: 0 }}
+                                    />
+                                </View>
+                                :
+                                <View>
+                                    <UstaHeading
+                                        title='JOB REVIEWS'
+                                        onPress={handleViewButton}
+                                        style={{ fontSize: fontSize[16] }}
+                                    />
+                                    <CustomButton
+                                        title={"Leave Review"}
+                                        onPress={handleViewButton}
+                                        style={{ width: SIZES.wp(45), marginStart: 0 }}
+                                    />
+                                </View>
+                        )}
+                        <LineSeparator />
+                        <AccountHeader
+                            title='Category'
+                            subTitle={category}
+                            titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                            subTitleStyle={{ marginTop: -8 }}
+                        />
+                        <AccountHeader
+                            title='JOB DESCRIPTION'
+                            subTitle={description}
+                            titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                            subTitleStyle={{ marginTop: -8 }}
+                        />
+                        <LineSeparator />
+                        <AccountHeader
+                            title='AREA SIZE'
+                            subTitle={`${areaSize} m²`}
+                            titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                            subTitleStyle={{ marginTop: -8 }}
+                        />
+                        <AccountHeader
+                            title='MATERIALS'
+                            subTitle={materials}
+                            titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                            subTitleStyle={{ marginTop: -8 }}
+                        />
+                        <LineSeparator />
+                        <Heading
+                            headingText='IMAGES'
+                            style={{ fontSize: fontSize[16] }}
+                            containerStyle={{ gap: 2 }}
+                        />
+                    </View>
                     <HorizontalImageList
                         images={Images}
                     />
-                    <AccountHeader
-                        title='START DATE'
-                        subTitle={moment(startDate)?.format('DD MMMM YYYY')}
-                        titleStyle={{ fontSize: fontSize[16] }}
-                        subTitleStyle={{ marginTop: -8 }}
-                    />
-                    <AccountHeader
-                        title='END DATE'
-                        subTitle={moment(endDate)?.format('DD MMMM YYYY')}
-                        titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
-                        subTitleStyle={{ marginTop: -8 }}
-                    />
-                    <LineSeparator />
-                    <AccountHeader
-                        title='LOCATION'
-                        subTitle={location?.address}
-                        titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
-                        subTitleStyle={{ marginTop: -8 }}
-                    />
-                    <AccountHeader
-                        title='LOCATION DESCRIPTION'
-                        subTitle={location?.address}
-                        titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
-                        subTitleStyle={{ marginTop: -8 }}
-                    />
-                    <View style={styles.mapContainer}>
-                        {region &&
-                            <MapView
-                                ref={mapRef}
-                                provider={PROVIDER_GOOGLE}
-                                style={styles.mapView}
-                                region={region}
-                                onRegionChangeComplete={setRegion}
-                                scrollEnabled={true}
-                                zoomEnabled={true}
-                                pitchEnabled={true}
-                                rotateEnabled={true}
-                            >
-                                <Marker coordinate={region} />
-                            </MapView>
-                        }
+                    <View style={{ paddingHorizontal: 20, gap: 10 }}>
+                        <AccountHeader
+                            title='START DATE'
+                            subTitle={moment(startDate)?.format('DD MMMM YYYY')}
+                            titleStyle={{ fontSize: fontSize[16] }}
+                            subTitleStyle={{ marginTop: -8 }}
+                        />
+                        <AccountHeader
+                            title='END DATE'
+                            subTitle={moment(endDate)?.format('DD MMMM YYYY')}
+                            titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                            subTitleStyle={{ marginTop: -8 }}
+                        />
+                        <LineSeparator />
+                        <AccountHeader
+                            title='LOCATION'
+                            subTitle={location?.address}
+                            titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                            subTitleStyle={{ marginTop: -8 }}
+                        />
+                        <AccountHeader
+                            title='LOCATION DESCRIPTION'
+                            subTitle={location?.address}
+                            titleStyle={{ fontSize: fontSize[16], marginTop: -10 }}
+                            subTitleStyle={{ marginTop: -8 }}
+                        />
+                        <View style={styles.mapContainer}>
+                            {region &&
+                                <MapView
+                                    ref={mapRef}
+                                    provider={PROVIDER_GOOGLE}
+                                    style={styles.mapView}
+                                    region={region}
+                                    onRegionChangeComplete={setRegion}
+                                    scrollEnabled={true}
+                                    zoomEnabled={true}
+                                    pitchEnabled={true}
+                                    rotateEnabled={true}
+                                >
+                                    <Marker coordinate={region} />
+                                </MapView>
+                            }
+                        </View>
+                        <AccountHeader
+                            title='BUDGET'
+                            subTitle={`${budget} ALL`}
+                            titleStyle={{ fontSize: fontSize[16] }}
+                            containerStyle={{ gap: 2 }}
+                        />
                     </View>
-                    <AccountHeader
-                        title='BUDGET'
-                        subTitle={`${budget} ALL`}
-                        titleStyle={{ fontSize: fontSize[16] }}
-                        containerStyle={{ gap: 2 }}
-                    />
                 </View>
             </SafeAreaView>
         );
@@ -336,7 +340,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
         paddingTop: 16,
         paddingBottom: 100,
     },
