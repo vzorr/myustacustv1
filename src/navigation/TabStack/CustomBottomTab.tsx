@@ -15,13 +15,13 @@ interface TabButtonProps {
 }
 
 // Pre-render tab items to improve performance
-const TabButton = React.memo(({ 
-    route, 
-    isFocused, 
-    onPress, 
-    label, 
-    tabWidth, 
-    iconComponent 
+const TabButton = React.memo(({
+    route,
+    isFocused,
+    onPress,
+    label,
+    tabWidth,
+    iconComponent
 }: TabButtonProps) => {
     return (
         <TouchableOpacity
@@ -51,12 +51,12 @@ const TabButton = React.memo(({
 
 export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-    
+
     // Cache screen dimensions to avoid recalculating on each render
     const screenWidth = useMemo(() => Dimensions.get('window').width, []);
     const numberOfTabs = useMemo(() => state.routes.length, [state.routes.length]);
-    const tabWidth = useMemo(() => 
-        (screenWidth - 40 - 24) / numberOfTabs, 
+    const tabWidth = useMemo(() =>
+        (screenWidth - 40 - 24) / numberOfTabs,
         [screenWidth, numberOfTabs]
     );
 
@@ -64,7 +64,7 @@ export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
     const showKeyboard = useCallback(() => {
         setKeyboardVisible(true);
     }, []);
-    
+
     const hideKeyboard = useCallback(() => {
         setKeyboardVisible(false);
     }, []);
@@ -89,7 +89,7 @@ export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
     // Use conditional styling instead of conditional rendering
     return (
         <View style={[
-            styles.container, 
+            styles.container,
             isKeyboardVisible && { opacity: 0, height: 0 }
         ]}>
             <View style={styles.tabBar}>
@@ -112,7 +112,7 @@ export const CustomBottomTab = ({ state, descriptors, navigation }: any) => {
                                 return isFocused ? <SVGIcons.SearchWhiteIcon /> : <SVGIcons.SearchIcon />;
                             case "PostJobScreen":
                                 return isFocused ? <SVGIcons.PlusWhiteIcon /> : <SVGIcons.plusIcon />;
-                            case "ChatScreen":
+                            case "ChatList":
                                 return isFocused ? <SVGIcons.ChatWhiteIcon /> : <SVGIcons.MessageIcon />;
                             case "ProfileScreen":
                                 return isFocused ? <SVGIcons.ProfileIcon /> : <SVGIcons.UserIcon />;

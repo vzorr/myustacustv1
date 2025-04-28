@@ -6,7 +6,7 @@ export type UserStackParamList = {
     Home: undefined;
     PostJobScreen: any;
     SearchScreen: any;
-    ChatScreen: any;
+    ChatList: any;
     ProfileScreen: any;
     PostJobPreview: any;
     SuccessMessageScreen: any;
