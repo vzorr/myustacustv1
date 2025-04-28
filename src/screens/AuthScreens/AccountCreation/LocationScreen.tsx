@@ -35,6 +35,7 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
     const handleConfirmLocation = () => {
         if (!address) {
             Toast.show("please add location", Toast.SHORT);
+            return
         }
         const location = {
             latitude: region.latitude,
@@ -93,8 +94,8 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
             Keyboard.dismiss();
             if (mapViewRef.current) {
                 mapViewRef.current.animateToRegion({
-                    latitude: 42.0693,
-                    longitude: 19.5126,
+                    latitude: lat,
+                    longitude: lng,
                     latitudeDelta: 0.05,
                     longitudeDelta: 0.05,
                 });
@@ -136,7 +137,7 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
                                 </View>
 
                                 <TextInput
-                                    value={address ? address :searchQuery}
+                                    value={address ? address : searchQuery}
                                     onChangeText={(text) => {
                                         setSearchQuery(text);
                                         fetchGooglePlaces(text);
@@ -167,8 +168,8 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
                                     setSuggestions([]);
                                     setAddress('')
                                     setRegion({
-                                        latitude: region.latitude,
-                                        longitude: region.longitude,
+                                        latitude: 42.0693,
+                                        longitude: 19.5126,
                                         latitudeDelta: 0.0922,
                                         longitudeDelta: 0.0421,
                                     })
