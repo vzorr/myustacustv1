@@ -8,6 +8,7 @@ import JobsStatusCard from '../../../components/HomeComponents/JobsStatusCard';
 import LineSeparator from '../../../components/LineSeparator/LineSeparator';
 import { statusTabsStyles } from '../../../styles/statusTabsStyles';
 import { useNavigation } from '@react-navigation/native';
+import FooterLoader from '../../../components/Loader/FooterLoader';
 
 const TopTabsNavigator = (props: any) => {
   const { activeTab, setActiveTab } = props
@@ -16,17 +17,20 @@ const TopTabsNavigator = (props: any) => {
   const { userData }: any = useSelector((state: any) => state?.userInfo)
   const navigation: any = useNavigation()
 
-  const getAllJobList = async (tabType: any) => {
+  const [loadMore, setLoadMore] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(true);
+  const limit = 5
+  const getAllJobList = async (tabType: string, pageNumber: number = 1, isLoadMore: boolean = false) => {
     try {
       // let url = `jobs/usta/jobs?filter=${tabType === 'Recommended' ? "recommended" : tabType === 'Most Recent' ? "most_recent" : "saved"}`
-      if (tabType === JOBS_STATUS_TABS.ONGOING) {
-        setJobData([])
-        return
-      } else if (tabType === JOBS_STATUS_TABS.COMPLETED) {
-        setJobData([])
+      if (tabType !== JOBS_STATUS_TABS.PENDING && !isLoadMore) {
+        setIsloading(false);
+        setJobData([]);
         return
       }
-      let url = `jobs/user/jobs`
+      // let url = `jobs/user/jobs`
+      let url = `jobs/user/jobs?page=${pageNumber}&limit=${limit}`
       let response = await client(userData?.token).get(`${url}`)
       console.log("API Response:", JSON.stringify(response.data, null, 2))
       let res = response?.data
@@ -34,10 +38,17 @@ const TopTabsNavigator = (props: any) => {
       if (res?.code !== 200) {
         return
       }
-      setIsloading(false)
-      if (res?.result?.data?.length > 0) {
-        setJobData(res?.result?.data)
+      const newJobs = res?.result?.data || [];
+      setHasNextPage(res?.result?.hasNextPage ?? false);
+      setPage(res?.result?.page)
+
+      if (isLoadMore) {
+        setJobData((prev: any) => [...prev, ...newJobs]);
+      } else {
+        setJobData(newJobs);
       }
+      setLoadMore(false)
+      setIsloading(false);
     } catch (error) {
       setIsloading(false)
       console.log("API Error:", JSON.stringify(error, null, 2))
@@ -45,7 +56,7 @@ const TopTabsNavigator = (props: any) => {
   }
   useEffect(() => {
     const fetchData = async () => {
-      await getAllJobList(activeTab);
+      await getAllJobList(activeTab, 1);
     };
     fetchData();
   }, []);
@@ -53,6 +64,13 @@ const TopTabsNavigator = (props: any) => {
     setActiveTab(tabType)
     getAllJobList(tabType)
   };
+  const handleLoadMore = () => {
+    if (hasNextPage && !loadMore) {
+      setLoadMore(true)
+      const nextPage = page + 1;
+      getAllJobList(activeTab, nextPage, true);
+    }
+  }
   const handleViewButton = (status: string, id: any) => {
     if (status === "pending") {
       navigation.navigate("ApplicationsList", { jobId: id })
@@ -152,6 +170,8 @@ const TopTabsNavigator = (props: any) => {
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={statusTabsStyles.content}
+          ListFooterComponent={loadMore ? <FooterLoader /> : null}
+          onEndReached={handleLoadMore}
         />
       </View>
     </View>

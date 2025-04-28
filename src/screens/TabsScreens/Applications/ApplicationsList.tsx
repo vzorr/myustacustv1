@@ -11,6 +11,7 @@ import { client } from '../../../apiManager/Client';
 import { getCustomTimeAgo } from '../../../config/constants/constants';
 import VisibleLoader from '../../../components/Loader/VisibleLoader';
 import LoadingScreen from '../../../components/Loader/LoadingScreen';
+import FooterLoader from '../../../components/Loader/FooterLoader';
 
 const ApplicationsList: React.FC<UserNavigationRootProps<"ApplicationsList">> = (props) => {
     const [isLoading, setIsloading] = useState(true)
@@ -18,22 +19,34 @@ const ApplicationsList: React.FC<UserNavigationRootProps<"ApplicationsList">> = 
     const { userData }: any = useSelector((state: any) => state?.userInfo)
     const id = props.route?.params?.jobId
     const navigation: any = useNavigation()
-
-    const getAllAppList = async () => {
+    const [loadMore, setLoadMore] = useState<boolean>(false);
+    const [page, setPage] = useState<number>(1);
+    const [hasNextPage, setHasNextPage] = useState<boolean>(true);
+    const limit = 5
+    const getAllAppList = async (pageNumber: number = 1, isLoadMore: boolean = false) => {
         try {
-
-            let url = `jobs/${id}/applications`
+            let url = `jobs/${id}/applications?page=${pageNumber}&limit=${limit}`
+            //  let url = `jobs/user/jobs?page=${pageNumber}&limit=${limit}`
             let response = await client(userData?.token).get(`${url}`)
             let res = response?.data
-            console.log("API Response:", JSON.stringify(res, null, 2))
             setIsloading(false)
             if (res?.code !== 200) {
                 return
             }
-            if (res?.result?.data?.length > 0) {
-                setAppData(res?.result)
-            }
             setIsloading(false)
+            const newapp = res?.result;
+            setHasNextPage(res?.result?.hasNextPage ?? false);
+            setPage(res?.result?.page)
+            if (isLoadMore) {
+                setAppData((prev: any) => ({
+                    ...prev,
+                    data: [...(prev?.data || []), ...(newapp?.data || [])]
+                }));
+            } else {
+                setAppData(newapp);
+            }
+            setLoadMore(false)
+            setIsloading(false);
         } catch (error) {
             setIsloading(false)
             console.log("API Error:", JSON.stringify(error, null, 2))
@@ -45,6 +58,13 @@ const ApplicationsList: React.FC<UserNavigationRootProps<"ApplicationsList">> = 
         };
         fetchData();
     }, []);
+    const handleLoadMore = () => {
+        if (hasNextPage && !loadMore) {
+            setLoadMore(true)
+            const nextPage = page + 1;
+            getAllAppList(nextPage, true);
+        }
+    }
     const handlePress = (applicationId: number) => {
         // console.log(`Pressed application ${applicationId}`);
         props.navigation.navigate('ApplicationDetail', { proposalId: applicationId });
@@ -76,10 +96,13 @@ const ApplicationsList: React.FC<UserNavigationRootProps<"ApplicationsList">> = 
                                     rating={item?.rating}
                                     status={item?.status}
                                     profileImg={item?.ustaProfilePic}
+
                                     // imageSource={item?.imageSource}
                                     onPress={() => handlePress(item?.proposalId)}
                                 />
                             )}
+                            ListFooterComponent={loadMore ? <FooterLoader /> : null}
+                            onEndReached={handleLoadMore}
                             showsVerticalScrollIndicator={false}
                         />
                     </View>
