@@ -2,6 +2,7 @@ import axios from 'axios';
 
 export const BASE_API_URL_STAGGING = 'http://47.254.134.96:3000/api/';
 const BASE_API_URL_PRODUCTION = 'http://47.254.134.96:3000/api/';
+export const GOOGLE_PLACES_URL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 
 export const client = (token = null) => {
     return axios.create({

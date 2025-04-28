@@ -49,7 +49,6 @@ export const locationScreenStyles = StyleSheet.create({
     searchText: {
         fontSize: fontSize[14],
         fontFamily: FONTS.interRegular,
-        fontWeight: '400',
         color: COLORS.Navy200,
         fontStyle: 'normal',
         textAlign: 'left'

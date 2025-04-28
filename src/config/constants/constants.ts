@@ -13,7 +13,7 @@ export enum WORK_HISTORY_TABS {
     ACTIVE_JOBS = "Active Jobs",
 }
 
-export const googlePlacesApi = "AIzaSyDK6xDsgrab0VzbnLeEVT1rJHsz2k1mA1c"
+export const googlePlacesApi = "AIzaSyCESGzn-f_ccP5pQ2xSo5PHaA-Z5B73HSY"
 export const googleLocationApiKey = "AIzaSyB8ODrHnGGYlUvHJ5omefoaIEM_M9Je0bg"
 // API Key Android AIzaSyDK6xDsgrab0VzbnLeEVT1rJHsz2k1mA1c
 const convertImagesToBase64 = async (images: any) => {
