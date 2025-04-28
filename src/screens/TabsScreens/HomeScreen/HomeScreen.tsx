@@ -84,7 +84,7 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
                 onMenuPress={() => { }}
                 onNotificationPress={() => { }}
                 showNotificationBadge={true}
-                badgeCount={5}
+                badgeCount={0}
                 isProfile={false}
             />
             <UstaHeading

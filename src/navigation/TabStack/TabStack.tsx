@@ -3,14 +3,13 @@ import { View, StyleSheet } from 'react-native'
 import { UserStackParamList } from '../../types/stacksParams';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { tabsScreenOptionsStyle } from './tabStyles';
-import HomeScreen from '../../screens/TabsScreens/HomeScreen/HomeScreen';
 import { CustomBottomTab } from './CustomBottomTab';
 import SearchScreen from '../../screens/TabsScreens/SearchScreen/SearchScreen';
 import PostJobScreen from '../../screens/TabsScreens/PostJobScreens/PostJobScreen';
-import ChatScreen from '../../screens/TabsScreens/ChatScreen/ChatScreen';
 import ProfileScreen from '../../screens/TabsScreens/ProfileScreen/ProfileScreen';
 import { COLORS } from '../../config/themes/theme';
 import JobsStatusSackNav from '../../screens/TabsScreens/JobsStatusScreens/JobsStatusStackNav';
+import ChatListContainer from '../../screens/TabsScreens/ChatScreen/ChatListing/ChatListContainer';
 
 const Tab = createBottomTabNavigator<UserStackParamList>();
 
@@ -38,8 +37,8 @@ const TabStack: React.FC = () => {
                     options={{ tabBarLabel: "Post Job" }}
                 />
                 <Tab.Screen
-                    name="ChatScreen"
-                    component={ChatScreen}
+                    name="ChatList"
+                    component={ChatListContainer}
                     options={{ tabBarLabel: "Messages" }}
                 />
                 <Tab.Screen
