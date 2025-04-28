@@ -8,6 +8,7 @@ import { chatListStyle } from './chatListStyles'
 import { useIsFocused } from '@react-navigation/native'
 interface UsersChatList {
     profilePicture: string | null;
+    jobTitle: string;
     userName: string;
     userId: number;
     isOnline: boolean;
@@ -69,6 +70,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                 const dummyChatList: UsersChatList[] = [
                     {
                         profilePicture: null,
+                        jobTitle: "Looking for an experience electricision",
                         userName: 'John Doe',
                         userId: 1,
                         isOnline: true,
@@ -82,6 +84,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                     },
                     {
                         profilePicture: null,
+                        jobTitle: "Looking for an experience plumber",
                         userName: 'Sarah Smith',
                         userId: 2,
                         isOnline: false,
@@ -95,6 +98,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                     },
                     {
                         profilePicture: null,
+                        jobTitle: "Looking for an experience mechanics",
                         userName: 'Mike Johnson',
                         userId: 3,
                         isOnline: true,
@@ -108,6 +112,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                     },
                     {
                         profilePicture: null,
+                        jobTitle: "Looking for an experience electricision",
                         userName: 'Emily Wilson',
                         userId: 4,
                         isOnline: false,
@@ -121,6 +126,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                     },
                     {
                         profilePicture: null,
+                        jobTitle: "Looking for an experience Plumber",
                         userName: 'David Brown',
                         userId: 5,
                         isOnline: true,
@@ -169,6 +175,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                     )}
                     renderItem={({ item, index }) => (
                         <ChatListUi
+                            jobTitle={item.jobTitle}
                             userName={item.userName}
                             userId={item.userId}
                             lastMsg={item.lastChatMessage}
@@ -177,6 +184,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                             isOnline={item.isOnline}
                             isBlocked={item.isBlocked}
                             isBlocker={item.isBlocker}
+                            navigation={props.navigation}
                         />
                     )}
                     keyExtractor={(item, index) => index.toString()}

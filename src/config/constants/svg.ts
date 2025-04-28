@@ -51,6 +51,14 @@ import startFillIcon from "../../assets/icons/star/star-filled.svg"
 import yellowStarIcon from "../../assets/icons/star/Yellow-Start.svg"
 import chatIcon from "../../assets/icons/bx-chat.svg"
 import starOutlined from "../../assets/icons/star/star-outlined.svg"
+import breifCase from "../../assets/icons/bx-briefcase-alt.svg"
+import yellowBreifCase from "../../assets/icons/bx-briefcase-alt-yellow.svg"
+import chatMenuDots from "../../assets/icons/bx-dots.svg"
+import emoji from "../../assets/icons/Emoji.svg"
+import fileAttach from "../../assets/icons/Attach-file.svg"
+import insertPhoto from "../../assets/icons/Insert-photo.svg"
+import chatVoice from "../../assets/icons/chat-voice.svg"
+import whiteLock from "../../assets/icons/bx-lock-alt-white.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -104,5 +112,13 @@ export const SVGIcons = {
     startFillIcon,
     yellowStarIcon,
     chatIcon,
-    starOutlined
+    starOutlined,
+    breifCase,
+    yellowBreifCase,
+    chatMenuDots,
+    emoji,
+    fileAttach,
+    insertPhoto,
+    chatVoice,
+    whiteLock
 };

@@ -18,20 +18,22 @@ import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import moment from 'moment'
 import { chatListStyle } from './chatListStyles'
+import { SVGIcons } from '../../../../config/constants/svg'
 
-const ChatListingUi = (props: any) => {
-    const { userName, userId, lastMsg, chatDate, count, isBlocker, isBlocked, isOnline } = props
+const ChatListUi = (props: any) => {
+    const { jobTitle, userName, userId, lastMsg, chatDate, count, navigation, isBlocker, isBlocked, isOnline } = props
     const formattedDate = moment(chatDate, "DD-MM-YYYY/h:mm A")?.format("DD-MM-YYYY/h:mm A");
     const handleChatNav = () => {
-        // navigation.navigate("ChatInbox", {
-        //     chatData: {
-        //         userId: userId,
-        //         userName: userName,
-        //         isOnline: isOnline,
-        //         isBlocked: isBlocked,
-        //         isBlocker: isBlocker
-        //     }
-        // })
+        navigation.navigate("ChatInbox", {
+            chatData: {
+                userId: userId,
+                jobTitle: jobTitle,
+                userName: userName,
+                isOnline: isOnline,
+                isBlocked: isBlocked,
+                isBlocker: isBlocker
+            }
+        })
     }
     return (
         <TouchableOpacity style={[chatListStyle.chatListCardMain]}
@@ -50,7 +52,11 @@ const ChatListingUi = (props: any) => {
                             <View style={chatListStyle.isOnlineView} /> : null
                         }
                     </View>
-                    <View style={{ marginStart: 8 }}>
+                    <View style={{ marginStart: 8, width: "80%" }}>
+                        <View style={chatListStyle.jobTitleContainer}>
+                            <SVGIcons.breifCase width={14} height={14} />
+                            <Text style={chatListStyle.jobTitle} numberOfLines={1}>{jobTitle}</Text>
+                        </View>
                         <View style={chatListStyle.nameContainer}>
                             <View style={{ width: "45%" }}>
                                 <Text style={chatListStyle.userNameText} numberOfLines={1}>{userName ? userName : "user name"}</Text>
@@ -61,21 +67,18 @@ const ChatListingUi = (props: any) => {
                             <Text style={chatListStyle.lastMsg}
                                 numberOfLines={1}
                             >{lastMsg ? lastMsg : " no msg"}</Text>
-                            <View >
-                                {count > 0 ?
-                                    <View style={chatListStyle.countView}>
-                                        <Text style={chatListStyle.counntText}>{count}</Text>
-                                    </View>
-                                    : null
-                                }
-                            </View>
+                            {count > 0 ?
+                                <View style={chatListStyle.countView}>
+                                    <Text style={chatListStyle.counntText}>{count}</Text>
+                                </View>
+                                : null
+                            }
                         </View>
                     </View>
                 </View>
             </View>
-
         </TouchableOpacity>
     )
 }
 
-export default ChatListingUi
+export default ChatListUi

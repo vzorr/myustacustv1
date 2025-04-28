@@ -18,10 +18,6 @@ export const chatListStyle = StyleSheet.create({
         backgroundColor: COLORS.white
     },
     chatListCardMain: {
-        // paddingTop: 8,
-        // marginTop: 10,
-        // backgroundColor: 'blue',
-        // paddingBottom: 5
 
     },
 
@@ -33,7 +29,7 @@ export const chatListStyle = StyleSheet.create({
     },
     chatListInner: {
         // flexDirection: 'row',
-        paddingVertical: 8,
+        paddingVertical: 10,
         paddingHorizontal: 12,
         // justifyContent: "space-between"
     },
@@ -65,6 +61,7 @@ export const chatListStyle = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        width: "100%"
     },
     userNameText: {
         fontSize: fontSize[14],
@@ -91,18 +88,44 @@ export const chatListStyle = StyleSheet.create({
         justifyContent: 'space-between'
     },
     lastMsg: {
-        fontSize: hp(1.8),
-        fontFamily: FONTS.interSemiBold,
-        color: COLORS.Black,
-        opacity: 0.5,
+        fontSize: fontSize[12],
+        fontFamily: FONTS.interRegular,
+        color: COLORS.Navy200,
+        fontWeight: '400',
         width: wp(70)
+    },
+    jobTitleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+        backgroundColor: COLORS.lightSky,
+        paddingVertical: 2,
+        paddingHorizontal: 4,
+        borderRadius: 4,
+        maxWidth: '100%',
+    },
+    jobTitle: {
+        fontSize: fontSize[10],
+        fontFamily: FONTS.interRegular,
+        color: COLORS.Navy200,
+        fontWeight: '400',
+        marginStart: 3,
+        flexShrink: 1,
+        overflow: 'hidden',
     },
     dateText: {
         fontSize: fontSize[10],
         fontFamily: FONTS.interRegular,
         color: COLORS.GreyedOut,
         fontWeight: '400',
-        width: "40%"
+        width: "38%"
+    },
+    countContainer: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        borderWidth: 10,
+        borderColor: COLORS.ErrorRed
     },
     countView: {
         width: 20,
@@ -119,7 +142,9 @@ export const chatListStyle = StyleSheet.create({
         backgroundColor: "green",
         borderRadius: 5,
         position: "absolute",
-        marginStart: 5
+        // marginEnd: 5,
+        right: 2,
+        bottom: 5
     },
     counntText: {
         fontSize: fontSize[10],
