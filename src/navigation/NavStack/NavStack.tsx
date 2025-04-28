@@ -45,7 +45,7 @@ const NavStack: React.FC = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='LocationScreen'
+            initialRouteName='Tabs'
         >
             <Stack.Screen name="Tabs" component={TabStack} />
             <Stack.Screen name="Splash" component={SplashScreen} />

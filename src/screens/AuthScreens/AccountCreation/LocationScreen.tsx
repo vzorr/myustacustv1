@@ -43,7 +43,7 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
         };
         const updatedAccountCreation = {
             ...accountCreation,
-            location: [...accountCreation.location, location],
+            location: [...accountCreation?.location, location],
         };
         dispatch(setAccountCreation(updatedAccountCreation));
         props.navigation.navigate('LocationsAndPreferences');
