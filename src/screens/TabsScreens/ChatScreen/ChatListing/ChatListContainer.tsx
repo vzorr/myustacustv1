@@ -77,7 +77,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                         isBlocked: false,
                         isBlocker: false,
                         lastChatMessage: 'Hey, how are you doing?',
-                        lastChatDate: '2023-05-15T10:30:00',
+                        lastChatDate: '2025-04-29T10:30:00', // Today
                         isOwner: true,
                         productId: 101,
                         newMessageCount: 2
@@ -91,7 +91,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                         isBlocked: false,
                         isBlocker: false,
                         lastChatMessage: 'The item looks great!',
-                        lastChatDate: '2023-05-14T15:45:00',
+                        lastChatDate: '2025-04-28T15:45:00', // 1 day ago
                         isOwner: false,
                         productId: 102,
                         newMessageCount: 0
@@ -105,7 +105,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                         isBlocked: true,
                         isBlocker: false,
                         lastChatMessage: 'Can we meet tomorrow?',
-                        lastChatDate: '2023-05-13T09:20:00',
+                        lastChatDate: '2025-04-27T09:20:00', // 2 days ago
                         isOwner: true,
                         productId: 103,
                         newMessageCount: 5
@@ -119,7 +119,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                         isBlocked: false,
                         isBlocker: true,
                         lastChatMessage: 'Thanks for your help!',
-                        lastChatDate: '2023-05-12T18:10:00',
+                        lastChatDate: '2025-04-26T18:10:00', // 3 days ago
                         isOwner: false,
                         productId: 104,
                         newMessageCount: 0
@@ -133,12 +133,13 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                         isBlocked: false,
                         isBlocker: false,
                         lastChatMessage: 'The price is negotiable',
-                        lastChatDate: '2023-05-11T11:25:00',
+                        lastChatDate: '2025-04-25T11:25:00', // 4 days ago
                         isOwner: true,
                         productId: 105,
                         newMessageCount: 1
                     },
                 ]
+
                 setChatList(dummyChatList)
                 setLoading(false)
             }, 1000)

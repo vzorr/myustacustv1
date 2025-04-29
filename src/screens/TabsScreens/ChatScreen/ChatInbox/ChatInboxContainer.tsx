@@ -12,7 +12,8 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
         userName,
         isOnline,
         isBlocked,
-        isBlocker
+        isBlocker,
+        chatDate
     } = route?.params?.chatData;
     console.log("userName", userName)
 
@@ -24,6 +25,7 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
             isOnline={isOnline}
             isBlocked={isBlocked}
             isBlocker={isBlocker}
+            chatDate={chatDate}
         />
     )
 }

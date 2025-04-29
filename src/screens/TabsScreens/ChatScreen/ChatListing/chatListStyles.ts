@@ -118,7 +118,6 @@ export const chatListStyle = StyleSheet.create({
         fontFamily: FONTS.interRegular,
         color: COLORS.GreyedOut,
         fontWeight: '400',
-        width: "38%"
     },
     countContainer: {
         width: 30,

@@ -59,6 +59,10 @@ import fileAttach from "../../assets/icons/Attach-file.svg"
 import insertPhoto from "../../assets/icons/Insert-photo.svg"
 import chatVoice from "../../assets/icons/chat-voice.svg"
 import whiteLock from "../../assets/icons/bx-lock-alt-white.svg"
+import LockIconAlt from "../../assets/icons/bx-lock-alt.svg"
+import LockIcon from "../../assets/icons/bx-lock.svg"
+import sendIcon from "../../assets/icons/bx-navigation.svg"
+import replayIcon from "../../assets/icons/bx-reply.svg"
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -120,5 +124,9 @@ export const SVGIcons = {
     fileAttach,
     insertPhoto,
     chatVoice,
-    whiteLock
+    whiteLock,
+    sendIcon,
+    LockIconAlt,
+    LockIcon,
+    replayIcon
 };
