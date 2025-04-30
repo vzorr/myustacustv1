@@ -22,8 +22,11 @@ export const COLORS = {
     SecondaryHover: "#F2F2F2",
     UstaBlack: "#232323",
     Gray: "#EEEEEE",
+    lightSky: "#DBE7F2",
     statusBarColor: "#E9E9E9",
     white: "#FFF",
+    grey: "#BEBEBE",
+    otherChatBgColor: "#EDEDED",
     bgImgColor: "rgba(0, 32, 63, 0.7)",
     authBgColor: 'rgba(0, 32, 63, 1)',
     otpBoxColor: "rgba(128, 143, 159, 1)",
@@ -37,7 +40,6 @@ export const COLORS = {
     completedBgColor: "rgba(217,255,217,1)",
     completedTxtColor: "rgba(4,170,10,1)",
     skyBlue: "rgba(0,100,198,1)",
-    grey: "#BEBEBE"
 }
 export const fontSize = {
     5: hp(0.7),
