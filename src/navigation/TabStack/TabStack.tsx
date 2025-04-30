@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { UserStackParamList } from '../../types/stacksParams';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -10,10 +10,34 @@ import ProfileScreen from '../../screens/TabsScreens/ProfileScreen/ProfileScreen
 import { COLORS } from '../../config/themes/theme';
 import JobsStatusSackNav from '../../screens/TabsScreens/JobsStatusScreens/JobsStatusStackNav';
 import ChatListContainer from '../../screens/TabsScreens/ChatScreen/ChatListing/ChatListContainer';
+import { useDispatch, useSelector } from 'react-redux';
+import { client } from '../../apiManager/Client';
+import { setUserProfile } from '../../stores/reducer/UserProfileReducer';
 
 const Tab = createBottomTabNavigator<UserStackParamList>();
 
 const TabStack: React.FC = () => {
+        const { token }: any = useSelector((state: any) => state?.accessToken)
+        const { userData }: any = useSelector((state: any) => state?.userInfo)
+    const dispatch = useDispatch()
+    const getUserProfile = async () => {
+        const userToken = token ? token : userData?.token
+        if(userToken){
+            try {
+                let res = await client(userToken).get('users/customerProfile')
+                if (res.data?.code !== 200) {
+                    return
+                }
+                dispatch(setUserProfile(res?.data?.result))
+                
+            } catch (error) {
+                
+            }
+        }
+    }
+    useEffect(() => {
+        getUserProfile()
+    }, [])
     return (
         <View style={styles.container}>
             <Tab.Navigator

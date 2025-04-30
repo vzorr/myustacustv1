@@ -14,13 +14,15 @@ import { FONTS, fontSize, SIZES } from '../../../config/themes/theme';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
 import { GOOGLE_PLACES_URL } from '../../../apiManager/Client';
+import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer';
 
 const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> = (props) => {
 
     const mapViewRef = useRef<MapView>(null);
     const dispatch = useDispatch();
     const { accountCreation }: any = useSelector((state: any) => state?.accountCreation);
-
+    const screenName= props.route?.params?.screenName
+  const { postJob }: any = useSelector((state: any) => state?.postJob)
     const [region, setRegion] = useState({
         latitude: 42.0693,
         longitude: 19.5126,
@@ -33,21 +35,33 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
     const [suggestions, setSuggestions] = useState<any[]>([]);
 
     const handleConfirmLocation = () => {
-        if (!address) {
-            Toast.show("please add location", Toast.SHORT);
-            return
-        }
         const location = {
             latitude: region.latitude,
             longitude: region.longitude,
             address: address,
         };
-        const updatedAccountCreation = {
-            ...accountCreation,
-            location: [...accountCreation?.location, location],
-        };
-        dispatch(setAccountCreation(updatedAccountCreation));
-        props.navigation.navigate('LocationsAndPreferences');
+        if (!address) {
+            Toast.show("please add location", Toast.SHORT);
+            return
+        }
+        if(screenName === "postJob"){
+            const updatelocation = {
+                ...postJob,
+                location: [location],
+            };
+            dispatch(setPostJobReducer(updatelocation));
+            props.navigation.navigate('Tabs', {
+                screen: 'PostJobScreen',
+            });
+        }else{
+      
+            const updatedAccountCreation = {
+                ...accountCreation,
+                location: [...accountCreation?.location, location],
+            };
+            dispatch(setAccountCreation(updatedAccountCreation));
+            props.navigation.navigate('LocationsAndPreferences');
+        }
     };
 
     const handleMapReady = () => {

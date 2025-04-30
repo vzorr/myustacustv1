@@ -16,4 +16,18 @@ export const reuseableTextStyles = StyleSheet.create({
         fontStyle: 'normal',
         color: COLORS.Navy200,
     },
+    chatHeaderTitle: {
+        fontSize: fontSize[16],
+        fontFamily: FONTS.interSemiBold,
+        fontWeight: '600',
+        fontStyle: 'normal',
+        color: COLORS.white,
+    },
+    chatStatus: {
+        fontSize: fontSize[14],
+        fontFamily: FONTS.interMedium,
+        fontWeight: '400',
+        fontStyle: 'normal',
+        color: COLORS.Yellow,
+    }
 });

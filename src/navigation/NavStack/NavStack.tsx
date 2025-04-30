@@ -26,16 +26,22 @@ import ApplicationsList from '../../screens/TabsScreens/Applications/Application
 import ApplicationDetailScreen from '../../screens/TabsScreens/Applications/ApplicationDetailScreen';
 import UstaProfileScreen from '../../screens/UstaProfile/UstaProfileScreen';
 import UstaPortfolioDetailScreen from '../../screens/UstaProfile/UstaPortfolioDetailScreen';
+import ChatInboxContainer from '../../screens/TabsScreens/ChatScreen/ChatInbox/ChatInboxContainer';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
     const dispatch = useDispatch()
     const getMetaData = async () => {
-        let res = await client1().get('general/meta')
-        if (res.data?.code !== 200) {
-            return
+        try {
+            let res = await client1().get('general/meta')
+            if (res.data?.code !== 200) {
+                return
+            }
+            dispatch(setMetaData(res?.data?.result))  
+        } catch (error) {
+            console.log("errorffffffff", JSON.stringify(error))
         }
-        dispatch(setMetaData(res?.data?.result))
+       
     }
     useEffect(() => {
         getMetaData()
@@ -64,6 +70,7 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="PostJobPreview" component={PostJobPreviewScreen} />
             <Stack.Screen name="SuccessMessageScreen" component={SuccessMessageScreen} />
             <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
+            <Stack.Screen name="ChatInbox" component={ChatInboxContainer} />
             {/* <Stack.Screen name="PostedJobDetailScreen" component={PostedJobDetailScreen} /> */}
             {/* <Stack.Screen name="ApplicationsList" component={ApplicationsList} /> */}
             {/* <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} /> */}
