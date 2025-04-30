@@ -32,11 +32,16 @@ const Stack = createNativeStackNavigator<UserStackParamList>();
 const NavStack: React.FC = () => {
     const dispatch = useDispatch()
     const getMetaData = async () => {
-        let res = await client1().get('general/meta')
-        if (res.data?.code !== 200) {
-            return
+        try {
+            let res = await client1().get('general/meta')
+            if (res.data?.code !== 200) {
+                return
+            }
+            dispatch(setMetaData(res?.data?.result))  
+        } catch (error) {
+            console.log("errorffffffff", JSON.stringify(error))
         }
-        dispatch(setMetaData(res?.data?.result))
+       
     }
     useEffect(() => {
         getMetaData()

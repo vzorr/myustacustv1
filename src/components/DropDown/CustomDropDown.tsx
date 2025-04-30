@@ -7,9 +7,10 @@ import CustomSelector from '../Selector/CustomSelector';
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface CustomDropDownProps {
-    data: { key: string; value: string }[];
+    // data: { key: string; value: string }[];
+    data: any;
     placeholder: string;
-    selectedItems: string[];
+    selectedItems: any
     onSelectionChange: (selectedItems: string[]) => void;
     isMultiSelect?: boolean;
     boxStyles?: object;
@@ -21,6 +22,7 @@ interface CustomDropDownProps {
     getValue?: any;
     isAddLocation?: boolean,
     handleAddLocation?: any
+    handleRegion?: any
 }
 
 const CustomDropDown: React.FC<CustomDropDownProps> = ({
@@ -37,7 +39,8 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
     zIndex = 100,
     getValue,
     isAddLocation,
-    handleAddLocation
+    handleAddLocation,
+    handleRegion
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
@@ -74,7 +77,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
         }
     };
 
-    const handleItemPress = (itemKey: string, itemValue: string) => {
+    const handleItemPress = (itemKey: string, itemValue: any) => {
         let newSelectedItems: string[] = [];
 
         if (isMultiSelect) {
@@ -93,7 +96,9 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
         onSelectionChange(newSelectedItems);
     };
 
-    const filteredData = data.filter(item =>
+    const filteredData = isAddLocation ? data?.filter((item: any) =>
+        item?.address?.toLowerCase().includes(searchText.toLowerCase())
+    ) : data?.filter((item: any) =>
         item.value.toLowerCase().includes(searchText.toLowerCase())
     );
 
@@ -107,7 +112,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
         const availableSpace = SCREEN_HEIGHT - headerPosition.y - headerPosition.height - BOTTOM_PADDING;
 
         // Calculate content height based on items
-        const contentHeight = filteredData.length * ITEM_HEIGHT + SEARCH_HEIGHT + PADDING;
+        const contentHeight = filteredData?.length * ITEM_HEIGHT + SEARCH_HEIGHT + PADDING;
 
         // Use maxHeight prop if provided, otherwise use available space
         const maximumHeight = maxHeight ? maxHeight : Math.min(contentHeight, availableSpace);
@@ -138,12 +143,22 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
         if (selectedItems.length === 0) {
             return placeholder;
         } else if (selectedItems.length === 1) {
-            return selectedItems[0];
+            if (isAddLocation) {
+                // handleRegion()
+                console.log("selectedItems[0]?.latitude", selectedItems[0]?.latitude, selectedItems[0]?.longitude)
+            return selectedItems[0].address;
+          
+            }else{
+                return selectedItems[0]; 
+            }
         } else {
-            return selectedItems.join(',')
+            return selectedItems?.join(',')
         }
     };
-
+    console.log("filteredData", filteredData)
+    if (isAddLocation) {
+        console.log('Address:', filteredData[0]?.address);
+    }
     return (
         <View style={[styles.container, { zIndex }, boxStyles]} ref={dropdownRef}>
             <Animated.View
@@ -209,8 +224,8 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
 
                         <FlatList
                             data={filteredData}
-                            keyExtractor={(item) => item.key}
-                            renderItem={({ item }) => (
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item, index }) => (
                                 <TouchableOpacity
                                     style={[styles.item, itemStyles]}
                                     // onPress={() => handleItemPress(item.key, item.value)}
@@ -218,7 +233,12 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                                         if (getValue) {
                                             getValue(item.value)
                                         }
-                                        handleItemPress(item.key, item.value)
+                                        if (isAddLocation) {
+                                            handleItemPress(item.key, item)
+
+                                        } else {
+                                            handleItemPress(item.key, item.value)
+                                        }
                                     }}
                                 >
                                     {isMultiSelect && (
@@ -234,8 +254,8 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                                             )}
                                         </View>
                                     )}
-                                    <Text style={styles.itemText} numberOfLines={1} ellipsizeMode="tail">
-                                        {item.value}
+                                    <Text style={[styles.itemText]}>
+                                        {isAddLocation ? item?.address : item.value}
                                     </Text>
                                 </TouchableOpacity>
                             )}
@@ -258,13 +278,13 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                             onTouchMove={e => e.stopPropagation()}
                             onTouchEnd={e => e.stopPropagation()}
                         />
-                        {isAddLocation &&
+                         {isAddLocation &&
                             <CustomSelector
                                 title='Add New Location'
                                 iconName='plusIcon'
                                 onPress={handleAddLocation}
                             />
-                        }
+                        } 
                     </View>
                 </TouchableOpacity>
             </Modal>

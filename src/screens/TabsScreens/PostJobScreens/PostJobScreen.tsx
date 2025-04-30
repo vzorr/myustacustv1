@@ -59,7 +59,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const EditPostJob = route?.params?.EditPostJob
     const [selectedCategories, setSelectedCategories] = useState<string[]>(postJob?.category || []);
     const [selectedArea, setSelectedArea] = useState<string[]>(postJob?.areaType || []);
-    const [selectLocation, setSelectLocation] = useState<string[]>(postJob?.locationDescp || []);
+    const [selectLocation, setSelectLocation] = useState<any>(postJob?.location || []);
     const [selectedBudget, setSelectedBudget] = useState<string[]>(postJob?.budgetDesc || []);
     const [projectTitle, setProjectTitle] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
@@ -91,12 +91,14 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const [selectedIndex, setSelectedIndex] = useState<any>(0);
     const { metaData }: any = useSelector((state: any) => state?.metaData)
     const { userData }: any = useSelector((state: any) => state?.userInfo)
-    console.log("userData", userData)
+    const { userProfile }: any = useSelector((state: any) => state?.userProfile)
+    console.log("userProfile", userProfile)
 
     const dispatch = useDispatch()
+
     const [region, setRegion] = useState<Region>({
-        latitude: 42.0693,
-        longitude: 19.5126,
+        latitude: postJob?.location[0]?.latitude ?  postJob?.location[0]?.latitude : 42.0693,
+        longitude: postJob?.location[0]?.longitude ? postJob?.location[0]?.longitude:   19.5126,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     });
@@ -104,10 +106,10 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     // Use a memoized initialRegion to prevent unnecessary re-renders
     const initialRegion = React.useMemo(() => ({
         latitude: region.latitude,
-        longitude: region.longitude,
+        longitude: region?.longitude,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
-    }), []);
+    }), [region]);
 
     const [isLoading, setIsLoading] = useState(false)
     const mapRef = useRef<MapView>(null);
@@ -123,18 +125,19 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         key: name?.key,
         value: name.name
     }));
-    const UKLocations = [
-        { key: '1', value: 'London' },
-        { key: '2', value: 'Manchester' },
-        { key: '3', value: 'Birmingham' },
-        { key: '4', value: 'Liverpool' },
-        { key: '5', value: 'Edinburgh' },
-        { key: '6', value: 'Glasgow' },
-        { key: '7', value: 'Bristol' },
-        { key: '8', value: 'Leeds' },
-        { key: '9', value: 'Cardiff' },
-        { key: '10', value: 'Belfast' },
-    ]
+    const UKLocations = userProfile?.locations
+    // [
+    //     { key: '1', value: 'London' },
+    //     { key: '2', value: 'Manchester' },
+    //     { key: '3', value: 'Birmingham' },
+    //     { key: '4', value: 'Liverpool' },
+    //     { key: '5', value: 'Edinburgh' },
+    //     { key: '6', value: 'Glasgow' },
+    //     { key: '7', value: 'Bristol' },
+    //     { key: '8', value: 'Leeds' },
+    //     { key: '9', value: 'Cardiff' },
+    //     { key: '10', value: 'Belfast' },
+    // ]
     const areaType = [
         { key: '1', value: 'Room' },
         { key: '2', value: 'Bathroom' },
@@ -184,7 +187,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     }, [materialToDelete]);
 
     const handleAddNewLocation = () => {
-        navigation.navigate("LocationScreen")
+        navigation.navigate("LocationScreen", { screenName: "postJob" })
     }
 
     const handleCancel = () => {
@@ -223,6 +226,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
             budgetDesc: selectedBudget,
             areaType: selectedArea,
             category: selectedCategories,
+            dateCreated: new Date().toISOString()
         }
 
         dispatch(setPostJobReducer(updateValue))
@@ -239,7 +243,42 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         setAreaError("")
         setLocationError("")
     }, [selectedCategories, selectedArea, selectedBudget, selectLocation])
+    // useEffect(() => {
+    //     if (
+    //         mapRef.current &&
+    //         selectLocation.length > 0 &&
+    //         selectLocation[0]?.latitude &&
+    //         selectLocation[0]?.longitude
+    //     ) {
+    //         const lat = Number(selectLocation[0]?.latitude);
+    //         const lng = Number(selectLocation[0]?.longitude);
 
+    //         if (!isNaN(lat) && !isNaN(lng)) {
+    //             mapRef.current.animateToRegion({
+    //                 latitude: lat,
+    //                 longitude: lng,
+    //                 latitudeDelta: 0.05,
+    //                 longitudeDelta: 0.05,
+    //             }, 1000);
+    //         } else {
+    //             console.warn("Invalid lat/lng:", lat, lng);
+    //         }
+    //     }
+    // }, [selectLocation]);
+    const handleRegion = () => {
+        try {
+            // setRegion({
+            //     latitude: selectLocation[0]?.latitude,
+            //     longitude: selectLocation[0]?.longitude,
+            //     latitudeDelta: 0.05,
+            //     longitudeDelta: 0.05,
+            // })
+        } catch (error) {
+            console.log("errrroooooo", error)
+
+        }
+
+    }
     const RenderScreenContent = (props: any) => {
         const { handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue } = props
         const pickImageFromGallery = () => {
@@ -298,11 +337,20 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         const handleSelectImage = (index: number) => {
             setSelectedIndex(index); // only update selected index manually
         };
-
+        const handleMapReady = () => {
+            if (selectLocation.length > 0 && mapRef.current) {
+                mapRef.current.animateToRegion({
+                    latitude: selectLocation[0]?.latitude,
+                    longitude: selectLocation[0]?.latitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                });
+            }
+        };
         const handleDeleteImage = (indexToDelete: number) => {
             if (!Array.isArray(values.images)) return;
 
-            const updatedImages = values.images.filter((_: { path: string }, idx: number) => idx !== indexToDelete);
+            const updatedImages = values.images?.filter((_: { path: string }, idx: number) => idx !== indexToDelete);
             setFieldValue('images', updatedImages);
 
             if (updatedImages.length > 0) {
@@ -311,7 +359,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                     setSelectedIndex(0);
                 }
                 // If deleting last image, select the new last image
-                else if (indexToDelete === values.images.length - 1) {
+                else if (indexToDelete === values.images?.length - 1) {
                     setSelectedIndex(updatedImages.length - 1);
                 }
                 // If deleted image was before the selected image
@@ -323,7 +371,22 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                 setSelectedIndex(null); // no images left
             }
         };
-
+        const handleAddNewLocation = () => {
+            const materialsString = materials.map(item => item.name).join(', ');
+            let updateValue = {
+                ...values,
+                materials: materialsString,
+                budget: values?.budgetDesc,
+                locationDescp: selectLocation,
+                budgetDesc: selectedBudget,
+                areaType: selectedArea,
+                category: selectedCategories,
+                dateCreated: new Date().toISOString()
+            }
+    
+            dispatch(setPostJobReducer(updateValue))
+            navigation.navigate("LocationScreen", { screenName: "postJob" })
+        }
         // const imagesCount = values?.images && Array.isArray(values.images) ? values.images.length : 0
         const imagesCount = Array.isArray(values?.images) ? values.images.length : 0;
         return (
@@ -790,6 +853,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                     zIndex={1000}
                                     isAddLocation={true}
                                     handleAddLocation={handleAddNewLocation}
+                                    handleRegion={handleRegion}
                                 />
                                 {console.log("locationError", locationError)}
                                 {locationError &&
@@ -820,20 +884,19 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 <Text style={reuseableTextStyles.subTitle}>Place the marker in the exact location</Text>
                             </View>
                             <View style={styles.mapContainer}>
-                                <MapView
-                                    ref={mapRef}
-                                    provider={PROVIDER_GOOGLE}
-                                    style={styles.mapView}
-                                    initialRegion={initialRegion}
-                                    scrollEnabled={true}
-                                    zoomEnabled={true}
-                                    pitchEnabled={true}
-                                    rotateEnabled={true}
-                                    shouldRasterizeIOS={true}
-                                    cacheEnabled={true}
-                                >
-                                    <Marker coordinate={initialRegion} />
-                                </MapView>
+                                {region?.latitude && region?.longitude && !isNaN(region.latitude) && !isNaN(region.longitude) && (
+                                    <MapView
+                                        ref={mapRef}
+                                        provider={PROVIDER_GOOGLE}
+                                        style={styles.mapView}
+                                        region={region}
+                                        loadingEnabled
+                                        zoomControlEnabled
+                                        onMapReady={handleMapReady}
+                                    >
+                                        <Marker coordinate={region} />
+                                    </MapView>
+                                )}
                             </View>
                             <Heading
                                 headingText='BUDGET'
@@ -908,7 +971,8 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                 // images: postJob?.images ? postJob?.images : "",
                 images: postJob?.images ? (Array.isArray(postJob.images) ? postJob.images : [postJob.images]) : [],
                 locationDescp: postJob?.location?.address ? postJob?.location?.address : "",
-                budgetDesc: postJob?.budget ? postJob?.budget : 0
+                budgetDesc: postJob?.budget ? postJob?.budget : 0,
+                dateCreated: '',
             }}
             onSubmit={async (values: any, { resetForm }) => {
                 setIsLoading(true)
@@ -930,9 +994,9 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                         showNotificationBadge={true}
                         badgeCount={0}
                         isProfile={true}
-                        userName={`${userData?.firstName || ''} ${userData?.lastName || ''}`}
-                        userLocation={'Tirana, AL'}
-                        imageUrl=''
+                        userName={`${userProfile?.firstName || ''} ${userProfile?.lastName || ''}`}
+                        userLocation={`${userProfile?.locations[0]?.address}`}
+                        imageUrl={userProfile?.profilePicture}
                     />
                     <FlatList
                         data={screenData}

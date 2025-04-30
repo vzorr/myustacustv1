@@ -41,8 +41,8 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
 
     // Use the location from postJob if available, otherwise use default location
     const initialRegion = useMemo(() => ({
-        latitude: previewValue?.location?.latitude || 42.0693,
-        longitude: previewValue?.location?.longitude || 19.5126,
+        latitude: previewValue?.location[0]?.latitude || 42.0693,
+        longitude: previewValue?.location[0]?.longitude || 19.5126,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     }), [previewValue?.location]);

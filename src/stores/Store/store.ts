@@ -15,6 +15,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PostJobReducer from '../reducer/PostJobReducer';
 import GeneralMetaDataReducer from '../reducer/GeneralMetaDataReducer';
+import UserProfileReducer from '../reducer/UserProfileReducer';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
@@ -26,7 +27,8 @@ const rootReducer = combineReducers({
   accountCreation: AccountCreationReducer,
   accessToken: UserTokenReducer,
   postJob: PostJobReducer,
-  metaData: GeneralMetaDataReducer
+  metaData: GeneralMetaDataReducer,
+  userProfile: UserProfileReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
