@@ -26,7 +26,6 @@ const ImageModal: React.FC<ImageModalProps> = ({
   onClose,
   initialIndex = 0,
 }) => {
-  console.log("Modal images...................", images)
   return (
     <Modal
       visible={visible}

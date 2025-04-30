@@ -1,5 +1,5 @@
 import { FlatList, Platform, SafeAreaView, StatusBar, StyleSheet, Text, UIManager, View } from 'react-native'
-import React, { useRef, useState, useMemo, useCallback } from 'react'
+import React, { useRef, useState, useMemo, useCallback, useEffect } from 'react'
 import { UserNavigationRootProps } from '../../../types/stacksParams'
 import AppHeader from '../../../components/AppHeader/AppHeader'
 import Heading from '../../../components/Heading/Heading'
@@ -14,7 +14,7 @@ import HorizontalImageList from '../../../components/HorizentalImagesList/Horize
 import { useDispatch, useSelector } from 'react-redux'
 import { client } from '../../../apiManager/Client'
 // import RNFS from 'react-native-fs';
-import { postJobValue } from '../../../config/constants/constants'
+import { getCustomTimeAgo, postJobValue } from '../../../config/constants/constants'
 import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer'
 import VisibleLoader from '../../../components/Loader/VisibleLoader'
 import Toast from 'react-native-simple-toast';
@@ -36,13 +36,18 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const dispatch = useDispatch()
     const { postJob }: any = useSelector((state: any) => state?.postJob)
     const previewValue = useMemo(() => postJob, [postJob]);
-
+   const [region, setRegion] = useState<Region>({
+        latitude: previewValue?.location && previewValue?.location[0]?.latitude ?  previewValue?.location[0]?.latitude : 42.0693,
+        longitude: previewValue?.location && previewValue?.location[0]?.longitude ? previewValue?.location[0]?.longitude:   19.5126,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+    });
     const mapRef = useRef<MapView>(null);
 
     // Use the location from postJob if available, otherwise use default location
     const initialRegion = useMemo(() => ({
-        latitude: previewValue?.location[0]?.latitude || 42.0693,
-        longitude: previewValue?.location[0]?.longitude || 19.5126,
+        latitude: previewValue?.location&& previewValue?.location[0]?.latitude || 42.0693,
+        longitude: previewValue?.location && previewValue?.location[0]?.longitude || 19.5126,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     }), [previewValue?.location]);
@@ -54,8 +59,25 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
         dispatch(setPostJobReducer({}))
         navigation.navigate('Tabs')
     }
+    useEffect(()=>{
+        setRegion({
+            latitude: previewValue?.location&& previewValue?.location[0]?.latitude || 42.0693,
+            longitude: previewValue?.location && previewValue?.location[0]?.longitude || 19.5126,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+        })
+    },[previewValue?.location])
+    const handleMapReady = () => {
+        if (previewValue?.location.length > 0 && mapRef.current) {
+            mapRef.current.animateToRegion({
+                latitude: previewValue?.location[0]?.latitude,
+                longitude: previewValue?.location[0]?.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            });
+        }
+    };
     const handlePostJob = useCallback(async () => {
-        console.log("token", token)
         try {
             if (!userData?.token && !token) {
                 navigation.navigate('SignIn')
@@ -71,7 +93,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
             if (!previewValue?.areaSize) validationErrors.push('Area size');
             if (!previewValue?.startDate) validationErrors.push('Start date');
             if (!previewValue?.endDate) validationErrors.push('End date');
-            if (!previewValue?.location || !previewValue?.location?.address) validationErrors.push('Location');
+            if (!previewValue?.location || !previewValue?.location[0]?.address) validationErrors.push('Location');
             if (!previewValue?.images || previewValue.images.length === 0) validationErrors.push('Images');
             if (!previewValue?.category) validationErrors.push('Category');
             if (!previewValue?.materials) validationErrors.push('Materials');
@@ -93,9 +115,9 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 navigation.replace("SuccessMessageScreen")
             } catch (apiError: any) {
                 setIsLoading(false)
-                console.log('API Error Response:', apiError.response?.data);
-                console.log('API Error Status:', apiError.response?.status);
-                console.log('API Error Headers:', apiError.response?.headers);
+                // console.log('API Error Response:', apiError.response?.data);
+                // console.log('API Error Status:', apiError.response?.status);
+                // console.log('API Error Headers:', apiError.response?.headers);
 
                 // Show validation error details if available
                 if (apiError.response?.data?.errors) {
@@ -110,7 +132,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
             }
         } catch (error: any) {
             setIsLoading(false)
-            console.log('Error preparing payload:', error);
+            // console.log('Error preparing payload:', error);
             const errorMessage = error.message || 'Error preparing job data. Please try again.';
             Toast.show(errorMessage, Toast.LONG);
         }
@@ -124,7 +146,6 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
             },
         });
     }, [navigation]);
-    console.log("previewValue imagesssssssssssssssssssssss", previewValue?.images)
 
     const renderScreenContent = useCallback(() => (
         <SafeAreaView style={styles.container}>
@@ -188,7 +209,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                     <LineSeparator />
                     <AccountHeader
                         title='LOCATION'
-                        subTitle={previewValue?.location?.address}
+                        subTitle={previewValue?.location&&previewValue?.location[0]?.address}
                         titleStyle={{ fontSize: fontSize[16] }}
                         containerStyle={{ marginTop: -3, gap: 2 }}
                     />
@@ -203,16 +224,18 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                             ref={mapRef}
                             provider={PROVIDER_GOOGLE}
                             style={styles.mapView}
-                            initialRegion={initialRegion}
-                            scrollEnabled={true}
+                            // initialRegion={region}
+                            region={region}
+                            // scrollEnabled={true}
                             zoomEnabled={true}
-                            pitchEnabled={true}
-                            rotateEnabled={true}
-                            shouldRasterizeIOS={true}
+                            // pitchEnabled={true}
+                            // rotateEnabled={true}
+                            // shouldRasterizeIOS={true}
                             showsUserLocation={true}
-                            cacheEnabled={true}
+                            // cacheEnabled={true}
+                            onMapReady={handleMapReady}
                         >
-                            <Marker coordinate={initialRegion} />
+                            <Marker coordinate={region} />
                         </MapView>
                     </View>
                     <AccountHeader
@@ -231,10 +254,10 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 </View>
             </View>
         </SafeAreaView>
-    ), [previewValue, initialRegion, handleDiscard, handlePostJob]);
+    ), [previewValue, handleDiscard, handlePostJob, region]);
 
     const screenData = useMemo(() => [{ id: '1' }], []);
-
+const timeAgo = getCustomTimeAgo(previewValue?.dateCreated)
     return (
         <View style={{ backgroundColor: COLORS.white, flex: 1 }}>
             <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
@@ -247,7 +270,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                 isOnPreview={true}
                 jobTitle='Tile installations'
                 jobProviderName={`${userData?.firstName || ''} ${userData?.lastName || ''}`}
-                time='2 minutes ago'
+                time={timeAgo}
                 handleEditJobPost={handleEditJobPost}
             />
             <FlatList

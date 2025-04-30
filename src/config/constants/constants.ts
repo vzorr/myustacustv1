@@ -47,7 +47,7 @@ export const postJobValue = async (previewValue: any, categories?: any) => {
         startDate: previewValue?.startDate,
         endDate: previewValue?.endDate,
         materials: previewValue?.materials,
-        location: previewValue?.location,
+        location: previewValue?.location[0],
         budget: Number(previewValue?.budget) || 1,
         images: base64Images
     }
