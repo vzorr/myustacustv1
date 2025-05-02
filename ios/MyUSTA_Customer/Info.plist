@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs access to your photo library to upload profile pictures</string>
+	<string>$(PRODUCT_NAME) needs access to your photo library to upload photos and to select files</string>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs access to your camera to take profile pictures</string>
+	<string>$(PRODUCT_NAME) needs access to your camera to take photos</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs access to your microphone for video recording</string>
+	<string>$(PRODUCT_NAME) needs access to your microphone for video recording and to record audio</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs your location to provide location-based services</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

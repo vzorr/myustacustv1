@@ -6,6 +6,7 @@ import { SVGIcons } from '../../../../config/constants/svg'
 
 type ChatListCardProps = {
     handleChatNav: () => void
+    jobId: number,
     jobTitle: string
     userName: string
     userId: string | number
@@ -19,6 +20,7 @@ type ChatListCardProps = {
 }
 
 const ChatListCard: React.FC<ChatListCardProps> = ({
+    jobId,
     jobTitle,
     userName,
     handleChatNav,
@@ -48,64 +50,45 @@ const ChatListCard: React.FC<ChatListCardProps> = ({
 
     const formattedDate = formatChatDate(chatDate)
 
-    //   const handleChatNav = () => {
-    //     navigation.navigate('ChatInbox', {
-    //       chatData: {
-    //         userId,
-    //         jobTitle,
-    //         userName,
-    //         isOnline,
-    //         isBlocked,
-    //         isBlocker
-    //       }
-    //     })
-    //   }
-
     return (
         <TouchableOpacity
             style={chatListStyle.chatListCardMain}
             activeOpacity={0.5}
             onPress={handleChatNav}
         >
-            <View style={chatListStyle.chatListInner}>
-                <View style={{ flexDirection: 'row' }}>
-                    <View style={chatListStyle.imageMainView}>
-                        <Image
-                            style={chatListStyle.imageView}
-                            source={require('../../../../assets/images/MostVisitedProfessions/Plumber.png')}
-                            resizeMode="contain"
-                        />
-                        {isOnline && <View style={chatListStyle.isOnlineView} />}
-                    </View>
+            <View style={chatListStyle.imageMainView}>
+                <Image
+                    style={chatListStyle.imageView}
+                    source={require('../../../../assets/images/MostVisitedProfessions/Plumber.png')}
+                    resizeMode="contain"
+                />
+                {isOnline && <View style={chatListStyle.isOnlineView} />}
+            </View>
 
-                    <View style={{ marginStart: 8, width: '80%' }}>
-                        <View style={chatListStyle.jobTitleContainer}>
-                            <SVGIcons.breifCase width={14} height={14} />
-                            <Text style={chatListStyle.jobTitle} numberOfLines={1}>
-                                {jobTitle}
-                            </Text>
-                        </View>
+            <View style={chatListStyle.contentContainer}>
+                <View style={chatListStyle.jobTitleContainer}>
+                    <SVGIcons.breifCase width={14} height={14} />
+                    <Text style={chatListStyle.jobTitle} numberOfLines={1}>
+                        {jobTitle}
+                    </Text>
+                </View>
 
-                        <View style={chatListStyle.nameContainer}>
-                            <View style={{ width: '70%' }}>
-                                <Text style={chatListStyle.userNameText} numberOfLines={1}>
-                                    {userName || 'user name'}
-                                </Text>
-                            </View>
-                            <Text style={chatListStyle.dateText}>{formattedDate}</Text>
-                        </View>
+                <View style={chatListStyle.nameContainer}>
+                    <Text style={chatListStyle.userNameText} numberOfLines={1}>
+                        {userName}
+                    </Text>
+                    <Text style={chatListStyle.dateText}>{formattedDate}</Text>
+                </View>
 
-                        <View style={chatListStyle.lastMsgContainer}>
-                            <Text style={chatListStyle.lastMsg} numberOfLines={1}>
-                                {lastMsg || 'no msg'}
-                            </Text>
-                            {count > 0 && (
-                                <View style={chatListStyle.countView}>
-                                    <Text style={chatListStyle.counntText}>{count}</Text>
-                                </View>
-                            )}
+                <View style={chatListStyle.lastMsgContainer}>
+                    <Text style={chatListStyle.lastMsg} numberOfLines={1}>
+                        {lastMsg || 'no msg'}
+                    </Text>
+                    {count > 0 && (
+                        <View style={chatListStyle.countView}>
+                            <Text style={chatListStyle.counntText}>{count}</Text>
                         </View>
-                    </View>
+                    )}
                 </View>
             </View>
         </TouchableOpacity>

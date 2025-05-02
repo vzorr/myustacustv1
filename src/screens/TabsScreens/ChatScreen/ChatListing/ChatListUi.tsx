@@ -8,6 +8,7 @@ import ChatListCard from './ChatListCard'
 
 const ChatListUi = (props: any) => {
     const {
+        jobId,
         jobTitle,
         userName,
         userId,
@@ -41,6 +42,7 @@ const ChatListUi = (props: any) => {
         navigation.navigate("ChatInbox", {
             chatData: {
                 userId: userId,
+                jobId: jobId,
                 jobTitle: jobTitle,
                 userName: userName,
                 isOnline: isOnline,
@@ -54,6 +56,7 @@ const ChatListUi = (props: any) => {
     return (
         <ChatListCard
             handleChatNav={handleChatNav}
+            jobId={jobId}
             jobTitle={jobTitle}
             userName={userName}
             userId={userId}
@@ -65,53 +68,6 @@ const ChatListUi = (props: any) => {
             isBlocked={isBlocked}
             isOnline={isOnline}
         />
-        // <TouchableOpacity
-        //     style={chatListStyle.chatListCardMain}
-        //     activeOpacity={0.5}
-        //     onPress={handleChatNav}
-        // >
-        //     <View style={chatListStyle.chatListInner}>
-        //         <View style={{ flexDirection: "row" }}>
-        //             <View style={chatListStyle.imageMainView}>
-        //                 <Image
-        //                     style={chatListStyle.imageView}
-        //                     source={require("../../../../assets/images/MostVisitedProfessions/Plumber.png")}
-        //                     resizeMode='contain'
-        //                 />
-        //                 {isOnline && <View style={chatListStyle.isOnlineView} />}
-        //             </View>
-
-        //             <View style={{ marginStart: 8, width: "80%" }}>
-        //                 <View style={chatListStyle.jobTitleContainer}>
-        //                     <SVGIcons.breifCase width={14} height={14} />
-        //                     <Text style={chatListStyle.jobTitle} numberOfLines={1}>
-        //                         {jobTitle}
-        //                     </Text>
-        //                 </View>
-
-        //                 <View style={chatListStyle.nameContainer}>
-        //                     <View style={{ width: "70%" }}>
-        //                         <Text style={chatListStyle.userNameText} numberOfLines={1}>
-        //                             {userName || "user name"}
-        //                         </Text>
-        //                     </View>
-        //                     <Text style={chatListStyle.dateText}>{formattedDate}</Text>
-        //                 </View>
-
-        //                 <View style={chatListStyle.lastMsgContainer}>
-        //                     <Text style={chatListStyle.lastMsg} numberOfLines={1}>
-        //                         {lastMsg || "no msg"}
-        //                     </Text>
-        //                     {count > 0 && (
-        //                         <View style={chatListStyle.countView}>
-        //                             <Text style={chatListStyle.counntText}>{count}</Text>
-        //                         </View>
-        //                     )}
-        //                 </View>
-        //             </View>
-        //         </View>
-        //     </View>
-        // </TouchableOpacity>
     )
 }
 
