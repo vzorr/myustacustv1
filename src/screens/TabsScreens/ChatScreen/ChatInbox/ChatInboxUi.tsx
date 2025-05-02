@@ -642,7 +642,16 @@ const ChatInboxUi = (props: any) => {
         // Handle chat menu actions
     }
     const handleChatProfileImg = () => {
-
+            navigation.navigate('Tabs', {
+                screen: 'JobsStatusSackNav',
+                params: {
+                    screen: 'UstaProfile',
+                    params: {
+                        otherUserId: '',
+                        jobId: jobId,
+                    },
+                },
+            });
     }
 
     const handleJobTitle = () => {
