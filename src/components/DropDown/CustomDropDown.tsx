@@ -144,9 +144,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
             return placeholder;
         } else if (selectedItems.length === 1) {
             if (isAddLocation) {
-                // handleRegion()
-                console.log("selectedItems[0]?.latitude", selectedItems[0]?.latitude, selectedItems[0]?.longitude)
-            return selectedItems[0].address;
+            return selectedItems[0]?.address;
           
             }else{
                 return selectedItems[0]; 
@@ -155,10 +153,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
             return selectedItems?.join(',')
         }
     };
-    console.log("filteredData", filteredData)
-    if (isAddLocation) {
-        console.log('Address:', filteredData[0]?.address);
-    }
+
     return (
         <View style={[styles.container, { zIndex }, boxStyles]} ref={dropdownRef}>
             <Animated.View
@@ -235,6 +230,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                                         }
                                         if (isAddLocation) {
                                             handleItemPress(item.key, item)
+                                            handleRegion(item)
 
                                         } else {
                                             handleItemPress(item.key, item.value)
@@ -278,13 +274,13 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                             onTouchMove={e => e.stopPropagation()}
                             onTouchEnd={e => e.stopPropagation()}
                         />
-                         {isAddLocation &&
+                         {/* {isAddLocation &&
                             <CustomSelector
                                 title='Add New Location'
                                 iconName='plusIcon'
                                 onPress={handleAddLocation}
                             />
-                        } 
+                        }  */}
                     </View>
                 </TouchableOpacity>
             </Modal>
