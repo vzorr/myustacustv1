@@ -26,6 +26,7 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
             isBlocked={isBlocked}
             isBlocker={isBlocker}
             chatDate={chatDate}
+            navigation={navigation}
         />
     )
 }

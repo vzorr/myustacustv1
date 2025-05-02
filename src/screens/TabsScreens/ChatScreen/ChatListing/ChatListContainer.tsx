@@ -8,6 +8,7 @@ import { chatListStyle } from './chatListStyles'
 import { useIsFocused } from '@react-navigation/native'
 interface UsersChatList {
     profilePicture: string | null;
+    jobId: number,
     jobTitle: string;
     userName: string;
     userId: number;
@@ -70,6 +71,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                 const dummyChatList: UsersChatList[] = [
                     {
                         profilePicture: null,
+                        jobId: 1,
                         jobTitle: "Looking for an experience electricision",
                         userName: 'John Doe',
                         userId: 1,
@@ -84,6 +86,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                     },
                     {
                         profilePicture: null,
+                        jobId: 2,
                         jobTitle: "Looking for an experience plumber",
                         userName: 'Sarah Smith',
                         userId: 2,
@@ -98,6 +101,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                     },
                     {
                         profilePicture: null,
+                        jobId: 3,
                         jobTitle: "Looking for an experience mechanics",
                         userName: 'Mike Johnson',
                         userId: 3,
@@ -112,6 +116,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                     },
                     {
                         profilePicture: null,
+                        jobId: 4,
                         jobTitle: "Looking for an experience electricision",
                         userName: 'Emily Wilson',
                         userId: 4,
@@ -126,6 +131,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                     },
                     {
                         profilePicture: null,
+                        jobId: 5,
                         jobTitle: "Looking for an experience Plumber",
                         userName: 'David Brown',
                         userId: 5,
@@ -167,7 +173,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
             ) : (
                 <FlatList
                     data={chatList}
-                    contentContainerStyle={{ paddingTop: 8, flexGrow: 1 }}
+                    contentContainerStyle={{ paddingTop: 8, flexGrow: 1, }}
                     showsVerticalScrollIndicator={false}
                     ListEmptyComponent={() => (
                         <View style={styles.emptyContainer}>
@@ -176,6 +182,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                     )}
                     renderItem={({ item, index }) => (
                         <ChatListUi
+                            jobId={item?.jobId}
                             jobTitle={item.jobTitle}
                             userName={item.userName}
                             userId={item.userId}
@@ -189,9 +196,6 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
                         />
                     )}
                     keyExtractor={(item, index) => index.toString()}
-                    ItemSeparatorComponent={() => (
-                        <View style={{ height: 0.7, backgroundColor: COLORS.grey }} />
-                    )}
                 />
             )}
         </SafeAreaView>
@@ -202,8 +206,7 @@ export default ChatListContainer
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: COLORS.white
+        backgroundColor: COLORS.white,
     },
     loadingContainer: {
         flex: 1,

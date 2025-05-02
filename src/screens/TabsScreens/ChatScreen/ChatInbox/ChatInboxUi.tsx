@@ -455,14 +455,31 @@ import { COLORS, FONTS, fontSize } from '../../../../config/themes/theme';
 import { SVGIcons } from '../../../../config/constants/svg';
 import { chatInboxStyles } from './chatInboxStyles';
 import { mockMessages } from '../../../../utils/ChatMockApi\'s/ChatMockApi';
+import ImagePicker from 'react-native-image-crop-picker';
+// import DocumentPicker from '@react-native-documents/picker';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import EmojiKeyboard from 'rn-emoji-keyboard';
+import FastImage from 'react-native-fast-image';
+import DocumentPicker, { types } from '@react-native-documents/picker';
+type Attachment = {
+    type: 'image' | 'file' | 'audio';
+    uri: string;
+    name?: string | null;  // Add null to the type
+    size?: number | null;  // Add null to the type
+    duration?: string | null;
+};
+
+const audioRecorderPlayer = new AudioRecorderPlayer();
 
 const ChatInboxUi = (props: any) => {
     const {
         userId,
+        jobId,
         jobTitle,
         userName,
         isOnline,
-        chatDate
+        chatDate,
+        navigation
     } = props;
 
     const [messages, setMessages] = useState<any[]>(mockMessages);
@@ -472,29 +489,34 @@ const ChatInboxUi = (props: any) => {
     const [lockRecording, setLockRecording] = useState(false);
     const [replyingTo, setReplyingTo] = useState<any>(null);
     const [showReplyIcon, setShowReplyIcon] = useState<string | null>(null);
+    const [showEmojiKeyboard, setShowEmojiKeyboard] = useState(false);
+    const [recordingTime, setRecordingTime] = useState('00:00');
+    const [recordSecs, setRecordSecs] = useState(0);
+    const [audioPath, setAudioPath] = useState('');
+    // Update the attachments state type definition
+    const [attachments, setAttachments] = useState<Attachment[]>([]);
+    const [emojiKeyboardOpen, setEmojiKeyboardOpen] = useState(false);
     const flatListRef = useRef<FlatList>(null);
-    const currentUserId = '101'; // This would normally come from your auth context
+    const currentUserId = '101';
 
-    // Format time with AM/PM
     const formatTime = (dateString: string) => {
         const date = new Date(dateString);
         let hours = date.getHours();
         const minutes = date.getMinutes();
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = hours ? hours : 12;
         const minutesStr = minutes < 10 ? '0' + minutes : minutes;
         return `${hours}:${minutesStr} ${ampm}`;
     };
 
-    // Pan responder for swipe to reply (now only right swipe for all messages)
     const panResponder = (messageId: string) => {
         const pan = new Animated.ValueXY();
 
         return PanResponder.create({
             onStartShouldSetPanResponder: () => true,
             onPanResponderMove: (_, gestureState) => {
-                if (gestureState.dx > 0) { // Only allow right swipe
+                if (gestureState.dx > 0) {
                     pan.setValue({ x: gestureState.dx, y: 0 });
                     setShowReplyIcon(messageId);
                 }
@@ -525,32 +547,123 @@ const ChatInboxUi = (props: any) => {
         });
     };
 
+    const handleEmojiSelect = (emoji: any) => {
+        setNewMessage(prev => prev + emoji.emoji);
+    };
+
+    const toggleEmojiKeyboard = () => {
+        // setShowEmojiKeyboard(prev => !prev);
+        setEmojiKeyboardOpen(prev => !prev);
+        setShowEmojiKeyboard(prev => !prev);
+    };
+
+    const startAudioRecording = async () => {
+        try {
+            const result = await audioRecorderPlayer.startRecorder();
+            setAudioPath(result);
+            audioRecorderPlayer.addRecordBackListener((e: any) => {
+                setRecordSecs(e.current_position);
+                setRecordingTime(audioRecorderPlayer.mmssss(Math.floor(e.current_position)));
+            });
+            setStartRecording(true);
+            setShowLock(true);
+        } catch (error) {
+            console.log('Recording error', error);
+        }
+    };
+
+    const stopAudioRecording = async () => {
+        try {
+            const result = await audioRecorderPlayer.stopRecorder();
+            audioRecorderPlayer.removeRecordBackListener();
+            setStartRecording(false);
+            setLockRecording(false);
+
+            setAttachments(prev => [...prev, {
+                type: 'audio',
+                uri: result,
+                name: `recording-${Date.now()}.mp3`,
+                size: recordSecs
+            }]);
+
+            setRecordingTime('00:00');
+            setRecordSecs(0);
+        } catch (error) {
+            console.log('Stop recording error', error);
+        }
+    };
+
+    const handleFileAttachment = async () => {
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.allFiles],
+            });
+
+            const newAttachment: Attachment = {
+                type: 'file',
+                uri: res[0].uri,
+                name: res[0].name ?? undefined,  // Explicit conversion
+                size: res[0].size ?? undefined   // Explicit conversion
+            };
+
+            setAttachments(prev => [...prev, newAttachment]);
+        } catch (err) {
+            // Error handling
+        }
+    };
+
+
+    const handleImageAttachment = async () => {
+        try {
+            const image = await ImagePicker.openPicker({
+                width: 300,
+                height: 400,
+                cropping: false,
+                multiple: true,
+            });
+
+            const newImages = Array.isArray(image) ? image : [image];
+            const imageAttachments = newImages.map(img => ({
+                type: 'image' as const,
+                uri: img.path,
+                name: img.filename || `image-${Date.now()}.jpg`,
+                size: img.size
+            }));
+
+            setAttachments(prev => [...prev, ...imageAttachments]);
+        } catch (err: any) {
+            if (err.code !== 'E_PICKER_CANCELLED') {
+                console.log('Image picker error', err);
+            }
+        }
+    };
+
     const handleChatMenu = () => {
         // Handle chat menu actions
     }
+    const handleChatProfileImg = () => {
+
+    }
 
     const handleJobTitle = () => {
-        // Handle job title press
+        navigation.navigate("PostedJobDetailScreen", { jobId: jobId })
     }
 
     const handleVoicRecorder = () => {
-        setStartRecording(true)
-        setShowLock(true)
+        startAudioRecording();
     }
 
     const handleLockRecording = () => {
-        setShowLock(false)
-        setLockRecording(true)
+        setShowLock(false);
+        setLockRecording(true);
     }
 
     const handleDeleteRecording = () => {
-        setShowLock(false)
-        setLockRecording(false)
-        setStartRecording(false)
+        stopAudioRecording();
     }
 
     const handleSendMessage = () => {
-        if ((newMessage.trim() === '' && !lockRecording)) return;
+        if ((newMessage.trim() === '' && !lockRecording && attachments.length === 0)) return;
 
         const newMsg: any = {
             id: Date.now().toString(),
@@ -561,17 +674,18 @@ const ChatInboxUi = (props: any) => {
             status: 'sent',
             senderImage: 'https://randomuser.me/api/portraits/men/1.jpg',
             receiverImage: 'https://randomuser.me/api/portraits/women/1.jpg',
-            ...(replyingTo && { replyTo: replyingTo.id }) // Add reply reference if replying
+            ...(replyingTo && { replyTo: replyingTo.id }),
+            ...(attachments.length > 0 && { attachments: [...attachments] })
         };
 
         setMessages(prev => [...prev, newMsg]);
         setNewMessage('');
+        setAttachments([]);
         setReplyingTo(null);
         setShowLock(false);
         setLockRecording(false);
         setStartRecording(false);
 
-        // Scroll to bottom after sending
         setTimeout(() => {
             flatListRef.current?.scrollToEnd({ animated: true });
         }, 100);
@@ -586,7 +700,6 @@ const ChatInboxUi = (props: any) => {
         const userImage = isCurrentUser ? item.senderImage : item.receiverImage;
         const panResponderInstance = panResponder(item.id);
 
-        // Check if this message is a reply to another message
         const isReply = item.replyTo;
         const repliedMessage = isReply ? messages.find(msg => msg.id === item.replyTo) : null;
 
@@ -598,7 +711,6 @@ const ChatInboxUi = (props: any) => {
                 ]}
                 {...panResponderInstance.panHandlers}
             >
-                {/* Show reply icon when swiping */}
                 {showReplyIcon === item.id && (
                     <View style={[
                         chatInboxStyles.replyIconContainer,
@@ -610,19 +722,18 @@ const ChatInboxUi = (props: any) => {
                 )}
 
                 {!isCurrentUser && (
-                    <View style={chatInboxStyles.userImageContainer}>
+                    <TouchableOpacity style={chatInboxStyles.userImageContainer} onPress={handleChatProfileImg}>
                         <Image
                             source={{ uri: userImage }}
                             style={chatInboxStyles.userImage}
                         />
-                    </View>
+                    </TouchableOpacity>
                 )}
 
                 <View style={[
                     chatInboxStyles.messageContainer,
                     isCurrentUser ? chatInboxStyles.currentUserMessage : chatInboxStyles.otherUserMessage
                 ]}>
-                    {/* Reply preview if this is a reply */}
                     {isReply && repliedMessage && (
                         <View style={[
                             chatInboxStyles.replyPreviewContainer,
@@ -651,10 +762,52 @@ const ChatInboxUi = (props: any) => {
                         </View>
                     )}
 
-                    <Text style={[
-                        chatInboxStyles.messageText,
-                        isCurrentUser ? chatInboxStyles.currentUserMessageText : null
-                    ]}>{item.text}</Text>
+                    {item.attachments && item.attachments.map((attachment: any, index: number) => {
+                        if (attachment.type === 'image') {
+                            return (
+                                <FastImage
+                                    key={index}
+                                    source={{ uri: attachment.uri }}
+                                    style={chatInboxStyles.attachmentImage}
+                                    resizeMode={FastImage.resizeMode.cover}
+                                />
+                            );
+                        } else if (attachment.type === 'file') {
+                            return (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={chatInboxStyles.fileAttachmentContainer}
+                                    onPress={() => { }}
+                                >
+                                    <SVGIcons.fileAttach width={24} height={24} />
+                                    <Text style={chatInboxStyles.fileName} numberOfLines={1}>
+                                        {attachment.name}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        } else if (attachment.type === 'audio') {
+                            return (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={chatInboxStyles.audioAttachmentContainer}
+                                    onPress={() => { }}
+                                >
+                                    <SVGIcons.deleteIcon width={24} height={24} />
+                                    <Text style={chatInboxStyles.audioDuration}>
+                                        {attachment.duration || '00:00'}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        }
+                        return null;
+                    })}
+
+                    {item.text && (
+                        <Text style={[
+                            chatInboxStyles.messageText,
+                            isCurrentUser ? chatInboxStyles.currentUserMessageText : null
+                        ]}>{item.text}</Text>
+                    )}
 
                     <View style={chatInboxStyles.messageTimeContainer}>
                         <Text style={[
@@ -708,7 +861,6 @@ const ChatInboxUi = (props: any) => {
                     </TouchableOpacity>
                 }
 
-                {/* Reply preview in input area */}
                 {replyingTo && (
                     <View style={chatInboxStyles.replyBar}>
                         <View style={chatInboxStyles.replyingToContainer}>
@@ -744,6 +896,65 @@ const ChatInboxUi = (props: any) => {
                     </View>
                 )}
 
+                {attachments.length > 0 && (
+                    <View style={chatInboxStyles.attachmentsPreviewContainer}>
+                        {attachments.map((attachment, index) => (
+                            <View key={index} style={chatInboxStyles.attachmentPreview}>
+                                {attachment.type === 'image' ? (
+                                    <FastImage
+                                        source={{ uri: attachment.uri }}
+                                        style={chatInboxStyles.previewImage}
+                                        resizeMode={FastImage.resizeMode.cover}
+                                    />
+                                ) : attachment.type === 'file' ? (
+                                    <View style={chatInboxStyles.previewFile}>
+                                        <SVGIcons.fileAttach width={24} height={24} />
+                                        <Text style={chatInboxStyles.previewFileName} numberOfLines={1}>
+                                            {attachment.name}
+                                        </Text>
+                                    </View>
+                                ) : (
+                                    <View style={chatInboxStyles.previewAudio}>
+                                        <SVGIcons.chatVoice width={24} height={24} />
+                                        <Text style={chatInboxStyles.previewAudioDuration}>
+                                            {recordingTime}
+                                        </Text>
+                                    </View>
+                                )}
+                                <TouchableOpacity
+                                    style={chatInboxStyles.removeAttachmentButton}
+                                    onPress={() => {
+                                        const newAttachments = [...attachments];
+                                        newAttachments.splice(index, 1);
+                                        setAttachments(newAttachments);
+                                    }}
+                                >
+                                    <SVGIcons.crossIcon width={16} height={16} />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                )}
+
+                {showEmojiKeyboard && (
+                    <EmojiKeyboard
+                        onEmojiSelected={handleEmojiSelect}
+                        enableSearchBar={true}
+                        open={emojiKeyboardOpen}
+                        onClose={() => setEmojiKeyboardOpen(false)}
+                        styles={{
+                            container: {
+                                backgroundColor: COLORS.white,
+                                borderTopWidth: 1,
+                                borderTopColor: COLORS.grey,
+                            } as any, // Type assertion
+                            searchBar: {
+                                backgroundColor: COLORS.grey,
+                            } as any,
+                        }}
+                    />
+                )}
+
                 <View style={[chatInboxStyles.inputMainContainer, { backgroundColor: replyingTo ? COLORS.otherChatBgColor : COLORS.white }]}>
                     <View style={chatInboxStyles.inputContainer}>
                         {startRecording && (
@@ -754,13 +965,13 @@ const ChatInboxUi = (props: any) => {
                                 <View style={chatInboxStyles.recordingIndicator} />
                                 <View style={chatInboxStyles.recordingTextContainer}>
                                     <Text style={chatInboxStyles.recordingText}>Recording</Text>
-                                    <Text style={chatInboxStyles.recordingText}>{"00.01"}</Text>
+                                    <Text style={chatInboxStyles.recordingText}>{recordingTime}</Text>
                                 </View>
                             </View>
                         )}
                         {!startRecording && (
                             <View style={chatInboxStyles.emojiContainer}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={toggleEmojiKeyboard}>
                                     <SVGIcons.emoji />
                                 </TouchableOpacity>
                                 <TextInput
@@ -776,15 +987,15 @@ const ChatInboxUi = (props: any) => {
                         <View style={chatInboxStyles.fileVoiceContainer}>
                             {!startRecording && (
                                 <>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity onPress={handleFileAttachment}>
                                         <SVGIcons.fileAttach />
                                     </TouchableOpacity>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity onPress={handleImageAttachment}>
                                         <SVGIcons.insertPhoto />
                                     </TouchableOpacity>
                                 </>
                             )}
-                            {!lockRecording && newMessage.length === 0 &&
+                            {!lockRecording && newMessage.length === 0 && !startRecording &&
                                 <TouchableOpacity onPress={handleVoicRecorder}>
                                     <SVGIcons.chatVoice />
                                 </TouchableOpacity>
