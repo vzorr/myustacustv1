@@ -8,6 +8,7 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
     const { route, navigation } = props
     const {
         userId,
+        jobId,
         jobTitle,
         userName,
         isOnline,
@@ -20,6 +21,7 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
     return (
         <ChatInboxUi
             userId={userId}
+            jobId={jobId}
             jobTitle={jobTitle}
             userName={userName}
             isOnline={isOnline}

@@ -37,11 +37,11 @@ const NavStack: React.FC = () => {
             if (res.data?.code !== 200) {
                 return
             }
-            dispatch(setMetaData(res?.data?.result))  
+            dispatch(setMetaData(res?.data?.result))
         } catch (error) {
             console.log("errorffffffff", JSON.stringify(error))
         }
-       
+
     }
     useEffect(() => {
         getMetaData()
@@ -51,7 +51,7 @@ const NavStack: React.FC = () => {
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='Tabs'
+            initialRouteName='Splash'
         >
             <Stack.Screen name="Tabs" component={TabStack} />
             <Stack.Screen name="Splash" component={SplashScreen} />

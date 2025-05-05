@@ -21,10 +21,22 @@ const ApplicationDetailScreen: React.FC<UserNavigationRootProps<"ApplicationDeta
     const [appDetail, setAppDetails] = useState<any>("");
     const applicationId = props?.route.params?.proposalId
     const handleViewProfile = () => {
-        props.navigation.navigate('UstaProfile', { otherUserId: appDetail?.usta?.id, jobId: appDetail?.job?.id});
+        props.navigation.navigate('UstaProfile', { otherUserId: appDetail?.usta?.id, jobId: appDetail?.job?.id });
     };
     const handleInterview = () => {
-        // props.navigation.navigate('ApplicationDetail');
+        props.navigation.navigate('ChatInbox',
+            {
+                chatData: {
+                    userId: "1",
+                    jobId: "1",
+                    jobTitle: "Looking for an experience electricision",
+                    userName: "Abid Ghouri",
+                    isOnline: "true",
+                    isBlocked: "isBlocked",
+                    isBlocker: "isBlocker",
+                    chatDate: "chatDate",
+                }
+            })
     };
 
     const getAppDetail = async () => {
@@ -56,7 +68,7 @@ const ApplicationDetailScreen: React.FC<UserNavigationRootProps<"ApplicationDeta
         fetchData();
 
     }, [userData?.token, token]);
-    const jobDetail= appDetail?.job
+    const jobDetail = appDetail?.job
     const time = getCustomTimeAgo(jobDetail?.createdAt)
     const customer = jobDetail?.customer
     const renderScreenContent = () => (
@@ -119,7 +131,7 @@ const ApplicationDetailScreen: React.FC<UserNavigationRootProps<"ApplicationDeta
         </SafeAreaView>
     );
     const screenData = [{ id: '1' }];
- 
+
     return (
         <>
             {isLoading ?

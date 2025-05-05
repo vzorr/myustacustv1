@@ -44,7 +44,7 @@ const ChatListCard: React.FC<ChatListCardProps> = ({
         } else if (now.clone().subtract(1, 'day').isSame(messageDate, 'day')) {
             return 'Yesterday'
         } else {
-            return messageDate.format('DD/MM/YYYY')
+            return messageDate.format('DD/MM/YY')
         }
     }
 
