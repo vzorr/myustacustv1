@@ -461,6 +461,8 @@ import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import EmojiKeyboard from 'rn-emoji-keyboard';
 import FastImage from 'react-native-fast-image';
 import DocumentPicker, { types } from '@react-native-documents/picker';
+import ChatModal from '../../../../components/ConfirmationModal/ChatModal';
+import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal';
 type Attachment = {
     type: 'image' | 'file' | 'audio';
     uri: string;
@@ -490,6 +492,9 @@ const ChatInboxUi = (props: any) => {
     const [replyingTo, setReplyingTo] = useState<any>(null);
     const [showReplyIcon, setShowReplyIcon] = useState<string | null>(null);
     const [showEmojiKeyboard, setShowEmojiKeyboard] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [blockUser, setBlockUser] = useState(false);
+    const [deleteChat, setDeleteChat] = useState(false);
     const [recordingTime, setRecordingTime] = useState('00:00');
     const [recordSecs, setRecordSecs] = useState(0);
     const [audioPath, setAudioPath] = useState('');
@@ -639,19 +644,46 @@ const ChatInboxUi = (props: any) => {
     };
 
     const handleChatMenu = () => {
-        // Handle chat menu actions
+        setShowModal(true)
     }
+    const handleViewProgress = () => {
+        setShowModal(false)
+    }
+    const handleContract = () => {
+        setShowModal(false)
+    }
+    const handleBlockUser = () => {
+        setShowModal(false)
+        setBlockUser(true)
+    }
+    const handleConfirmBlockUser = () => {
+        setBlockUser(false)
+    }
+    const handleDeleteChat = () => {
+        setShowModal(false)
+        setDeleteChat(true)
+    }
+    const handleConfirmDeleteChat = () => {
+        setDeleteChat(false)
+    }
+
     const handleChatProfileImg = () => {
-            navigation.navigate('Tabs', {
-                screen: 'JobsStatusSackNav',
+        navigation.navigate('Tabs', {
+            screen: 'JobsStatusSackNav',
+            params: {
+                screen: 'UstaProfile',
                 params: {
-                    screen: 'UstaProfile',
-                    params: {
-                        otherUserId: '',
-                        jobId: jobId,
-                    },
+                    otherUserId: '',
+                    jobId: jobId,
                 },
-            });
+            },
+        });
+        setShowModal(false)
+    }
+    const handleChatSelfProfileImg = () => {
+        navigation.navigate('Tabs', {
+            screen: 'ProfileScreen',
+        })
     }
 
     const handleJobTitle = () => {
@@ -829,12 +861,12 @@ const ChatInboxUi = (props: any) => {
                 </View>
 
                 {isCurrentUser && (
-                    <View style={chatInboxStyles.userImageContainer}>
+                    <TouchableOpacity style={chatInboxStyles.userImageContainer} onPress={handleChatSelfProfileImg}>
                         <Image
                             source={{ uri: userImage }}
                             style={chatInboxStyles.userImage}
                         />
-                    </View>
+                    </TouchableOpacity>
                 )}
             </Animated.View>
         );
@@ -1031,6 +1063,30 @@ const ChatInboxUi = (props: any) => {
                         </View>
                     </View>
                 </View>
+                <ChatModal
+                    visible={showModal}
+                    isProgress={false}
+                    handleViewProfile={handleChatProfileImg}
+                    handleViewProgress={handleViewProgress}
+                    handleContract={handleContract}
+                    handleBlockUser={handleBlockUser}
+                    handleDeleteChat={handleDeleteChat}
+                />
+                <ConfirmationModal
+                    visible={blockUser}
+                    title='Block User?'
+                    message='You can unblock users again'
+                    confirmText='Block User'
+                    onCancel={() => setBlockUser(false)}
+                    Confirm={handleConfirmBlockUser}
+                />
+                <ConfirmationModal
+                    visible={deleteChat}
+                    title='Delete Chat?'
+                    confirmText='Delete'
+                    onCancel={() => setDeleteChat(false)}
+                    Confirm={handleConfirmDeleteChat}
+                />
             </KeyboardAvoidingView>
         </SafeAreaView>
     )
