@@ -37,8 +37,8 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const { postJob }: any = useSelector((state: any) => state?.postJob)
     const previewValue = useMemo(() => postJob, [postJob]);
    const [region, setRegion] = useState<Region>({
-        latitude: previewValue?.location && previewValue?.location[0]?.latitude ?  previewValue?.location[0]?.latitude : 42.0693,
-        longitude: previewValue?.location && previewValue?.location[0]?.longitude ? previewValue?.location[0]?.longitude:   19.5126,
+        latitude: previewValue?.location && previewValue?.location[0]?.latitude ?  Number(previewValue.location[0].latitude) : 42.0693,
+        longitude: previewValue?.location && previewValue?.location[0]?.longitude ? Number(previewValue.location[0].longitude):   19.5126,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     });
@@ -59,14 +59,15 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
         dispatch(setPostJobReducer({}))
         navigation.navigate('Tabs')
     }
-    useEffect(()=>{
-        setRegion({
-            latitude: previewValue?.location&& previewValue?.location[0]?.latitude || 42.0693,
-            longitude: previewValue?.location && previewValue?.location[0]?.longitude || 19.5126,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-        })
-    },[previewValue?.location])
+  
+    // useEffect(()=>{
+    //     setRegion({
+    //         latitude: previewValue?.location&& previewValue?.location[0]?.latitude || 42.0693,
+    //         longitude: previewValue?.location && previewValue?.location[0]?.longitude || 19.5126,
+    //         latitudeDelta: 0.05,
+    //         longitudeDelta: 0.05,
+    //     })
+    // },[previewValue?.location])
     const handleMapReady = () => {
         if (previewValue?.location.length > 0 && mapRef.current) {
             mapRef.current.animateToRegion({
