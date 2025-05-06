@@ -995,7 +995,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                         badgeCount={0}
                         isProfile={true}
                         userName={`${userProfile?.firstName || ''} ${userProfile?.lastName || ''}`}
-                        userLocation={`${userProfile?.locations && userProfile?.locations[0]?.address}`}
+                        userLocation={selectLocation?.length > 0 ?selectLocation[0]?.address: userProfile?.locations && userProfile?.locations[0]?.address}
                         imageUrl={userProfile?.profilePicture}
                     />
                     <FlatList
