@@ -25,6 +25,7 @@ export const COLORS = {
     lightSky: "#DBE7F2",
     statusBarColor: "#E9E9E9",
     white: "#FFF",
+    lightWhite: "rgba(255,255,255,0.70)",
     grey: "#BEBEBE",
     otherChatBgColor: "#EDEDED",
     bgImgColor: "rgba(0, 32, 63, 0.7)",

@@ -455,14 +455,14 @@ import { COLORS, FONTS, fontSize } from '../../../../config/themes/theme';
 import { SVGIcons } from '../../../../config/constants/svg';
 import { chatInboxStyles } from './chatInboxStyles';
 import { mockMessages } from '../../../../utils/ChatMockApi\'s/ChatMockApi';
-import ImagePicker from 'react-native-image-crop-picker';
-// import DocumentPicker from '@react-native-documents/picker';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import EmojiKeyboard from 'rn-emoji-keyboard';
 import FastImage from 'react-native-fast-image';
 import DocumentPicker, { types } from '@react-native-documents/picker';
 import ChatModal from '../../../../components/ConfirmationModal/ChatModal';
 import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal';
+import CustomImagePickerModal from '../../../../components/ImagePickerModal/ImagePickerModal';
+import ImagePicker from 'react-native-image-crop-picker';
 type Attachment = {
     type: 'image' | 'file' | 'audio';
     uri: string;
@@ -501,6 +501,7 @@ const ChatInboxUi = (props: any) => {
     // Update the attachments state type definition
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [emojiKeyboardOpen, setEmojiKeyboardOpen] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false);
     const flatListRef = useRef<FlatList>(null);
     const currentUserId = '101';
 
@@ -617,32 +618,6 @@ const ChatInboxUi = (props: any) => {
         }
     };
 
-
-    const handleImageAttachment = async () => {
-        try {
-            const image = await ImagePicker.openPicker({
-                width: 300,
-                height: 400,
-                cropping: false,
-                multiple: true,
-            });
-
-            const newImages = Array.isArray(image) ? image : [image];
-            const imageAttachments = newImages.map(img => ({
-                type: 'image' as const,
-                uri: img.path,
-                name: img.filename || `image-${Date.now()}.jpg`,
-                size: img.size
-            }));
-
-            setAttachments(prev => [...prev, ...imageAttachments]);
-        } catch (err: any) {
-            if (err.code !== 'E_PICKER_CANCELLED') {
-                console.log('Image picker error', err);
-            }
-        }
-    };
-
     const handleChatMenu = () => {
         setShowModal(true)
     }
@@ -735,6 +710,80 @@ const ChatInboxUi = (props: any) => {
     const cancelReply = () => {
         setReplyingTo(null);
     }
+    const takePhotoWithCamera = async () => {
+        try {
+            const remainingSlots = 4 - attachments.filter(a => a.type === 'image').length;
+            if (remainingSlots <= 0) {
+                // Show some feedback to user that they've reached the limit
+                return;
+            }
+
+            const image = await ImagePicker.openCamera({
+                width: 300,
+                height: 400,
+                cropping: true,
+                mediaType: 'photo',
+            });
+
+            const newAttachment: Attachment = {
+                type: 'image',
+                uri: image.path,
+                name: image.filename || `photo-${Date.now()}.jpg`,
+                size: image.size
+            };
+
+            setAttachments(prev => [...prev, newAttachment]);
+            setShowImageModal(false);
+        } catch (err: any) {
+            if (err.code !== 'E_PICKER_CANCELLED') {
+                console.log('Camera error', err);
+            }
+            setShowImageModal(false);
+        }
+    };
+
+    const pickImageFromGallery = async () => {
+        try {
+            const remainingSlots = 4 - attachments.filter(a => a.type === 'image').length;
+            if (remainingSlots <= 0) {
+                // Show some feedback to user that they've reached the limit
+                return;
+            }
+
+            const images = await ImagePicker.openPicker({
+                width: 300,
+                height: 400,
+                cropping: false,
+                multiple: true,
+                mediaType: 'photo',
+                maxFiles: remainingSlots, // This limits the selection to remaining available slots
+            });
+
+            // Handle single or multiple image selection
+            const selectedImages = Array.isArray(images) ? images : [images];
+            const imageAttachments = selectedImages.slice(0, remainingSlots).map(img => ({
+                type: 'image' as const,
+                uri: img.path,
+                name: img.filename || `image-${Date.now()}.jpg`,
+                size: img.size
+            }));
+
+            setAttachments(prev => [...prev, ...imageAttachments]);
+            setShowImageModal(false);
+        } catch (err: any) {
+            if (err.code !== 'E_PICKER_CANCELLED') {
+                console.log('Gallery picker error', err);
+            }
+            setShowImageModal(false);
+        }
+    };
+
+    const handleImageUpload = () => {
+        setShowImageModal(true);
+    };
+    const handleCancelModal = () => {
+        setShowImageModal(false);
+    };
 
     const renderMessage = ({ item }: { item: any }) => {
         const isCurrentUser = item.senderId === currentUserId;
@@ -754,7 +803,7 @@ const ChatInboxUi = (props: any) => {
             >
                 {showReplyIcon === item.id && (
                     <View style={[
-                        chatInboxStyles.replyIconContainer,
+                        // chatInboxStyles.replyIconContainer,
                         isCurrentUser ? chatInboxStyles.currentUserReplyIcon : chatInboxStyles.otherUserReplyIcon
                     ]}>
                         <SVGIcons.replayIcon />
@@ -925,7 +974,7 @@ const ChatInboxUi = (props: any) => {
                                     />
                                 </View>
                                 <View style={chatInboxStyles.replyTextContainer}>
-                                    <Text style={chatInboxStyles.replyBarMessage} numberOfLines={2}>
+                                    <Text style={chatInboxStyles.replyBarMessage} numberOfLines={1}>
                                         {replyingTo.text}
                                     </Text>
                                     <Text style={chatInboxStyles.replyBarTime}>
@@ -939,7 +988,7 @@ const ChatInboxUi = (props: any) => {
 
                 {attachments.length > 0 && (
                     <View style={chatInboxStyles.attachmentsPreviewContainer}>
-                        {attachments.map((attachment, index) => (
+                        {attachments.slice(0, 4).map((attachment, index) => (
                             <View key={index} style={chatInboxStyles.attachmentPreview}>
                                 {attachment.type === 'image' ? (
                                     <FastImage
@@ -974,6 +1023,17 @@ const ChatInboxUi = (props: any) => {
                                 </TouchableOpacity>
                             </View>
                         ))}
+                        {attachments.length > 4 && (
+                            <View style={chatInboxStyles.attachmentPreview}>
+                                <View style={[chatInboxStyles.previewImage, {
+                                    backgroundColor: COLORS.grey,
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }]}>
+                                    <Text style={{ color: COLORS.white }}>+{attachments.length - 4}</Text>
+                                </View>
+                            </View>
+                        )}
                     </View>
                 )}
 
@@ -996,7 +1056,7 @@ const ChatInboxUi = (props: any) => {
                     />
                 )}
 
-                <View style={[chatInboxStyles.inputMainContainer, { backgroundColor: replyingTo ? COLORS.otherChatBgColor : COLORS.white }]}>
+                <View style={[chatInboxStyles.inputMainContainer, { backgroundColor: replyingTo || attachments.length > 0 ? COLORS.otherChatBgColor : COLORS.white }]}>
                     <View style={chatInboxStyles.inputContainer}>
                         {startRecording && (
                             <View style={chatInboxStyles.recordingContainer}>
@@ -1031,9 +1091,16 @@ const ChatInboxUi = (props: any) => {
                                     <TouchableOpacity onPress={handleFileAttachment}>
                                         <SVGIcons.fileAttach />
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={handleImageAttachment}>
+                                    <TouchableOpacity onPress={handleImageUpload}>
                                         <SVGIcons.insertPhoto />
                                     </TouchableOpacity>
+                                    {/* <TouchableOpacity
+                                        onPress={handleImageUpload}
+                                        disabled={attachments.filter(a => a.type === 'image').length >= 4}
+                                        style={attachments.filter(a => a.type === 'image').length >= 4 ? { opacity: 0.5 } : null}
+                                    >
+                                        <SVGIcons.insertPhoto />
+                                    </TouchableOpacity> */}
                                 </>
                             )}
                             {!lockRecording && newMessage.length === 0 && !startRecording &&
@@ -1086,6 +1153,13 @@ const ChatInboxUi = (props: any) => {
                     confirmText='Delete'
                     onCancel={() => setDeleteChat(false)}
                     Confirm={handleConfirmDeleteChat}
+                />
+                <CustomImagePickerModal
+                    onTakePhoto={takePhotoWithCamera}
+                    onPickFromGallery={pickImageFromGallery}
+                    handleCancel={handleCancelModal}
+                    showImageModal={showImageModal}
+                    setShowImageModal={setShowImageModal}
                 />
             </KeyboardAvoidingView>
         </SafeAreaView>

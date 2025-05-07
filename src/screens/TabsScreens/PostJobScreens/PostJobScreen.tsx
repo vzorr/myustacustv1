@@ -26,7 +26,7 @@ import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import Toast from 'react-native-simple-toast'
 import VisibleLoader from '../../../components/Loader/VisibleLoader'
-import CustomImagePicker from '../../../components/ImagePicker/ImagePicker'
+import CustomImagePickerModal from '../../../components/ImagePickerModal/ImagePickerModal'
 
 // Define the ImagePicker result type
 interface ImagePickerResult {
@@ -96,8 +96,8 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const dispatch = useDispatch()
 
     const [region, setRegion] = useState<Region>({
-        latitude: postJob?.location && postJob?.location[0]?.latitude ?  postJob?.location[0]?.latitude : 42.0693,
-        longitude: postJob?.location && postJob?.location[0]?.longitude ? postJob?.location[0]?.longitude:   19.5126,
+        latitude: postJob?.location && postJob?.location[0]?.latitude ? postJob?.location[0]?.latitude : 42.0693,
+        longitude: postJob?.location && postJob?.location[0]?.longitude ? postJob?.location[0]?.longitude : 19.5126,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     });
@@ -244,7 +244,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         if (mapRef.current && region.latitude && region.longitude) {
             const lat = Number(region.latitude);
             const lng = Number(region.longitude);
-    
+
             if (!isNaN(lat) && !isNaN(lng)) {
                 mapRef.current.animateToRegion({
                     latitude: lat,
@@ -347,7 +347,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         const handleSelectImage = (index: number) => {
             setSelectedIndex(index); // only update selected index manually
         };
-   
+
         const handleDeleteImage = (indexToDelete: number) => {
             if (!Array.isArray(values.images)) return;
 
@@ -384,7 +384,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                 category: selectedCategories,
                 dateCreated: new Date().toISOString()
             }
-    
+
             dispatch(setPostJobReducer(updateValue))
             navigation.navigate("LocationScreen", { screenName: "postJob" })
         }
@@ -696,7 +696,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             </View>
                         )}
                         <View style={{ paddingHorizontal: 20, gap: 10 }}>
-                            <CustomImagePicker
+                            <CustomImagePickerModal
                                 onTakePhoto={takePhotoWithCamera}
                                 onPickFromGallery={pickImageFromGallery}
                                 handleCancel={handleCancelModal}
