@@ -803,7 +803,6 @@ const ChatInboxUi = (props: any) => {
             >
                 {showReplyIcon === item.id && (
                     <View style={[
-                        // chatInboxStyles.replyIconContainer,
                         isCurrentUser ? chatInboxStyles.currentUserReplyIcon : chatInboxStyles.otherUserReplyIcon
                     ]}>
                         <SVGIcons.replayIcon />
@@ -851,46 +850,67 @@ const ChatInboxUi = (props: any) => {
                             </View>
                         </View>
                     )}
+                    {item.attachments && (() => {
+                        // Separate image attachments from other types
+                        const imageAttachments = item.attachments.filter((a: Attachment) => a.type === 'image');
+                        const otherAttachments = item.attachments.filter((a: Attachment) => a.type !== 'image');
 
-                    {item.attachments && item.attachments.map((attachment: any, index: number) => {
-                        if (attachment.type === 'image') {
-                            return (
-                                <FastImage
-                                    key={index}
-                                    source={{ uri: attachment.uri }}
-                                    style={chatInboxStyles.attachmentImage}
-                                    resizeMode={FastImage.resizeMode.cover}
-                                />
-                            );
-                        } else if (attachment.type === 'file') {
-                            return (
-                                <TouchableOpacity
-                                    key={index}
-                                    style={chatInboxStyles.fileAttachmentContainer}
-                                    onPress={() => { }}
-                                >
-                                    <SVGIcons.fileAttach width={24} height={24} />
-                                    <Text style={chatInboxStyles.fileName} numberOfLines={1}>
-                                        {attachment.name}
-                                    </Text>
-                                </TouchableOpacity>
-                            );
-                        } else if (attachment.type === 'audio') {
-                            return (
-                                <TouchableOpacity
-                                    key={index}
-                                    style={chatInboxStyles.audioAttachmentContainer}
-                                    onPress={() => { }}
-                                >
-                                    <SVGIcons.deleteIcon width={24} height={24} />
-                                    <Text style={chatInboxStyles.audioDuration}>
-                                        {attachment.duration || '00:00'}
-                                    </Text>
-                                </TouchableOpacity>
-                            );
-                        }
-                        return null;
-                    })}
+                        return (
+                            <>
+                                {/* Render images in 2-column grid */}
+                                {imageAttachments.length > 0 && (
+                                    <View style={chatInboxStyles.imageGridContainer}>
+                                        {imageAttachments.map((image: Attachment, index: number) => (
+                                            <View key={index} style={[
+                                                imageAttachments.length === 1
+                                                    ? chatInboxStyles.singleImageItem
+                                                    : chatInboxStyles.multiImageItem,
+                                                // index % 2 === 0 ? { marginRight: 8 } : { marginRight: 0 }
+                                            ]}>
+                                                <FastImage
+                                                    source={{ uri: image.uri }}
+                                                    style={chatInboxStyles.attachmentImage}
+                                                    resizeMode={FastImage.resizeMode.cover}
+                                                />
+                                            </View>
+                                        ))}
+                                    </View>
+                                )}
+
+                                {/* Render other attachment types normally */}
+                                {otherAttachments.map((attachment: Attachment, index: number) => {
+                                    if (attachment.type === 'file') {
+                                        return (
+                                            <TouchableOpacity
+                                                key={`file-${index}`}
+                                                style={chatInboxStyles.fileAttachmentContainer}
+                                                onPress={() => { }}
+                                            >
+                                                <SVGIcons.fileAttach width={24} height={24} />
+                                                <Text style={chatInboxStyles.fileName} numberOfLines={1}>
+                                                    {attachment.name || 'File'}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    } else if (attachment.type === 'audio') {
+                                        return (
+                                            <TouchableOpacity
+                                                key={`audio-${index}`}
+                                                style={chatInboxStyles.audioAttachmentContainer}
+                                                onPress={() => { }}
+                                            >
+                                                <SVGIcons.deleteIcon width={24} height={24} />
+                                                <Text style={chatInboxStyles.audioDuration}>
+                                                    {attachment.duration || '00:00'}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    }
+                                    return null;
+                                })}
+                            </>
+                        );
+                    })()}
 
                     {item.text && (
                         <Text style={[
@@ -919,7 +939,7 @@ const ChatInboxUi = (props: any) => {
                 )}
             </Animated.View>
         );
-    }
+    };
 
     return (
         <SafeAreaView style={chatInboxStyles.container}>
@@ -1094,20 +1114,13 @@ const ChatInboxUi = (props: any) => {
                                     <TouchableOpacity onPress={handleImageUpload}>
                                         <SVGIcons.insertPhoto />
                                     </TouchableOpacity>
-                                    {/* <TouchableOpacity
-                                        onPress={handleImageUpload}
-                                        disabled={attachments.filter(a => a.type === 'image').length >= 4}
-                                        style={attachments.filter(a => a.type === 'image').length >= 4 ? { opacity: 0.5 } : null}
-                                    >
-                                        <SVGIcons.insertPhoto />
-                                    </TouchableOpacity> */}
                                 </>
                             )}
-                            {!lockRecording && newMessage.length === 0 && !startRecording &&
+                            {(!lockRecording && newMessage.length === 0 && !startRecording && attachments.length === 0) && (
                                 <TouchableOpacity onPress={handleVoicRecorder}>
                                     <SVGIcons.chatVoice />
                                 </TouchableOpacity>
-                            }
+                            )}
                             {lockRecording &&
                                 <>
                                     <SVGIcons.LockIconAlt width={20} height={20} />
@@ -1119,14 +1132,14 @@ const ChatInboxUi = (props: any) => {
                                     </TouchableOpacity>
                                 </>
                             }
-                            {newMessage.length > 0 &&
+                            {(newMessage.length > 0 || attachments.length > 0) && (
                                 <TouchableOpacity
                                     style={chatInboxStyles.btnContainer}
                                     onPress={handleSendMessage}
                                 >
                                     <SVGIcons.sendIcon stroke={COLORS.white} width={20} height={20} />
                                 </TouchableOpacity>
-                            }
+                            )}
                         </View>
                     </View>
                 </View>

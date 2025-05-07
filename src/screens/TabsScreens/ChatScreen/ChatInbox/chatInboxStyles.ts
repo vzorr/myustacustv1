@@ -302,11 +302,24 @@ export const chatInboxStyles = StyleSheet.create({
         marginTop: 2,
         alignSelf: 'flex-end',
     },
-    attachmentImage: {
+    imageGridContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginBottom: 4,
+        gap: 8
+    },
+    singleImageItem: {
         width: 200,
         height: 200,
+    },
+    multiImageItem: {
+        width: 124,
+        height: 124,
+    },
+    attachmentImage: {
+        width: '100%',
+        height: '100%',
         borderRadius: 8,
-        marginBottom: 8,
     },
     fileAttachmentContainer: {
         flexDirection: 'row',
@@ -403,10 +416,6 @@ export const chatInboxStyles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-    },
-    multiImageItem: {
-        width: '100%',
-        marginBottom: 8,
     },
     imageCounterText: {
         fontSize: 10,
