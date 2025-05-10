@@ -16,9 +16,9 @@ const ChatListUi = (props: any) => {
         chatDate,
         count,
         navigation,
-        isBlocker,
         isBlocked,
-        isOnline
+        isOnline,
+        onPress
     } = props
 
     const formatChatDate = (dateString: string) => {
@@ -39,18 +39,21 @@ const ChatListUi = (props: any) => {
     const formattedDate = formatChatDate(chatDate);
 
     const handleChatNav = () => {
-        navigation.navigate("ChatInbox", {
-            chatData: {
-                userId: userId,
-                jobId: jobId,
-                jobTitle: jobTitle,
-                userName: userName,
-                isOnline: isOnline,
-                isBlocked: isBlocked,
-                isBlocker: isBlocker,
-                chatDate: chatDate,
-            }
-        })
+        if (onPress) {
+            onPress();
+        } else {
+            navigation.navigate("ChatInbox", {
+                chatData: {
+                    userId: userId,
+                    jobId: jobId,
+                    jobTitle: jobTitle,
+                    userName: userName,
+                    isOnline: isOnline,
+                    isBlocked: isBlocked,
+                    chatDate: chatDate,
+                }
+            })
+        }
     }
 
     return (
@@ -64,9 +67,9 @@ const ChatListUi = (props: any) => {
             chatDate={chatDate}
             count={count}
             navigation={navigation}
-            isBlocker={isBlocker}
             isBlocked={isBlocked}
             isOnline={isOnline}
+            formattedDate={formattedDate}
         />
     )
 }
