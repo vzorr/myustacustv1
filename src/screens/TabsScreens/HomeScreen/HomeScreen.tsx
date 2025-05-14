@@ -82,7 +82,6 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
             <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
             <AppHeader
                 onMenuPress={() => { }}
-                onNotificationPress={() => { }}
                 showNotificationBadge={true}
                 badgeCount={0}
                 isProfile={false}

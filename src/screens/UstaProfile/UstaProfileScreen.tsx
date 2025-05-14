@@ -291,7 +291,6 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
                 <SafeAreaView style={styles.container}>
                     <AppHeader
                         onMenuPress={() => { }}
-                        onNotificationPress={() => { }}
                         showNotificationBadge={true}
                         badgeCount={5}
                         isProfile={true}

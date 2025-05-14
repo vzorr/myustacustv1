@@ -12,6 +12,11 @@ export enum WORK_HISTORY_TABS {
     FINISHED_JOBS = "Finshed Jobs",
     ACTIVE_JOBS = "Active Jobs",
 }
+export enum NOTIFICATION_TABS {
+    ACTIVITY = "Activity",
+    CONTRACTS = "Contracts",
+    REMINDERS = "Reminders",
+}
 
 export const googlePlacesApi = "AIzaSyCESGzn-f_ccP5pQ2xSo5PHaA-Z5B73HSY"
 export const googleLocationApiKey = "AIzaSyB8ODrHnGGYlUvHJ5omefoaIEM_M9Je0bg"

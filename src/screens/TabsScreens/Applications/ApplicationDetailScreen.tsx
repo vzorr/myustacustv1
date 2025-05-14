@@ -148,7 +148,7 @@ const ApplicationDetailScreen: React.FC<UserNavigationRootProps<"ApplicationDeta
                         keyExtractor={item => item.id}
                         renderItem={() => renderScreenContent()}
                         showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ flexGrow: 1 }}
+                        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
                     />
                 </SafeAreaView>
             }

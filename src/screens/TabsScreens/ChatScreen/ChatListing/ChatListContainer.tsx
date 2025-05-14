@@ -160,7 +160,6 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = (props)
         <SafeAreaView style={chatListStyle.chatListingMain}>
             <AppHeader
                 onMenuPress={() => { }}
-                onNotificationPress={() => { }}
                 showNotificationBadge={true}
                 badgeCount={0}
                 isProfile={false}
