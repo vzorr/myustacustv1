@@ -7,7 +7,9 @@ import AppHeader from '../../../components/AppHeader/AppHeader'
 import UstaHeading from '../../../components/UstaHeading/UstaHeading'
 import ProfessionCard from '../../../components/HomeComponents/ProfessionCard'
 import CategoryItem from '../../../components/HomeComponents/CategoryItem'
+import Heading from '../../../components/Heading/Heading'
 
+const AllProfessions = ['Plumber', 'Electricians', 'Woodworkers', 'Masons', 'Tilers', 'Painters', 'Roofer', 'Door installers', 'Gardeners', 'Locksmiths', 'Handyman', 'Movers', 'Pests', 'HVAC'];
 
 const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
     const { route, navigation } = props
@@ -28,7 +30,11 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
 
     const renderScreenContent = () => (
         <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Most Visited Professions</Text>
+            {/* <Text style={styles.sectionTitle}>Most Visited Professions</Text> */}
+            <Heading
+                headingText='Most Visited Professions'
+                style={{ fontSize: fontSize[20] }}
+                containerStyle={{ marginBottom: 10 }} />
             <ProfessionCard
                 title="Plumber"
                 count={253}
@@ -73,6 +79,30 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
                 icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
                 suffixText=" Professionals"
             />
+            <Heading
+                headingText='Explore All Professions'
+                style={{ fontSize: fontSize[20] }}
+                containerStyle={{ marginBottom: 10 }} />
+            <View
+                style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'flex-start',
+                }}>
+                {AllProfessions.map((item, index) => (
+                    <View style={{
+                        paddingHorizontal: 2,
+                        paddingVertical: 4,
+                    }}
+                        key={index}
+                    >
+                        <CategoryItem
+                            iconName="plusIcon"
+                            label={item}
+                        />
+                    </View>
+                ))}
+            </View>
         </View>
     )
     const screenData = [{ id: '1' }];
@@ -122,7 +152,7 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
                 keyExtractor={item => item.id}
                 renderItem={() => renderScreenContent()}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ flexGrow: 1 }}
+                contentContainerStyle={{ flexGrow: 1, paddingBottom: 50 }}
             />
         </SafeAreaView>
     )
@@ -187,22 +217,22 @@ const styles = StyleSheet.create({
         gap: 8,
         marginBottom: 20
     },
-    categoryItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: SIZES.wp(35),
-        height: SIZES.hp(6),
-        borderWidth: 1,
-        borderRadius: 36,
-        borderColor: COLORS.inputBorder,
-        gap: 8
-    },
-    categoryLabel: {
-        fontSize: 12,
-        color: COLORS.Navy,
-        textAlign: 'center',
-    },
+    // categoryItem: {
+    //     flexDirection: 'row',
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     width: SIZES.wp(35),
+    //     height: SIZES.hp(6),
+    //     borderWidth: 1,
+    //     borderRadius: 36,
+    //     borderColor: COLORS.inputBorder,
+    //     gap: 8
+    // },
+    // categoryLabel: {
+    //     fontSize: 12,
+    //     color: COLORS.Navy,
+    //     textAlign: 'center',
+    // },
     sectionContainer: {
         paddingBottom: 80,
         paddingHorizontal: 20,

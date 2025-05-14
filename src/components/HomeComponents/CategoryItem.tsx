@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { COLORS, SIZES } from '../../config/themes/theme'
+import { COLORS, FONTS, fontSize, SIZES } from '../../config/themes/theme'
 import { SVGIcons } from '../../config/constants/svg'
 
 // ✅ Define the props interface
@@ -25,17 +25,20 @@ export default CategoryItem
 const styles = StyleSheet.create({
     categoryItem: {
         flexDirection: 'row',
+        alignSelf: 'flex-start', // <-- Important: keeps width only as wide as the content
         alignItems: 'center',
         justifyContent: 'center',
-        width: SIZES.wp(35),
-        height: SIZES.hp(6),
-        borderWidth: 1,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
         borderRadius: 36,
+        borderWidth: 1,
         borderColor: COLORS.inputBorder,
         gap: 8,
     },
     categoryLabel: {
-        fontSize: 12,
+        fontSize: fontSize[14],
+        fontFamily: FONTS.interMedium,
+        fontWeight: 500,
         color: COLORS.Navy,
         textAlign: 'center',
     },
