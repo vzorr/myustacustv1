@@ -31,6 +31,7 @@ const ChatHeader = ({
 
     return (
         <View style={[styles.header, headerContainer]}>
+            <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
             <View style={styles.menuContainer}>
                 <TouchableOpacity onPress={handleBack}>
                     <SVGIcons.BackArrow width={32} height={32} />

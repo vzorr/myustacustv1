@@ -9,6 +9,14 @@ export const locationScreenStyles = StyleSheet.create({
     mapContainer: {
         flex: 1,
     },
+    staticLocationHeader: {
+        padding: 16,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee'
+    },
     map: {
         flex: 1,
     },

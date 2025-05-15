@@ -6,79 +6,38 @@ import { reuseableTextStyles } from '../../styles/reuseableTextStyles'
 import { useNavigation } from '@react-navigation/native'
 
 type HeaderProps = {
-    onMenuPress?: () => void
-    handleEditJobPost?: () => void
-    iconName?: keyof typeof SVGIcons;
-    imageUrl?: string
-    userName?: string
-    userLocation?: string
-    showNotificationBadge?: boolean
-    isProfile?: boolean
-    badgeCount?: number
-    logoWidth?: number
-    logoHeight?: number
     headerContainer?: ViewStyle;
     textStyle?: TextStyle;
-    isOnPreview?: boolean;
-    jobTitle?: string;
-    jobProviderName?: string;
-    time?: string;
-    isChat?: boolean;
+    headerText?: string;
 }
 
-const AppHeader = ({
-    onMenuPress,
-    showNotificationBadge = true,
-    imageUrl,
-    userName,
-    userLocation,
-    isProfile = true,
-    badgeCount = 3,
-    logoWidth = 80,
-    logoHeight = 30,
+const ReUseableHeader = ({
     headerContainer,
     textStyle,
-    isOnPreview,
-    jobTitle,
-    jobProviderName,
-    time,
-    isChat,
-    handleEditJobPost
+    headerText = "Notifications"
 }: HeaderProps) => {
-    const navigation = useNavigation<any>()
-    const handleHomeLogo = () => {
-        navigation.navigate("Home")
-    }
-    const onNotificationPress = () => {
-        navigation.navigate('Notifications')
+    const navigation = useNavigation<any>();
+    const handleBackArrow = () => {
+        navigation.goBack()
     }
 
     return (
         <View style={[styles.header, headerContainer]}>
-            <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
+            <StatusBar backgroundColor={COLORS.UstaBlack} barStyle="light-content" />
             <View style={styles.menuContainer}>
-                <TouchableOpacity style={styles.menuButton} onPress={onMenuPress}>
-                    <SVGIcons.menuIcon />
+                <TouchableOpacity style={styles.menuButton} onPress={handleBackArrow}>
+                    <SVGIcons.BackArrow />
                 </TouchableOpacity>
-
-                <TouchableOpacity style={styles.logoContainer} onPress={handleHomeLogo}>
-                    <SVGIcons.MyUstaLogo width={logoWidth} height={logoHeight} />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.notificationButton} onPress={onNotificationPress}>
-                    <SVGIcons.bellIcon />
-                    {showNotificationBadge && badgeCount > 0 && (
-                        <View style={styles.notificationBadge}>
-                            <Text style={[styles.notificationBadgeText, textStyle]}>{badgeCount}</Text>
-                        </View>
-                    )}
-                </TouchableOpacity>
+                <View>
+                    <Text style={[reuseableTextStyles.title, { fontSize: fontSize[14], color: COLORS.white }]}>{headerText}</Text>
+                </View>
+                <View />
             </View>
-            {isProfile &&
+            {/* {isProfile &&
                 <View style={styles.profileContainer}>
                     <View style={styles.profileSubContainer}>
                         <View style={styles.profileImgContainer}>
-                            <Image source={{ uri: imageUrl }} style={styles.img} />
+                            <Image source={require('../../assets/images/MostVisitedProfessions/Plumber.png')} style={styles.img} />
                         </View>
                         <View style={{ gap: 4 }}>
                             <View>
@@ -86,21 +45,11 @@ const AppHeader = ({
                             </View>
                             <View style={styles.userDataContainer}>
                                 <SVGIcons.locationYellowIcon />
-                                <Text
-                                    style={[reuseableTextStyles.subTitle, styles.locationText, { color: COLORS.white }]}
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail"
-                                >
-                                    {userLocation}
-                                </Text>
+                                <Text style={[reuseableTextStyles.subTitle, { color: COLORS.white }]}>{userLocation}</Text>
                             </View>
                         </View>
                     </View>
-                    {isChat &&
-                        <TouchableOpacity>
-                            <SVGIcons.chatIcon />
-                        </TouchableOpacity>
-                    }
+                    <View></View>
                 </View>
             }
             {isOnPreview &&
@@ -118,12 +67,12 @@ const AppHeader = ({
                         </TouchableOpacity>
                     </View>
                 </View>
-            }
+            } */}
         </View>
     )
 }
 
-export default AppHeader
+export default ReUseableHeader
 const styles = StyleSheet.create({
     header: {
         backgroundColor: COLORS.Navy,
@@ -211,11 +160,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: "center",
         justifyContent: "center",
-        gap: 4,
-        flexShrink: 1,
-    },
-    locationText: {
-        flexShrink: 1,
-        maxWidth: SIZES.width * 0.5,
-    },
+        gap: 4
+    }
 })

@@ -2,6 +2,10 @@ import axios from 'axios';
 
 export const BASE_API_URL_STAGGING = 'http://47.254.134.96:3000/api/';
 const BASE_API_URL_PRODUCTION = 'http://47.254.134.96:3000/api/';
+
+const SCOCKET_URL_PRODUCTION = 'http://47.254.134.96:3001/';
+export const SCOCKET_BASE_URL = SCOCKET_URL_PRODUCTION;
+
 export const GOOGLE_PLACES_URL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 export const BASE_CHAT_SCOCKET_URL = 'http://47.254.134.96:3001/';
 

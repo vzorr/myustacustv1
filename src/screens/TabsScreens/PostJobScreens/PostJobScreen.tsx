@@ -96,8 +96,12 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const dispatch = useDispatch()
 
     const [region, setRegion] = useState<Region>({
-        latitude: postJob?.location && postJob?.location[0]?.latitude ? postJob?.location[0]?.latitude : 42.0693,
-        longitude: postJob?.location && postJob?.location[0]?.longitude ? postJob?.location[0]?.longitude : 19.5126,
+        // latitude: postJob?.location && postJob?.location[0]?.latitude ? postJob?.location[0]?.latitude : 42.0693,
+        // longitude: postJob?.location && postJob?.location[0]?.longitude ? postJob?.location[0]?.longitude : 19.5126,
+        // latitudeDelta: 0.05,
+        // longitudeDelta: 0.05,
+        latitude: 42.0693,
+        longitude: 19.5126,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     });
@@ -124,18 +128,18 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         value: name.name
     }));
     const UKLocations = userProfile?.locations
-    // [
-    //     { key: '1', value: 'London' },
-    //     { key: '2', value: 'Manchester' },
-    //     { key: '3', value: 'Birmingham' },
-    //     { key: '4', value: 'Liverpool' },
-    //     { key: '5', value: 'Edinburgh' },
-    //     { key: '6', value: 'Glasgow' },
-    //     { key: '7', value: 'Bristol' },
-    //     { key: '8', value: 'Leeds' },
-    //     { key: '9', value: 'Cardiff' },
-    //     { key: '10', value: 'Belfast' },
-    // ]
+    const StaticLocation = [
+        { key: '1', value: 'London' },
+        { key: '2', value: 'Manchester' },
+        { key: '3', value: 'Birmingham' },
+        { key: '4', value: 'Liverpool' },
+        { key: '5', value: 'Edinburgh' },
+        { key: '6', value: 'Glasgow' },
+        { key: '7', value: 'Bristol' },
+        { key: '8', value: 'Leeds' },
+        { key: '9', value: 'Cardiff' },
+        { key: '10', value: 'Belfast' },
+    ]
     const areaType = [
         { key: '1', value: 'Room' },
         { key: '2', value: 'Bathroom' },
@@ -843,7 +847,8 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             />
                             <View style={{ gap: 8 }}>
                                 <CustomDropDown
-                                    data={UKLocations}
+                                    // data={UKLocations}
+                                    data={StaticLocation}
                                     placeholder="Select Location"
                                     selectedItems={selectLocation}
                                     onSelectionChange={setSelectLocation}
@@ -990,7 +995,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                     <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
                     <AppHeader
                         onMenuPress={() => { }}
-                        onNotificationPress={() => { }}
                         showNotificationBadge={true}
                         badgeCount={0}
                         isProfile={true}

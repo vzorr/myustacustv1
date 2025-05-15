@@ -5,10 +5,10 @@ import { UserStackParamList } from '../../../types/stacksParams';
 import HomeScreen from '../HomeScreen/HomeScreen';
 import JobsStatusScreens from './JobsStatusScreens';
 import ApplicationsList from '../Applications/ApplicationsList';
-import PostedJobDetailScreen from '../JobsStatusTopTabs/PostedJobDetailScreen';
 import ApplicationDetailScreen from '../Applications/ApplicationDetailScreen';
 import UstaProfileScreen from '../../UstaProfile/UstaProfileScreen';
 import UstaPortfolioDetailScreen from '../../UstaProfile/UstaPortfolioDetailScreen';
+import NotificationContainer from '../Notifications/NotificationContainer';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const JobsStatusSackNav: React.FC = () => {
@@ -26,6 +26,7 @@ const JobsStatusSackNav: React.FC = () => {
             <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} />
             <Stack.Screen name="UstaProfile" component={UstaProfileScreen} />
             <Stack.Screen name="UstaPortfolioDetail" component={UstaPortfolioDetailScreen} />
+            <Stack.Screen name="Notifications" component={NotificationContainer} />
         </Stack.Navigator>
     )
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "448847365292",
+    "project_id": "myusta-2f511",
+    "storage_bucket": "myusta-2f511.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:448847365292:android:bea797194d4b246eb7cb09",
+        "android_client_info": {
+          "package_name": "com.myusta.myustacustomer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4XxlVUKjI5GC0WW9gfM247x0Uas0iQPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

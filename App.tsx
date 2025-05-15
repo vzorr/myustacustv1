@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import MainStack from './src/navigation/MainStack/MainStack'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider, useSelector } from 'react-redux'
@@ -6,7 +6,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from './src/stores/Store/store';
 import { ConversationContext } from './src/config/context/ConversationContext';
 import io from "socket.io-client";
-import { BASE_SCOCKET_URL } from './src/apiManager/Client';
 const App: React.FC = () => {
   // const { userData } = useSelector((state: any) => state?.userInfo)
   // const userInfo = userData

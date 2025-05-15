@@ -33,6 +33,7 @@ export type UserStackParamList = {
     UstaPortfolio: any;
     UstaPortfolioDetail: any;
     ChatInbox: any;
+    Notifications: any;
 };
 
 export type UserNavigationRootProps<T extends keyof UserStackParamList> = {
