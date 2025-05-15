@@ -23,18 +23,19 @@ const ApplicationDetailScreen: React.FC<UserNavigationRootProps<"ApplicationDeta
     const handleViewProfile = () => {
         props.navigation.navigate('UstaProfile', { otherUserId: appDetail?.usta?.id, jobId: appDetail?.job?.id });
     };
+    console.log("appDetail", appDetail)
     const handleInterview = () => {
         props.navigation.navigate('ChatInbox',
             {
                 chatData: {
-                    userId: "1",
-                    jobId: "1",
-                    jobTitle: "Looking for an experience electricision",
-                    userName: "Abid Ghouri",
-                    isOnline: "true",
-                    isBlocked: "isBlocked",
-                    isBlocker: "isBlocker",
-                    chatDate: "chatDate",
+                    otherUserId: appDetail?.usta?.id,
+                    jobId: appDetail?.job?.id,
+                    jobTitle: appDetail?.job?.title,
+                    userName: `${appDetail?.usta?.firstName} ${appDetail?.usta?.lastName}`,
+                    isOnline: true,
+                    isBlocked: true,
+                    isBlocker: true,
+                    profileImage: ""
                 }
             })
     };

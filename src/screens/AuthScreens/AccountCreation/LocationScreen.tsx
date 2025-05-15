@@ -84,6 +84,7 @@ const LocationPickerScreen: React.FC<UserNavigationRootProps<"LocationScreen">> 
             const response = await axios.get(
                 `${GOOGLE_PLACES_URL}?input=${inputText}&key=${googlePlacesApi}`
             );
+            console.log('response.data', response.data)
             setSuggestions(response.data?.predictions);
         } catch (error) {
             console.log('Google Places API Error:', error);

@@ -1,0 +1,67 @@
+const { io
+} = require("socket.io-client");
+
+const SERVER_URL = "http://47.254.134.96:3001"; // Change to your actual IP if testing remotely
+
+const socket = io(SERVER_URL,
+{
+  transports: [
+        "websocket"
+    ], // Use only websocket transport
+  query: {
+    userId: "8f3d7b1e-2cd4-472a-8dbf-9cbe560e2e75" // Simulate user identification if needed
+    }
+});
+
+socket.on("connect", () => {
+  console.log("✅ Connected to Socket.IO server");
+
+  // Send a test message
+  const message = {
+    messageId: "8f3d7b1e-2cd4-472a-8dbf-9cbe560e2e75",
+    clientTempId: "temp-abc",
+    jobId: "8f3d7b1e-2cd4-472a-8dbf-9cbe560e2e75",
+    jobTitle: "Looking for an experienced electrician",
+    userName: "John Doe",
+    phone: "+923096222666",
+    userId: "8f3d7b1e-2cd4-472a-8dbf-9cbe560e2e75",
+    receiverId: "8f3d7b1e-2cd4-472a-8dbf-9cbe560e2e75",
+    isOnline: true,
+    isBlocked: false,
+    ChatDate: new Date().toISOString(),
+    messageType: "text",
+    messageImages: [],
+    audioFile: "",
+    textMsg: "Test message from client",
+    replyToMessageId: null,
+    editedAt: null,
+    deleted: false,
+    isSystemMessage: false,
+    attachments: []
+    };
+
+  console.log("📤 Sending test message...");
+  socket.emit("send_message", message);
+});
+
+// Listen for incoming messages
+socket.on("receive_message", (data) => {
+  console.log("📥 Received message:", data);
+});
+
+// Handle errors
+socket.on("connect_error", (err) => {
+  console.error("❌ Connection error:", err.message);
+});
+
+socket.on("disconnect", (reason) => {
+  console.log("⚠️ Disconnected from server:", reason);
+});
+
+// Exit after 10 seconds for test
+setTimeout(() => {
+  console.log("🕒 Test complete, disconnecting...");
+  socket.disconnect();
+  process.exit(0);
+},
+10000);

@@ -463,6 +463,7 @@ import ChatModal from '../../../../components/ConfirmationModal/ChatModal';
 import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal';
 import CustomImagePickerModal from '../../../../components/ImagePickerModal/ImagePickerModal';
 import ImagePicker from 'react-native-image-crop-picker';
+import { Formik } from 'formik';
 type Attachment = {
     type: 'image' | 'file' | 'audio';
     uri: string;
@@ -474,17 +475,9 @@ type Attachment = {
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
 const ChatInboxUi = (props: any) => {
-    const {
-        userId,
-        jobId,
-        jobTitle,
-        userName,
-        isOnline,
-        chatDate,
-        navigation
-    } = props;
+    const { userId,  jobId,  jobTitle, userName,  isOnline,  chatDate, navigation, chatHandle,  messages, loggedInUserId, userProfile} = props;
 
-    const [messages, setMessages] = useState<any[]>(mockMessages);
+    // const [messages, setMessages] = useState<any[]>(mockMessages);
     const [newMessage, setNewMessage] = useState('');
     const [startRecording, setStartRecording] = useState(false);
     const [showLock, setShowLock] = useState(false);
@@ -503,6 +496,8 @@ const ChatInboxUi = (props: any) => {
     const [emojiKeyboardOpen, setEmojiKeyboardOpen] = useState(false);
     const [showImageModal, setShowImageModal] = useState(false);
     const flatListRef = useRef<FlatList>(null);
+    console.log("userProfile", userProfile?.profilePicture
+)
     const currentUserId = '101';
 
     const formatTime = (dateString: string) => {
@@ -532,7 +527,7 @@ const ChatInboxUi = (props: any) => {
                 const isSwipeValid = gestureState.dx > swipeThreshold;
 
                 if (isSwipeValid) {
-                    const messageToReply = messages.find(msg => msg.id === messageId);
+                    const messageToReply = messages.find((msg:any) => msg.id === messageId);
                     if (messageToReply) {
                         setReplyingTo(messageToReply);
                     }
@@ -678,34 +673,34 @@ const ChatInboxUi = (props: any) => {
         stopAudioRecording();
     }
 
-    const handleSendMessage = () => {
-        if ((newMessage.trim() === '' && !lockRecording && attachments.length === 0)) return;
+    // const handleSendMessage = () => {
+    //     if ((newMessage.trim() === '' && !lockRecording && attachments.length === 0)) return;
 
-        const newMsg: any = {
-            id: Date.now().toString(),
-            text: newMessage,
-            senderId: currentUserId,
-            receiverId: userId,
-            timestamp: new Date().toISOString(),
-            status: 'sent',
-            senderImage: 'https://randomuser.me/api/portraits/men/1.jpg',
-            receiverImage: 'https://randomuser.me/api/portraits/women/1.jpg',
-            ...(replyingTo && { replyTo: replyingTo.id }),
-            ...(attachments.length > 0 && { attachments: [...attachments] })
-        };
+    //     const newMsg: any = {
+    //         id: Date.now().toString(),
+    //         text: newMessage,
+    //         senderId: currentUserId,
+    //         receiverId: userId,
+    //         timestamp: new Date().toISOString(),
+    //         status: 'sent',
+    //         senderImage: 'https://randomuser.me/api/portraits/men/1.jpg',
+    //         receiverImage: 'https://randomuser.me/api/portraits/women/1.jpg',
+    //         ...(replyingTo && { replyTo: replyingTo.id }),
+    //         ...(attachments.length > 0 && { attachments: [...attachments] })
+    //     };
 
-        setMessages(prev => [...prev, newMsg]);
-        setNewMessage('');
-        setAttachments([]);
-        setReplyingTo(null);
-        setShowLock(false);
-        setLockRecording(false);
-        setStartRecording(false);
+    //     setMessages(prev => [...prev, newMsg]);
+    //     setNewMessage('');
+    //     setAttachments([]);
+    //     setReplyingTo(null);
+    //     setShowLock(false);
+    //     setLockRecording(false);
+    //     setStartRecording(false);
 
-        setTimeout(() => {
-            flatListRef.current?.scrollToEnd({ animated: true });
-        }, 100);
-    }
+    //     setTimeout(() => {
+    //         flatListRef.current?.scrollToEnd({ animated: true });
+    //     }, 100);
+    // }
 
     const cancelReply = () => {
         setReplyingTo(null);
@@ -786,12 +781,13 @@ const ChatInboxUi = (props: any) => {
     };
 
     const renderMessage = ({ item }: { item: any }) => {
-        const isCurrentUser = item.senderId === currentUserId;
+        console.log("itemmmm", item)
+        const isCurrentUser = item.userId === loggedInUserId;
         const userImage = isCurrentUser ? item.senderImage : item.receiverImage;
         const panResponderInstance = panResponder(item.id);
 
         const isReply = item.replyTo;
-        const repliedMessage = isReply ? messages.find(msg => msg.id === item.replyTo) : null;
+        const repliedMessage = isReply ? messages.find((msg:any) => msg.id === item.replyTo) : null;
 
         return (
             <Animated.View
@@ -912,11 +908,11 @@ const ChatInboxUi = (props: any) => {
                         );
                     })()}
 
-                    {item.text && (
+                    {item?.messageType ==='text' && (
                         <Text style={[
                             chatInboxStyles.messageText,
                             isCurrentUser ? chatInboxStyles.currentUserMessageText : null
-                        ]}>{item.text}</Text>
+                        ]}>{item?.message}</Text>
                     )}
 
                     <View style={chatInboxStyles.messageTimeContainer}>
@@ -924,7 +920,7 @@ const ChatInboxUi = (props: any) => {
                             chatInboxStyles.messageTime,
                             isCurrentUser ? chatInboxStyles.currentUserMessageTime : null
                         ]}>
-                            {formatTime(item.timestamp)}
+                            {formatTime(item.ChatDate)}
                         </Text>
                     </View>
                 </View>
@@ -932,7 +928,7 @@ const ChatInboxUi = (props: any) => {
                 {isCurrentUser && (
                     <TouchableOpacity style={chatInboxStyles.userImageContainer} onPress={handleChatSelfProfileImg}>
                         <Image
-                            source={{ uri: userImage }}
+                            source={{ uri: userProfile?.profilePicture }}
                             style={chatInboxStyles.userImage}
                         />
                     </TouchableOpacity>
@@ -958,7 +954,7 @@ const ChatInboxUi = (props: any) => {
                     ref={flatListRef}
                     data={messages}
                     renderItem={renderMessage}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item, index) => index.toString()}
                     contentContainerStyle={chatInboxStyles.messagesList}
                     showsVerticalScrollIndicator={false}
                     onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
@@ -1056,93 +1052,113 @@ const ChatInboxUi = (props: any) => {
                         )}
                     </View>
                 )}
+                <Formik
+                    initialValues={{
+                        textMsg: '',
+                        imageFile: "",
+                        audioFile: "",
+                    }}
+                    onSubmit={(values, { resetForm }) => {
+                        resetForm()
+                        chatHandle(values)
+                    }}
+                // enableReinitialize
+                >
+                    {({ handleChange, handleBlur, handleSubmit, values, setFieldValue }) => (
+                        <>
+                            {showEmojiKeyboard && (
+                                <EmojiKeyboard
+                                    onEmojiSelected={handleEmojiSelect}
+                                    enableSearchBar={true}
+                                    open={emojiKeyboardOpen}
+                                    onClose={() => setEmojiKeyboardOpen(false)}
+                                    styles={{
+                                        container: {
+                                            backgroundColor: COLORS.white,
+                                            borderTopWidth: 1,
+                                            borderTopColor: COLORS.grey,
+                                        } as any, // Type assertion
+                                        searchBar: {
+                                            backgroundColor: COLORS.grey,
+                                        } as any,
+                                    }}
+                                />
+                            )}
 
-                {showEmojiKeyboard && (
-                    <EmojiKeyboard
-                        onEmojiSelected={handleEmojiSelect}
-                        enableSearchBar={true}
-                        open={emojiKeyboardOpen}
-                        onClose={() => setEmojiKeyboardOpen(false)}
-                        styles={{
-                            container: {
-                                backgroundColor: COLORS.white,
-                                borderTopWidth: 1,
-                                borderTopColor: COLORS.grey,
-                            } as any, // Type assertion
-                            searchBar: {
-                                backgroundColor: COLORS.grey,
-                            } as any,
-                        }}
-                    />
-                )}
-
-                <View style={[chatInboxStyles.inputMainContainer, { backgroundColor: replyingTo || attachments.length > 0 ? COLORS.otherChatBgColor : COLORS.white }]}>
-                    <View style={chatInboxStyles.inputContainer}>
-                        {startRecording && (
-                            <View style={chatInboxStyles.recordingContainer}>
-                                <TouchableOpacity onPress={handleDeleteRecording}>
-                                    <SVGIcons.deleteIcon width={20} height={20} />
-                                </TouchableOpacity>
-                                <View style={chatInboxStyles.recordingIndicator} />
-                                <View style={chatInboxStyles.recordingTextContainer}>
-                                    <Text style={chatInboxStyles.recordingText}>Recording</Text>
-                                    <Text style={chatInboxStyles.recordingText}>{recordingTime}</Text>
+                            <View style={[chatInboxStyles.inputMainContainer, { backgroundColor: replyingTo || attachments.length > 0 ? COLORS.otherChatBgColor : COLORS.white }]}>
+                                <View style={chatInboxStyles.inputContainer}>
+                                    {startRecording && (
+                                        <View style={chatInboxStyles.recordingContainer}>
+                                            <TouchableOpacity onPress={handleDeleteRecording}>
+                                                <SVGIcons.deleteIcon width={20} height={20} />
+                                            </TouchableOpacity>
+                                            <View style={chatInboxStyles.recordingIndicator} />
+                                            <View style={chatInboxStyles.recordingTextContainer}>
+                                                <Text style={chatInboxStyles.recordingText}>Recording</Text>
+                                                <Text style={chatInboxStyles.recordingText}>{recordingTime}</Text>
+                                            </View>
+                                        </View>
+                                    )}
+                                    {!startRecording && (
+                                        <View style={chatInboxStyles.emojiContainer}>
+                                            <TouchableOpacity onPress={toggleEmojiKeyboard}>
+                                                <SVGIcons.emoji />
+                                            </TouchableOpacity>
+                                            <TextInput
+                                                style={chatInboxStyles.input}
+                                                value={values?.textMsg}
+                                                // onChangeText={setNewMessage}
+                                                onChangeText={handleChange("textMsg")}
+                                                placeholder={replyingTo ? "Type a reply..." : "Type a message..."}
+                                                placeholderTextColor={COLORS.GreyedOut}
+                                                multiline
+                                            />
+                                        </View>
+                                    )}
+                                    <View style={chatInboxStyles.fileVoiceContainer}>
+                                        {!startRecording && (
+                                            <>
+                                                <TouchableOpacity onPress={handleFileAttachment}>
+                                                    <SVGIcons.fileAttach />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={handleImageUpload}>
+                                                    <SVGIcons.insertPhoto />
+                                                </TouchableOpacity>
+                                            </>
+                                        )}
+                                        {(!lockRecording && values?.textMsg?.length === 0 && !startRecording && attachments.length === 0) && (
+                                            <TouchableOpacity onPress={handleVoicRecorder}>
+                                                <SVGIcons.chatVoice />
+                                            </TouchableOpacity>
+                                        )}
+                                        {lockRecording &&
+                                            <>
+                                                <SVGIcons.LockIconAlt width={20} height={20} />
+                                                <TouchableOpacity
+                                                    style={chatInboxStyles.btnContainer}
+                                                    onPress={() => handleSubmit()}
+                                                // onPress={handleSubmit}
+                                                // onPress={handleSendMessage}
+                                                >
+                                                    <SVGIcons.sendIcon stroke={COLORS.white} width={20} height={20} />
+                                                </TouchableOpacity>
+                                            </>
+                                        }
+                                        {(values?.textMsg.length > 0 || attachments.length > 0) && (
+                                            <TouchableOpacity
+                                                style={chatInboxStyles.btnContainer}
+                                                onPress={() => handleSubmit()}
+                                            // onPress={handleSendMessage}
+                                            >
+                                                <SVGIcons.sendIcon stroke={COLORS.white} width={20} height={20} />
+                                            </TouchableOpacity>
+                                        )}
+                                    </View>
                                 </View>
                             </View>
-                        )}
-                        {!startRecording && (
-                            <View style={chatInboxStyles.emojiContainer}>
-                                <TouchableOpacity onPress={toggleEmojiKeyboard}>
-                                    <SVGIcons.emoji />
-                                </TouchableOpacity>
-                                <TextInput
-                                    style={chatInboxStyles.input}
-                                    value={newMessage}
-                                    onChangeText={setNewMessage}
-                                    placeholder={replyingTo ? "Type a reply..." : "Type a message..."}
-                                    placeholderTextColor={COLORS.GreyedOut}
-                                    multiline
-                                />
-                            </View>
-                        )}
-                        <View style={chatInboxStyles.fileVoiceContainer}>
-                            {!startRecording && (
-                                <>
-                                    <TouchableOpacity onPress={handleFileAttachment}>
-                                        <SVGIcons.fileAttach />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={handleImageUpload}>
-                                        <SVGIcons.insertPhoto />
-                                    </TouchableOpacity>
-                                </>
-                            )}
-                            {(!lockRecording && newMessage.length === 0 && !startRecording && attachments.length === 0) && (
-                                <TouchableOpacity onPress={handleVoicRecorder}>
-                                    <SVGIcons.chatVoice />
-                                </TouchableOpacity>
-                            )}
-                            {lockRecording &&
-                                <>
-                                    <SVGIcons.LockIconAlt width={20} height={20} />
-                                    <TouchableOpacity
-                                        style={chatInboxStyles.btnContainer}
-                                        onPress={handleSendMessage}
-                                    >
-                                        <SVGIcons.sendIcon stroke={COLORS.white} width={20} height={20} />
-                                    </TouchableOpacity>
-                                </>
-                            }
-                            {(newMessage.length > 0 || attachments.length > 0) && (
-                                <TouchableOpacity
-                                    style={chatInboxStyles.btnContainer}
-                                    onPress={handleSendMessage}
-                                >
-                                    <SVGIcons.sendIcon stroke={COLORS.white} width={20} height={20} />
-                                </TouchableOpacity>
-                            )}
-                        </View>
-                    </View>
-                </View>
+                        </>
+                    )}
+                </Formik>
                 <ChatModal
                     visible={showModal}
                     isProgress={false}

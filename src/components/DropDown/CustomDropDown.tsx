@@ -274,13 +274,13 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                             onTouchMove={e => e.stopPropagation()}
                             onTouchEnd={e => e.stopPropagation()}
                         />
-                         {isAddLocation &&
+                         {/* {isAddLocation &&
                             <CustomSelector
                                 title='Add New Location'
                                 iconName='plusIcon'
                                 onPress={handleAddLocation}
                             />
-                        } 
+                        }  */}
                     </View>
                 </TouchableOpacity>
             </Modal>
