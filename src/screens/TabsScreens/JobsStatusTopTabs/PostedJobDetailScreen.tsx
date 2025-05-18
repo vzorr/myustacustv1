@@ -128,7 +128,7 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.innerContainer}>
-                    <View style={{ paddingHorizontal: 20, gap: 10 }}>
+                    <View style={{ paddingHorizontal: 20, gap: 8 }}>
                         <Heading
                             headingText='JOB STATUS'
                             style={{ fontSize: fontSize[16] }}
@@ -158,7 +158,9 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
                                     isArrow={false}
                                 />
                         }
-                        <LineSeparator />
+                        <View style={{ marginTop: 10 }}>
+                            <LineSeparator />
+                        </View>
                         {(status === "ongoing" ?
                             <View>
                                 <Heading
@@ -170,17 +172,27 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
                                     onPress={handleViewButton}
                                     style={{ width: SIZES.wp(45), marginStart: 0 }}
                                 />
+                                <View style={{ marginTop: 10 }}>
+                                    <LineSeparator />
+                                </View>
                             </View>
                             : status === 'pending' ?
                                 <View>
-                                    <View>
-                                        <Text style={[reuseableTextStyles.title, { fontSize: fontSize[16] }]}>JOB APPLICATIONS({jobProposalsCount})</Text>
-                                    </View>
-                                    <CustomButton
-                                        title={"View my Applications"}
-                                        onPress={handleViewButton}
-                                        style={{ width: SIZES.wp(50), marginStart: 0 }}
-                                    />
+                                    {(jobProposalsCount > 0) &&
+                                        <>
+                                            <View>
+                                                <Text style={[reuseableTextStyles.title, { fontSize: fontSize[16] }]}>JOB APPLICATIONS({jobProposalsCount})</Text>
+                                            </View>
+                                            <CustomButton
+                                                title={"View my Applications"}
+                                                onPress={handleViewButton}
+                                                style={{ width: SIZES.wp(50), marginStart: 0 }}
+                                            />
+                                            <View style={{ marginTop: 10 }}>
+                                                <LineSeparator />
+                                            </View>
+                                        </>
+                                    }
                                 </View>
                                 :
                                 <View>
@@ -194,9 +206,11 @@ const PostedJobDetailScreen: React.FC<UserNavigationRootProps<"PostedJobDetailSc
                                         onPress={handleViewButton}
                                         style={{ width: SIZES.wp(45), marginStart: 0 }}
                                     />
+                                    <View style={{ marginTop: 10 }}>
+                                        <LineSeparator />
+                                    </View>
                                 </View>
                         )}
-                        <LineSeparator />
                         <AccountHeader
                             title='Category'
                             subTitle={category}

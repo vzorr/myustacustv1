@@ -847,8 +847,8 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             />
                             <View style={{ gap: 8 }}>
                                 <CustomDropDown
-                                    // data={UKLocations}
-                                    data={StaticLocation}
+                                    data={UKLocations}
+                                    // data={StaticLocation}
                                     placeholder="Select Location"
                                     selectedItems={selectLocation}
                                     onSelectionChange={setSelectLocation}
