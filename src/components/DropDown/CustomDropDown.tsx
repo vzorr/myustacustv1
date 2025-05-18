@@ -105,6 +105,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
     const calculateDropdownHeight = () => {
         const ITEM_HEIGHT = SIZES.hp(6);
         const SEARCH_HEIGHT = isSearch ? SIZES.hp(6) : 0;
+        const ADD_LOCATION_HEIGHT = isAddLocation ? SIZES.hp(6) : 0;
         const PADDING = SIZES.hp(1);
 
         // Calculate available space (similar to original implementation)
@@ -112,7 +113,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
         const availableSpace = SCREEN_HEIGHT - headerPosition.y - headerPosition.height - BOTTOM_PADDING;
 
         // Calculate content height based on items
-        const contentHeight = filteredData?.length * ITEM_HEIGHT + SEARCH_HEIGHT + PADDING;
+        const contentHeight = filteredData?.length * ITEM_HEIGHT + SEARCH_HEIGHT + ADD_LOCATION_HEIGHT + PADDING;
 
         // Use maxHeight prop if provided, otherwise use available space
         const maximumHeight = maxHeight ? maxHeight : Math.min(contentHeight, availableSpace);
@@ -144,10 +145,10 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
             return placeholder;
         } else if (selectedItems.length === 1) {
             if (isAddLocation) {
-            return selectedItems[0]?.address;
-          
-            }else{
-                return selectedItems[0]; 
+                return selectedItems[0]?.address;
+
+            } else {
+                return selectedItems[0];
             }
         } else {
             return selectedItems?.join(',')
@@ -274,13 +275,13 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
                             onTouchMove={e => e.stopPropagation()}
                             onTouchEnd={e => e.stopPropagation()}
                         />
-                         {/* {isAddLocation &&
+                        {isAddLocation &&
                             <CustomSelector
                                 title='Add New Location'
                                 iconName='plusIcon'
                                 onPress={handleAddLocation}
                             />
-                        }  */}
+                        }
                     </View>
                 </TouchableOpacity>
             </Modal>
