@@ -2,6 +2,88 @@ import { StyleSheet } from "react-native";
 import { COLORS, FONTS, fontSize } from "../../../../config/themes/theme";
 
 export const chatInboxStyles = StyleSheet.create({
+
+    emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+},
+emptyText: {
+    fontSize: fontSize[14],
+    fontFamily: FONTS.interRegular,
+    color: COLORS.Navy200,
+    textAlign: 'center',
+},
+loadingMoreContainer: {
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+},
+loadingMoreText: {
+    marginLeft: 8,
+    fontSize: fontSize[12],
+    color: COLORS.Navy200,
+},
+failedMessageContainer: {
+    alignSelf: 'center',
+    marginVertical: 8,
+    padding: 8,
+    backgroundColor: 'rgba(253, 76, 79, 0.1)',
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+},
+failedMessageText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interRegular,
+    color: COLORS.ErrorRed,
+},
+resendButton: {
+    marginLeft: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: COLORS.Yellow,
+    borderRadius: 4,
+},
+resendButtonText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.Navy,
+},
+blockedBanner: {
+    backgroundColor: COLORS.ErrorRed,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+},
+blockedText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.white,
+    marginLeft: 8,
+},
+connectionBanner: {
+    backgroundColor: COLORS.Navy200,
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+},
+connectionText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.white,
+},
+
     container: {
         flex: 1,
         backgroundColor: COLORS.white,

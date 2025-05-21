@@ -27,6 +27,7 @@ import ApplicationDetailScreen from '../../screens/TabsScreens/Applications/Appl
 import UstaProfileScreen from '../../screens/UstaProfile/UstaProfileScreen';
 import UstaPortfolioDetailScreen from '../../screens/UstaProfile/UstaPortfolioDetailScreen';
 import ChatInboxContainer from '../../screens/TabsScreens/ChatScreen/ChatInbox/ChatInboxContainer';
+import NotificationDetailScreen from '../../screens/TabsScreens/Notifications/NotificationDetailScreen';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
@@ -72,6 +73,7 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
             <Stack.Screen name="ChatInbox" component={ChatInboxContainer} />
             <Stack.Screen name="PostedJobDetailScreen" component={PostedJobDetailScreen} />
+            <Stack.Screen name="NotificationDetail" component={NotificationDetailScreen} />
             {/* <Stack.Screen name="ApplicationsList" component={ApplicationsList} /> */}
             {/* <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} /> */}
             {/* <Stack.Screen name="UstaProfile" component={UstaProfileScreen} />
