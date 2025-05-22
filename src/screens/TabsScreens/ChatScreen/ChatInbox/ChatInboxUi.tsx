@@ -1,505 +1,111 @@
-// import {
-//     SafeAreaView,
-//     StyleSheet,
-//     Text,
-//     View,
-//     FlatList,
-//     KeyboardAvoidingView,
-//     Platform,
-//     TextInput,
-//     TouchableOpacity,
-//     Image,
-//     Animated
-// } from 'react-native'
-// import React, { useState, useRef } from 'react'
-// import ChatHeader from '../../../../components/AppHeader/ChatHeader'
-// import { COLORS, FONTS, fontSize } from '../../../../config/themes/theme';
-// import { SVGIcons } from '../../../../config/constants/svg';
-// import ChatMessageItem from './ChatMessageItem';
-
-// // Mock data for chat messages
-// const mockMessages: any[] = [
-//     {
-//         id: '1',
-//         text: 'Hey there! How are you doing?',
-//         senderId: '101',
-//         receiverId: '102',
-//         timestamp: new Date(Date.now() - 3600000).toISOString(),
-//         status: 'delivered',
-//         senderImage: 'https://randomuser.me/api/portraits/men/1.jpg',
-//         receiverImage: 'https://randomuser.me/api/portraits/women/1.jpg'
-//     },
-//     {
-//         id: '2',
-//         text: "I'm good! Working on that project we discussed.",
-//         senderId: '102',
-//         receiverId: '101',
-//         timestamp: new Date(Date.now() - 3000000).toISOString(),
-//         status: 'read',
-//         senderImage: 'https://randomuser.me/api/portraits/women/1.jpg',
-//         receiverImage: 'https://randomuser.me/api/portraits/men/1.jpg'
-//     },
-//     {
-//         id: '3',
-//         text: 'When do you think you can finish?',
-//         senderId: '101',
-//         receiverId: '102',
-//         timestamp: new Date(Date.now() - 2400000).toISOString(),
-//         status: 'delivered',
-//         senderImage: 'https://randomuser.me/api/portraits/men/1.jpg',
-//         receiverImage: 'https://randomuser.me/api/portraits/women/1.jpg'
-//     },
-//     {
-//         id: '4',
-//         text: 'Probably by Friday. I will send you the files then.',
-//         senderId: '102',
-//         receiverId: '101',
-//         timestamp: new Date(Date.now() - 1800000).toISOString(),
-//         status: 'read',
-//         senderImage: 'https://randomuser.me/api/portraits/women/1.jpg',
-//         receiverImage: 'https://randomuser.me/api/portraits/men/1.jpg'
-//     },
-//     {
-//         id: '5',
-//         text: 'Sounds good! Looking forward to it.',
-//         senderId: '101',
-//         receiverId: '102',
-//         timestamp: new Date(Date.now() - 1200000).toISOString(),
-//         status: 'delivered',
-//         senderImage: 'https://randomuser.me/api/portraits/men/1.jpg',
-//         receiverImage: 'https://randomuser.me/api/portraits/women/1.jpg'
-//     },
-//     {
-//         id: '6',
-//         text: 'Did you check the new design specs I sent?',
-//         senderId: '102',
-//         receiverId: '101',
-//         timestamp: new Date(Date.now() - 600000).toISOString(),
-//         status: 'read',
-//         senderImage: 'https://randomuser.me/api/portraits/women/1.jpg',
-//         receiverImage: 'https://randomuser.me/api/portraits/men/1.jpg'
-//     },
-//     {
-//         id: '7',
-//         text: 'Not yet, will review them today and get back to you.',
-//         senderId: '101',
-//         receiverId: '102',
-//         timestamp: new Date(Date.now() - 300000).toISOString(),
-//         status: 'sent',
-//         senderImage: 'https://randomuser.me/api/portraits/men/1.jpg',
-//         receiverImage: 'https://randomuser.me/api/portraits/women/1.jpg'
-//     }
-// ];
-
-// const ChatInboxUi = (props: any) => {
-//     const {
-//         userId,
-//         jobTitle,
-//         userName,
-//         isOnline,
-//         chatDate
-//     } = props;
-
-//     const [messages, setMessages] = useState<any[]>(mockMessages);
-//     const [newMessage, setNewMessage] = useState('');
-//     const [startRecording, setStartRecording] = useState(false);
-//     const [showLock, setShowLock] = useState(false);
-//     const [lockRecording, setLockRecording] = useState(false);
-//     const [replyingTo, setReplyingTo] = useState<any>(null);
-//     const [swipedMessageId, setSwipedMessageId] = useState<string | null>(null);
-//     const flatListRef = useRef<FlatList>(null);
-//     const currentUserId = '101';
-//     const pan = useRef(new Animated.ValueXY()).current;
-
-//     const handleReply = (message: any) => {
-//         setReplyingTo(message);
-//     };
-
-//     const cancelReply = () => {
-//         setReplyingTo(null);
-//     };
-
-//     const handleChatMenu = () => {
-//         // Handle chat menu actions
-//     }
-
-//     const handleJobTitle = () => {
-//         // Handle job title press
-//     }
-//     const handleVoicRecorder = () => {
-//         setStartRecording(true)
-//         setShowLock(true)
-//     }
-//     const handleLockRecording = () => {
-//         setShowLock(false)
-//         setLockRecording(true)
-//     }
-//     const handleDeleteRecording = () => {
-//         setShowLock(false)
-//         setLockRecording(false)
-//         setStartRecording(false)
-//     }
-
-
-//     const handleSendMessage = () => {
-//         if (newMessage.trim() === '' && !replyingTo) return;
-
-//         const newMsg: any = {
-//             id: Date.now().toString(),
-//             text: newMessage,
-//             senderId: currentUserId,
-//             receiverId: userId,
-//             timestamp: new Date().toISOString(),
-//             status: 'sent',
-//             senderImage: 'https://randomuser.me/api/portraits/men/1.jpg',
-//             receiverImage: 'https://randomuser.me/api/portraits/women/1.jpg',
-//             ...(replyingTo && {
-//                 repliedTo: {
-//                     text: replyingTo.text,
-//                     senderImage: replyingTo.senderId === currentUserId
-//                         ? replyingTo.senderImage
-//                         : replyingTo.receiverImage,
-//                 },
-//             }),
-//         };
-
-//         setMessages(prev => [...prev, newMsg]);
-//         setNewMessage('');
-//         setReplyingTo(null);
-//         setSwipedMessageId(null);
-
-//         setTimeout(() => {
-//             flatListRef.current?.scrollToEnd({ animated: true });
-//         }, 100);
-//     };
-
-
-//     const renderMessage = ({ item }: { item: any }) => (
-//         <ChatMessageItem
-//             message={item}
-//             currentUserId={currentUserId}
-//         />
-//     );
-
-//     return (
-//         <SafeAreaView style={styles.container}>
-//             <ChatHeader
-//                 jobTitle={jobTitle}
-//                 userName={userName}
-//                 status={isOnline ? "Online" : "Offline"}
-//                 handleChatMenu={handleChatMenu}
-//                 handleJobTitle={handleJobTitle}
-//             />
-//             <KeyboardAvoidingView
-//                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-//                 style={styles.chatContainer}
-//             >
-//                 <FlatList
-//                     ref={flatListRef}
-//                     data={messages}
-//                     renderItem={renderMessage}
-//                     keyExtractor={(item) => item.id}
-//                     contentContainerStyle={styles.messagesList}
-//                     showsVerticalScrollIndicator={false}
-//                     onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-//                     onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
-//                 />
-//                 {showLock &&
-//                     <TouchableOpacity style={[styles.btnContainer, styles.lockContainer]} onPress={handleLockRecording}>
-//                         <SVGIcons.whiteLock />
-//                     </TouchableOpacity>
-//                 }
-//                 <View style={styles.inputMainContainer}>
-//                     <View style={styles.inputContainer}>
-//                         {startRecording && (
-//                             <View style={styles.recordingContainer}>
-//                                 <TouchableOpacity onPress={handleDeleteRecording}>
-//                                     <SVGIcons.deleteIcon width={20} height={20} />
-//                                 </TouchableOpacity>
-//                                 <View style={styles.recordingIndicator} />
-//                                 <View style={styles.recordingTextContainer}>
-//                                     <Text style={styles.recordingText}>Recording</Text>
-//                                     <Text style={styles.recordingText}>{"00.01"}</Text>
-//                                 </View>
-//                             </View>
-//                         )}
-//                         {!startRecording && (
-//                             <View style={styles.emojiContainer}>
-//                                 <TouchableOpacity>
-//                                     <SVGIcons.emoji />
-//                                 </TouchableOpacity>
-//                                 <TextInput
-//                                     style={styles.input}
-//                                     value={newMessage}
-//                                     onChangeText={setNewMessage}
-//                                     placeholder="Type a message..."
-//                                     placeholderTextColor={COLORS.GreyedOut}
-//                                     multiline
-//                                 />
-//                             </View>
-//                         )}
-//                         <View style={styles.fileVoiceContainer}>
-//                             {!startRecording && (
-//                                 <>
-//                                     <TouchableOpacity>
-//                                         <SVGIcons.fileAttach />
-//                                     </TouchableOpacity>
-//                                     <TouchableOpacity>
-//                                         <SVGIcons.insertPhoto />
-//                                     </TouchableOpacity>
-//                                 </>
-//                             )}
-//                             {!lockRecording && newMessage.length === 0 &&
-//                                 <TouchableOpacity onPress={handleVoicRecorder}>
-//                                     <SVGIcons.chatVoice />
-//                                 </TouchableOpacity>
-//                             }
-//                             {lockRecording &&
-//                                 <>
-//                                     <SVGIcons.LockIconAlt width={20} height={20} />
-//                                     <TouchableOpacity
-//                                         style={styles.btnContainer}
-//                                         onPress={handleSendMessage}
-//                                     >
-//                                         <SVGIcons.sendIcon stroke={COLORS.white} width={20} height={20} />
-//                                     </TouchableOpacity>
-//                                 </>
-//                             }
-//                             {newMessage.length > 0 &&
-//                                 <TouchableOpacity
-//                                     style={styles.btnContainer}
-//                                     onPress={handleSendMessage}
-//                                 >
-//                                     <SVGIcons.sendIcon stroke={COLORS.white} width={20} height={20} />
-//                                 </TouchableOpacity>
-//                             }
-//                         </View>
-//                     </View>
-//                 </View>
-//             </KeyboardAvoidingView>
-//         </SafeAreaView>
-//     )
-// }
-
-// export default ChatInboxUi
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         backgroundColor: COLORS.white,
-//     },
-//     chatContainer: {
-//         flex: 1,
-//     },
-//     messagesList: {
-//         paddingHorizontal: 15,
-//         paddingVertical: 10,
-//         backgroundColor: COLORS.white,
-//     },
-//     messageRow: {
-//         flexDirection: 'row',
-//         alignItems: 'flex-end',
-//         marginBottom: 10,
-//     },
-//     currentUserRow: {
-//         justifyContent: 'flex-end',
-//     },
-//     otherUserRow: {
-//         justifyContent: 'flex-start',
-//     },
-//     messageContainer: {
-//         maxWidth: '85%',
-//         padding: 12,
-//         borderRadius: 12,
-//     },
-//     currentUserMessage: {
-//         backgroundColor: COLORS.Navy,
-//         borderBottomRightRadius: 0,
-//         marginLeft: 8,
-//     },
-//     otherUserMessage: {
-//         backgroundColor: COLORS.otherChatBgColor,
-//         borderBottomLeftRadius: 0,
-//         marginRight: 8,
-//     },
-//     messageText: {
-//         fontSize: fontSize[14],
-//         fontFamily: FONTS.interRegular,
-//         fontWeight: "400",
-//         color: COLORS.Navy
-//     },
-//     currentUserMessageText: {
-//         color: COLORS.white,
-//     },
-//     messageTime: {
-//         fontSize: 12,
-//         marginTop: 5,
-//         textAlign: 'right',
-//     },
-//     currentUserMessageTime: {
-//         color: 'rgba(255,255,255,0.7)',
-//     },
-//     userImageContainer: {
-//         width: 40,
-//         height: 40,
-//         borderRadius: 20,
-//         overflow: 'hidden',
-//         backgroundColor: COLORS.grey,
-//         marginHorizontal: 4,
-//     },
-//     userImage: {
-//         width: '100%',
-//         height: '100%',
-//     },
-//     inputMainContainer: {
-//         paddingHorizontal: 20,
-//         paddingBottom: 20,
-//         paddingTop: 10,
-//         backgroundColor: COLORS.white,
-//     },
-//     inputContainer: {
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//         justifyContent: 'space-between',
-//         borderWidth: 1,
-//         borderRadius: 8,
-//         borderColor: COLORS.inputBorder,
-//         minHeight: 44,
-//         backgroundColor: COLORS.white,
-//         paddingRight: 8,
-//     },
-//     recordingContainer: {
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//         flex: 1,
-//         paddingLeft: 8,
-//         gap: 4
-//     },
-//     recordingTextContainer: {
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//         gap: 2
-//     },
-//     recordingText: {
-//         fontSize: fontSize[14],
-//         fontFamily: FONTS.interRegular,
-//         fontWeight: "400",
-//         color: COLORS.GreyedOut
-//     },
-//     recordingIndicator: {
-//         width: 10,
-//         height: 10,
-//         borderRadius: 5,
-//         backgroundColor: COLORS.ErrorRed
-//     },
-//     emojiContainer: {
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//         flex: 1,
-//         paddingLeft: 8,
-//     },
-//     fileVoiceContainer: {
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//         justifyContent: 'flex-end',
-//         gap: 4,
-//         end: 4
-//     },
-//     iconButton: {
-//         padding: 4,
-//     },
-//     input: {
-//         flex: 1,
-//         backgroundColor: COLORS.white,
-//         paddingHorizontal: 8,
-//         paddingVertical: 8,
-//         maxHeight: 100,
-//     },
-//     lockContainer: {
-//         alignSelf: 'flex-end',
-//         marginEnd: 32,
-//         bottom: -6,
-//         zIndex: 2
-//     },
-//     btnContainer: {
-//         width: 30,
-//         height: 30,
-//         borderRadius: 15,
-//         backgroundColor: COLORS.Navy,
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//     },
-//     sendButtonText: {
-//         color: '#fff',
-//         fontWeight: 'bold',
-//     },
-// })
-
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
     SafeAreaView,
-    StyleSheet,
-    Text,
-    View,
     FlatList,
     KeyboardAvoidingView,
     Platform,
     TextInput,
     TouchableOpacity,
-    Image,
+    View,
+    Text,
+    Animated,
     PanResponder,
-    Animated
-} from 'react-native'
-import React, { useState, useRef } from 'react'
-import ChatHeader from '../../../../components/AppHeader/ChatHeader'
-import { COLORS, FONTS, fontSize } from '../../../../config/themes/theme';
+    ActivityIndicator,
+    RefreshControl
+} from 'react-native';
+import { Formik } from 'formik';
+import ChatHeader from '../../../../components/AppHeader/ChatHeader';
+import { COLORS } from '../../../../config/themes/theme';
 import { SVGIcons } from '../../../../config/constants/svg';
 import { chatInboxStyles } from './chatInboxStyles';
-import { mockMessages } from '../../../../utils/ChatMockApi\'s/ChatMockApi';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import EmojiKeyboard from 'rn-emoji-keyboard';
-import FastImage from 'react-native-fast-image';
-import DocumentPicker, { types } from '@react-native-documents/picker';
-import ChatModal from '../../../../components/ConfirmationModal/ChatModal';
-import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal';
 import CustomImagePickerModal from '../../../../components/ImagePickerModal/ImagePickerModal';
 import ImagePicker from 'react-native-image-crop-picker';
-import { Formik } from 'formik';
-type Attachment = {
-    type: 'image' | 'file' | 'audio';
-    uri: string;
-    name?: string | null;  // Add null to the type
-    size?: number | null;  // Add null to the type
-    duration?: string | null;
-};
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import moment from 'moment';
+import ChatModal from '../../../../components/ConfirmationModal/ChatModal';
+import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal';
+
+// Import message components
+import {
+    SelfMessage,
+    OtherMessage,
+    AudioSelfMessage,
+    AudioOtherMessage,
+    ReplySelfMessage,
+    ReplyOtherMessage,
+    SelfImages,
+    OtherImages,
+    SelfFileAttach,
+    OtherFileAttach,
+} from './ChatComponents';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
-const ChatInboxUi = (props: any) => {
-    const { userId,  jobId,  jobTitle, userName,  isOnline,  chatDate, navigation, chatHandle,  messages, loggedInUserId, userProfile} = props;
+interface ChatInboxUiProps {
+    userId: string;
+    jobId: string;
+    jobTitle: string;
+    userName: string;
+    isOnline: boolean;
+    isBlocked: boolean;
+    navigation: any;
+    messages: any[];
+    loggedInUserId: string;
+    userProfile: any;
+    onSendMessage: (values: any) => void;
+    onLoadMore: () => void;
+    onRefresh: () => void;
+    refreshing: boolean;
+    isLoadingMore: boolean;
+    onResendMessage: (message: any) => void;
+    isConnected: boolean;
+    prefilledMessage?: string;
+}
 
-    // const [messages, setMessages] = useState<any[]>(mockMessages);
-    const [newMessage, setNewMessage] = useState('');
-    const [startRecording, setStartRecording] = useState(false);
-    const [showLock, setShowLock] = useState(false);
-    const [lockRecording, setLockRecording] = useState(false);
+const ChatInboxUi: React.FC<ChatInboxUiProps> = (props) => {
+    const {
+        userId,
+        jobId,
+        jobTitle,
+        userName,
+        isOnline,
+        isBlocked,
+        navigation,
+        messages,
+        loggedInUserId,
+        userProfile,
+        onSendMessage,
+        onLoadMore,
+        onRefresh,
+        refreshing,
+        isLoadingMore,
+        onResendMessage,
+        isConnected
+    } = props;
+
+    // State
     const [replyingTo, setReplyingTo] = useState<any>(null);
     const [showReplyIcon, setShowReplyIcon] = useState<string | null>(null);
-    const [showEmojiKeyboard, setShowEmojiKeyboard] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [blockUser, setBlockUser] = useState(false);
-    const [deleteChat, setDeleteChat] = useState(false);
-    const [recordingTime, setRecordingTime] = useState('00:00');
-    const [recordSecs, setRecordSecs] = useState(0);
-    const [audioPath, setAudioPath] = useState('');
-    // Update the attachments state type definition
-    const [attachments, setAttachments] = useState<Attachment[]>([]);
-    const [emojiKeyboardOpen, setEmojiKeyboardOpen] = useState(false);
-    const [showImageModal, setShowImageModal] = useState(false);
+    const [showEmojiKeyboard, setShowEmojiKeyboard] = useState<boolean>(false);
+    const [emojiKeyboardOpen, setEmojiKeyboardOpen] = useState<boolean>(false);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [blockUser, setBlockUser] = useState<boolean>(false);
+    const [deleteChat, setDeleteChat] = useState<boolean>(false);
+    const [showImageModal, setShowImageModal] = useState<boolean>(false);
+    const [startRecording, setStartRecording] = useState<boolean>(false);
+    const [showLock, setShowLock] = useState<boolean>(false);
+    const [lockRecording, setLockRecording] = useState<boolean>(false);
+    const [recordingTime, setRecordingTime] = useState<string>('00:00');
+    const [recordSecs, setRecordSecs] = useState<number>(0);
+    const [audioPath, setAudioPath] = useState<string>('');
+    const [attachments, setAttachments] = useState<any[]>([]);
+    
+    // Refs
     const flatListRef = useRef<FlatList>(null);
-    console.log("userProfile", userProfile?.profilePicture
-)
-    const currentUserId = '101';
-
+    const inputRef = useRef<TextInput>(null);
+    
+    // Format time for messages
     const formatTime = (dateString: string) => {
         const date = new Date(dateString);
         let hours = date.getHours();
@@ -510,7 +116,8 @@ const ChatInboxUi = (props: any) => {
         const minutesStr = minutes < 10 ? '0' + minutes : minutes;
         return `${hours}:${minutesStr} ${ampm}`;
     };
-
+    
+    // Pan responder for swipe to reply
     const panResponder = (messageId: string) => {
         const pan = new Animated.ValueXY();
 
@@ -527,9 +134,10 @@ const ChatInboxUi = (props: any) => {
                 const isSwipeValid = gestureState.dx > swipeThreshold;
 
                 if (isSwipeValid) {
-                    const messageToReply = messages.find((msg:any) => msg.id === messageId);
+                    const messageToReply = messages.find((msg) => msg.id === messageId);
                     if (messageToReply) {
                         setReplyingTo(messageToReply);
+                        inputRef.current?.focus();
                     }
                 }
                 Animated.spring(pan, {
@@ -547,17 +155,22 @@ const ChatInboxUi = (props: any) => {
             }
         });
     };
-
+    
+    // Handle emoji selection
     const handleEmojiSelect = (emoji: any) => {
-        setNewMessage(prev => prev + emoji.emoji);
+        if (inputRef.current) {
+            const currentText = inputRef.current.value || '';
+            inputRef.current.setNativeProps({ text: currentText + emoji.emoji });
+        }
     };
-
+    
+    // Toggle emoji keyboard
     const toggleEmojiKeyboard = () => {
-        // setShowEmojiKeyboard(prev => !prev);
         setEmojiKeyboardOpen(prev => !prev);
         setShowEmojiKeyboard(prev => !prev);
     };
-
+    
+    // Start audio recording
     const startAudioRecording = async () => {
         try {
             const result = await audioRecorderPlayer.startRecorder();
@@ -572,7 +185,8 @@ const ChatInboxUi = (props: any) => {
             console.log('Recording error', error);
         }
     };
-
+    
+    // Stop audio recording
     const stopAudioRecording = async () => {
         try {
             const result = await audioRecorderPlayer.stopRecorder();
@@ -593,123 +207,101 @@ const ChatInboxUi = (props: any) => {
             console.log('Stop recording error', error);
         }
     };
-
-    const handleFileAttachment = async () => {
-        try {
-            const res = await DocumentPicker.pick({
-                type: [DocumentPicker.types.allFiles],
-            });
-
-            const newAttachment: Attachment = {
-                type: 'file',
-                uri: res[0].uri,
-                name: res[0].name ?? undefined,  // Explicit conversion
-                size: res[0].size ?? undefined   // Explicit conversion
-            };
-
-            setAttachments(prev => [...prev, newAttachment]);
-        } catch (err) {
-            // Error handling
-        }
-    };
-
+    
+    // Handle chat menu
     const handleChatMenu = () => {
-        setShowModal(true)
-    }
+        setShowModal(true);
+    };
+    
+    // View progress
     const handleViewProgress = () => {
-        setShowModal(false)
-    }
+        setShowModal(false);
+        // Implementation for viewing progress
+    };
+    
+    // Handle contract
     const handleContract = () => {
-        setShowModal(false)
-    }
+        setShowModal(false);
+        // Implementation for handling contract
+    };
+    
+    // Block user
     const handleBlockUser = () => {
-        setShowModal(false)
-        setBlockUser(true)
-    }
+        setShowModal(false);
+        setBlockUser(true);
+    };
+    
+    // Confirm block user
     const handleConfirmBlockUser = () => {
-        setBlockUser(false)
-    }
+        // Implementation for confirming block user
+        setBlockUser(false);
+    };
+    
+    // Delete chat
     const handleDeleteChat = () => {
-        setShowModal(false)
-        setDeleteChat(true)
-    }
+        setShowModal(false);
+        setDeleteChat(true);
+    };
+    
+    // Confirm delete chat
     const handleConfirmDeleteChat = () => {
-        setDeleteChat(false)
-    }
-
+        // Implementation for confirming delete chat
+        setDeleteChat(false);
+    };
+    
+    // View profile
     const handleChatProfileImg = () => {
         navigation.navigate('Tabs', {
             screen: 'JobsStatusSackNav',
             params: {
                 screen: 'UstaProfile',
                 params: {
-                    otherUserId: '',
+                    otherUserId: userId,
                     jobId: jobId,
                 },
             },
         });
-        setShowModal(false)
-    }
+        setShowModal(false);
+    };
+    
+    // View current user profile
     const handleChatSelfProfileImg = () => {
         navigation.navigate('Tabs', {
             screen: 'ProfileScreen',
-        })
-    }
-
+        });
+    };
+    
+    // View job details
     const handleJobTitle = () => {
-        navigation.navigate("PostedJobDetailScreen", { jobId: jobId })
-    }
-
+        navigation.navigate("PostedJobDetailScreen", { jobId: jobId });
+    };
+    
+    // Start voice recording
     const handleVoicRecorder = () => {
         startAudioRecording();
-    }
-
+    };
+    
+    // Lock recording
     const handleLockRecording = () => {
         setShowLock(false);
         setLockRecording(true);
-    }
-
+    };
+    
+    // Delete recording
     const handleDeleteRecording = () => {
         stopAudioRecording();
-    }
-
-    // const handleSendMessage = () => {
-    //     if ((newMessage.trim() === '' && !lockRecording && attachments.length === 0)) return;
-
-    //     const newMsg: any = {
-    //         id: Date.now().toString(),
-    //         text: newMessage,
-    //         senderId: currentUserId,
-    //         receiverId: userId,
-    //         timestamp: new Date().toISOString(),
-    //         status: 'sent',
-    //         senderImage: 'https://randomuser.me/api/portraits/men/1.jpg',
-    //         receiverImage: 'https://randomuser.me/api/portraits/women/1.jpg',
-    //         ...(replyingTo && { replyTo: replyingTo.id }),
-    //         ...(attachments.length > 0 && { attachments: [...attachments] })
-    //     };
-
-    //     setMessages(prev => [...prev, newMsg]);
-    //     setNewMessage('');
-    //     setAttachments([]);
-    //     setReplyingTo(null);
-    //     setShowLock(false);
-    //     setLockRecording(false);
-    //     setStartRecording(false);
-
-    //     setTimeout(() => {
-    //         flatListRef.current?.scrollToEnd({ animated: true });
-    //     }, 100);
-    // }
-
+    };
+    
+    // Cancel reply
     const cancelReply = () => {
         setReplyingTo(null);
-    }
+    };
+    
+    // Take photo
     const takePhotoWithCamera = async () => {
         try {
             const remainingSlots = 4 - attachments.filter(a => a.type === 'image').length;
             if (remainingSlots <= 0) {
-                // Show some feedback to user that they've reached the limit
                 return;
             }
 
@@ -720,7 +312,7 @@ const ChatInboxUi = (props: any) => {
                 mediaType: 'photo',
             });
 
-            const newAttachment: Attachment = {
+            const newAttachment = {
                 type: 'image',
                 uri: image.path,
                 name: image.filename || `photo-${Date.now()}.jpg`,
@@ -736,12 +328,12 @@ const ChatInboxUi = (props: any) => {
             setShowImageModal(false);
         }
     };
-
+    
+    // Pick image from gallery
     const pickImageFromGallery = async () => {
         try {
             const remainingSlots = 4 - attachments.filter(a => a.type === 'image').length;
             if (remainingSlots <= 0) {
-                // Show some feedback to user that they've reached the limit
                 return;
             }
 
@@ -751,13 +343,12 @@ const ChatInboxUi = (props: any) => {
                 cropping: false,
                 multiple: true,
                 mediaType: 'photo',
-                maxFiles: remainingSlots, // This limits the selection to remaining available slots
+                maxFiles: remainingSlots,
             });
 
-            // Handle single or multiple image selection
             const selectedImages = Array.isArray(images) ? images : [images];
             const imageAttachments = selectedImages.slice(0, remainingSlots).map(img => ({
-                type: 'image' as const,
+                type: 'image',
                 uri: img.path,
                 name: img.filename || `image-${Date.now()}.jpg`,
                 size: img.size
@@ -772,170 +363,199 @@ const ChatInboxUi = (props: any) => {
             setShowImageModal(false);
         }
     };
-
+    
+    // Show image upload modal
     const handleImageUpload = () => {
         setShowImageModal(true);
     };
+    
+    // Cancel image modal
     const handleCancelModal = () => {
         setShowImageModal(false);
     };
-
-    const renderMessage = ({ item }: { item: any }) => {
-        console.log("itemmmm", item)
-        const isCurrentUser = item.userId === loggedInUserId;
-        const userImage = isCurrentUser ? item.senderImage : item.receiverImage;
+    
+    // Render message item
+    const renderMessage = ({ item, index }: { item: any; index: number }) => {
+        const isCurrentUser = item.senderId === loggedInUserId;
+        const userImage = isCurrentUser 
+            ? userProfile?.profilePicture 
+            : item.senderImage || 'https://randomuser.me/api/portraits/men/1.jpg';
         const panResponderInstance = panResponder(item.id);
-
-        const isReply = item.replyTo;
-        const repliedMessage = isReply ? messages.find((msg:any) => msg.id === item.replyTo) : null;
-
-        return (
-            <Animated.View
-                style={[
-                    chatInboxStyles.messageRow,
-                    isCurrentUser ? chatInboxStyles.currentUserRow : chatInboxStyles.otherUserRow
-                ]}
-                {...panResponderInstance.panHandlers}
-            >
-                {showReplyIcon === item.id && (
-                    <View style={[
-                        isCurrentUser ? chatInboxStyles.currentUserReplyIcon : chatInboxStyles.otherUserReplyIcon
-                    ]}>
-                        <SVGIcons.replayIcon />
-                        <Text style={chatInboxStyles.replyIconText}>Reply</Text>
-                    </View>
-                )}
-
-                {!isCurrentUser && (
-                    <TouchableOpacity style={chatInboxStyles.userImageContainer} onPress={handleChatProfileImg}>
-                        <Image
-                            source={{ uri: userImage }}
-                            style={chatInboxStyles.userImage}
-                        />
+        
+        // Handle message types
+        const messageType = item.type || item.messageType;
+        const hasAttachments = item.attachments && item.attachments.length > 0;
+        const isReply = item.replyToMessageId || item.replyTo;
+        const repliedMessage = isReply && item.replyToMessageId
+            ? messages.find(msg => msg.id === item.replyToMessageId || msg.messageId === item.replyToMessageId)
+            : null;
+            
+        // Failed message
+        if (item.status === 'failed') {
+            return (
+                <View style={chatInboxStyles.failedMessageContainer}>
+                    <Text style={chatInboxStyles.failedMessageText}>
+                        Failed to send message
+                    </Text>
+                    <TouchableOpacity 
+                        style={chatInboxStyles.resendButton}
+                        onPress={() => onResendMessage(item)}
+                    >
+                        <Text style={chatInboxStyles.resendButtonText}>Resend</Text>
                     </TouchableOpacity>
-                )}
-
-                <View style={[
-                    chatInboxStyles.messageContainer,
-                    isCurrentUser ? chatInboxStyles.currentUserMessage : chatInboxStyles.otherUserMessage
-                ]}>
-                    {isReply && repliedMessage && (
-                        <View style={[
-                            chatInboxStyles.replyPreviewContainer,
-                            isCurrentUser ? chatInboxStyles.currentUserReplyPreview : chatInboxStyles.otherUserReplyPreview
-                        ]}>
-                            <View style={chatInboxStyles.replyPreviewContent}>
-                                <View style={[
-                                    chatInboxStyles.replyPreviewLine,
-                                    isCurrentUser ? chatInboxStyles.currentUserReplyPreviewLine : chatInboxStyles.otherUserReplyPreviewLine
-                                ]} />
-                                <View style={chatInboxStyles.replyPreviewTextContainer}>
-                                    <Text style={[
-                                        chatInboxStyles.replyPreviewSender,
-                                        isCurrentUser ? chatInboxStyles.currentUserReplyPreviewSender : chatInboxStyles.otherUserReplyPreviewSender
-                                    ]}>
-                                        {repliedMessage.senderId === currentUserId ? 'You' : userName}
-                                    </Text>
-                                    <Text style={[
-                                        chatInboxStyles.replyPreviewText,
-                                        isCurrentUser ? chatInboxStyles.currentUserReplyPreviewText : chatInboxStyles.otherUserReplyPreviewText
-                                    ]} numberOfLines={1}>
-                                        {repliedMessage.text}
-                                    </Text>
-                                </View>
-                            </View>
-                        </View>
-                    )}
-                    {item.attachments && (() => {
-                        // Separate image attachments from other types
-                        const imageAttachments = item.attachments.filter((a: Attachment) => a.type === 'image');
-                        const otherAttachments = item.attachments.filter((a: Attachment) => a.type !== 'image');
-
-                        return (
-                            <>
-                                {/* Render images in 2-column grid */}
-                                {imageAttachments.length > 0 && (
-                                    <View style={chatInboxStyles.imageGridContainer}>
-                                        {imageAttachments.map((image: Attachment, index: number) => (
-                                            <View key={index} style={[
-                                                imageAttachments.length === 1
-                                                    ? chatInboxStyles.singleImageItem
-                                                    : chatInboxStyles.multiImageItem,
-                                                // index % 2 === 0 ? { marginRight: 8 } : { marginRight: 0 }
-                                            ]}>
-                                                <FastImage
-                                                    source={{ uri: image.uri }}
-                                                    style={chatInboxStyles.attachmentImage}
-                                                    resizeMode={FastImage.resizeMode.cover}
-                                                />
-                                            </View>
-                                        ))}
-                                    </View>
-                                )}
-
-                                {/* Render other attachment types normally */}
-                                {otherAttachments.map((attachment: Attachment, index: number) => {
-                                    if (attachment.type === 'file') {
-                                        return (
-                                            <TouchableOpacity
-                                                key={`file-${index}`}
-                                                style={chatInboxStyles.fileAttachmentContainer}
-                                                onPress={() => { }}
-                                            >
-                                                <SVGIcons.fileAttach width={24} height={24} />
-                                                <Text style={chatInboxStyles.fileName} numberOfLines={1}>
-                                                    {attachment.name || 'File'}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        );
-                                    } else if (attachment.type === 'audio') {
-                                        return (
-                                            <TouchableOpacity
-                                                key={`audio-${index}`}
-                                                style={chatInboxStyles.audioAttachmentContainer}
-                                                onPress={() => { }}
-                                            >
-                                                <SVGIcons.deleteIcon width={24} height={24} />
-                                                <Text style={chatInboxStyles.audioDuration}>
-                                                    {attachment.duration || '00:00'}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        );
-                                    }
-                                    return null;
-                                })}
-                            </>
-                        );
-                    })()}
-
-                    {item?.messageType ==='text' && (
-                        <Text style={[
-                            chatInboxStyles.messageText,
-                            isCurrentUser ? chatInboxStyles.currentUserMessageText : null
-                        ]}>{item?.message}</Text>
-                    )}
-
-                    <View style={chatInboxStyles.messageTimeContainer}>
-                        <Text style={[
-                            chatInboxStyles.messageTime,
-                            isCurrentUser ? chatInboxStyles.currentUserMessageTime : null
-                        ]}>
-                            {formatTime(item.ChatDate)}
-                        </Text>
-                    </View>
                 </View>
-
-                {isCurrentUser && (
-                    <TouchableOpacity style={chatInboxStyles.userImageContainer} onPress={handleChatSelfProfileImg}>
-                        <Image
-                            source={{ uri: userProfile?.profilePicture }}
-                            style={chatInboxStyles.userImage}
-                        />
-                    </TouchableOpacity>
-                )}
-            </Animated.View>
+            );
+        }
+        
+        // Audio message
+        if (messageType === 'audio') {
+            return isCurrentUser ? (
+                <AudioSelfMessage
+                    message={{
+                        timestamp: item.timestamp || item.ChatDate,
+                        senderImage: userImage,
+                        attachments: [{
+                            type: 'audio',
+                            uri: item.audioFile,
+                            duration: item.duration || '00:30'
+                        }]
+                    }}
+                    formatTime={formatTime}
+                    onProfilePress={handleChatSelfProfileImg}
+                    onAudioPress={() => {}}
+                />
+            ) : (
+                <AudioOtherMessage
+                    message={{
+                        timestamp: item.timestamp || item.ChatDate,
+                        receiverImage: userImage,
+                        attachments: [{
+                            type: 'audio',
+                            uri: item.audioFile,
+                            duration: item.duration || '00:30'
+                        }]
+                    }}
+                    formatTime={formatTime}
+                    onProfilePress={handleChatProfileImg}
+                    onAudioPress={() => {}}
+                />
+            );
+        }
+        
+        // Image message
+        if (messageType === 'image' || (item.messageImages && item.messageImages.length > 0)) {
+            const imageAttachments = item.messageImages ? 
+                item.messageImages.map((img: any) => ({
+                    type: 'image',
+                    uri: img.url || img.path || img
+                })) : [];
+                
+            return isCurrentUser ? (
+                <SelfImages
+                    message={{
+                        timestamp: item.timestamp || item.ChatDate,
+                        senderImage: userImage,
+                        attachments: imageAttachments
+                    }}
+                    formatTime={formatTime}
+                    onProfilePress={handleChatSelfProfileImg}
+                    onImagePress={() => {}}
+                />
+            ) : (
+                <OtherImages
+                    message={{
+                        timestamp: item.timestamp || item.ChatDate,
+                        receiverImage: userImage,
+                        attachments: imageAttachments
+                    }}
+                    formatTime={formatTime}
+                    onProfilePress={handleChatProfileImg}
+                    onImagePress={() => {}}
+                />
+            );
+        }
+        
+        // Reply message
+        if (isReply && repliedMessage) {
+            return isCurrentUser ? (
+                <ReplySelfMessage
+                    message={{
+                        text: item.textMsg || item.message || '',
+                        timestamp: item.timestamp || item.ChatDate,
+                        senderImage: userImage,
+                        replyTo: item.replyToMessageId || item.replyTo
+                    }}
+                    repliedMessage={{
+                        text: repliedMessage.textMsg || repliedMessage.message || '',
+                        senderId: repliedMessage.senderId
+                    }}
+                    formatTime={formatTime}
+                    onProfilePress={handleChatSelfProfileImg}
+                    currentUserId={loggedInUserId}
+                    userName={userName}
+                />
+            ) : (
+                <ReplyOtherMessage
+                    message={{
+                        text: item.textMsg || item.message || '',
+                        timestamp: item.timestamp || item.ChatDate,
+                        receiverImage: userImage,
+                        replyTo: item.replyToMessageId || item.replyTo
+                    }}
+                    repliedMessage={{
+                        text: repliedMessage.textMsg || repliedMessage.message || '',
+                        senderId: repliedMessage.senderId
+                    }}
+                    formatTime={formatTime}
+                    onProfilePress={handleChatProfileImg}
+                    currentUserId={loggedInUserId}
+                    userName={userName}
+                />
+            );
+        }
+        
+        // Regular text message
+        return isCurrentUser ? (
+            <SelfMessage
+                message={{
+                    id: item.id || item.messageId,
+                    text: item.textMsg || item.message || '',
+                    timestamp: item.timestamp || item.ChatDate,
+                    senderImage: userImage,
+                }}
+            />
+        ) : (
+            <OtherMessage
+                message={{
+                    id: item.id || item.messageId,
+                    text: item.textMsg || item.message || '',
+                    timestamp: item.timestamp || item.ChatDate,
+                    receiverImage: userImage,
+                }}
+            />
         );
     };
+    
+    // List empty component
+    const renderEmptyList = () => (
+        <View style={chatInboxStyles.emptyContainer}>
+            <Text style={chatInboxStyles.emptyText}>
+                {isConnected ? "No messages yet. Start the conversation!" : "Connecting to chat server..."}
+            </Text>
+        </View>
+    );
+    
+    // List header component
+    const renderListHeader = () => (
+        <>
+            {isLoadingMore && (
+                <View style={chatInboxStyles.loadingMoreContainer}>
+                    <ActivityIndicator size="small" color={COLORS.Navy} />
+                    <Text style={chatInboxStyles.loadingMoreText}>Loading more messages...</Text>
+                </View>
+            )}
+        </>
+    );
 
     return (
         <SafeAreaView style={chatInboxStyles.container}>
@@ -954,11 +574,22 @@ const ChatInboxUi = (props: any) => {
                     ref={flatListRef}
                     data={messages}
                     renderItem={renderMessage}
-                    keyExtractor={(item, index) => index.toString()}
+                    keyExtractor={(item, index) => item.id || item.messageId || index.toString()}
                     contentContainerStyle={chatInboxStyles.messagesList}
                     showsVerticalScrollIndicator={false}
-                    onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-                    onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
+                    inverted={true}
+                    onEndReached={onLoadMore}
+                    onEndReachedThreshold={0.5}
+                    ListHeaderComponent={renderListHeader}
+                    ListEmptyComponent={renderEmptyList}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            colors={[COLORS.Navy]}
+                            tintColor={COLORS.Navy}
+                        />
+                    }
                 />
 
                 {showLock &&
@@ -971,7 +602,7 @@ const ChatInboxUi = (props: any) => {
                     <View style={chatInboxStyles.replyBar}>
                         <View style={chatInboxStyles.replyingToContainer}>
                             <Text style={chatInboxStyles.replyBarTitle}>
-                                Replying to {replyingTo.senderId === currentUserId ? 'yourself' : userName}
+                                Replying to {replyingTo.senderId === loggedInUserId ? 'yourself' : userName}
                             </Text>
                             <TouchableOpacity onPress={cancelReply}>
                                 <SVGIcons.crossIcon width={16} height={16} />
@@ -980,21 +611,21 @@ const ChatInboxUi = (props: any) => {
                         <View style={chatInboxStyles.replyBarContent}>
                             <View style={[
                                 chatInboxStyles.replyBarLine,
-                                replyingTo.senderId === currentUserId ? chatInboxStyles.currentUserReplyLine : chatInboxStyles.otherUserReplyLine
+                                replyingTo.senderId === loggedInUserId ? chatInboxStyles.currentUserReplyLine : chatInboxStyles.otherUserReplyLine
                             ]} />
                             <View style={chatInboxStyles.replyMessageContainer}>
                                 <View style={chatInboxStyles.replyUserImageContainer}>
                                     <Image
-                                        source={{ uri: replyingTo.senderId === currentUserId ? replyingTo.senderImage : replyingTo.receiverImage }}
+                                        source={{ uri: replyingTo.senderId === loggedInUserId ? userProfile?.profilePicture : 'https://randomuser.me/api/portraits/men/1.jpg' }}
                                         style={chatInboxStyles.replyUserImage}
                                     />
                                 </View>
                                 <View style={chatInboxStyles.replyTextContainer}>
                                     <Text style={chatInboxStyles.replyBarMessage} numberOfLines={1}>
-                                        {replyingTo.text}
+                                        {replyingTo.textMsg || replyingTo.message}
                                     </Text>
                                     <Text style={chatInboxStyles.replyBarTime}>
-                                        {formatTime(replyingTo.timestamp)}
+                                        {formatTime(replyingTo.timestamp || replyingTo.ChatDate)}
                                     </Text>
                                 </View>
                             </View>
@@ -1052,17 +683,47 @@ const ChatInboxUi = (props: any) => {
                         )}
                     </View>
                 )}
+                
                 <Formik
                     initialValues={{
                         textMsg: '',
-                        imageFile: "",
-                        audioFile: "",
+                        imageFile: null,
+                        audioFile: null,
                     }}
                     onSubmit={(values, { resetForm }) => {
-                        resetForm()
-                        chatHandle(values)
+                        // Add attachments to form values
+                        const messageData = { ...values };
+                        
+                        // Handle image attachments
+                        const imageAttachments = attachments.filter(a => a.type === 'image');
+                        if (imageAttachments.length > 0) {
+                            messageData.imageFile = imageAttachments[0];
+                        }
+                        
+                        // Handle audio attachments
+                        const audioAttachments = attachments.filter(a => a.type === 'audio');
+                        if (audioAttachments.length > 0) {
+                            messageData.audioFile = audioAttachments[0].uri;
+                        }
+                        
+                        // Add reply information
+                        if (replyingTo) {
+                            messageData.replyToMessageId = replyingTo.id || replyingTo.messageId;
+                        }
+                        
+                        // Send the message
+                        onSendMessage(messageData);
+                        
+                        // Reset the form and state
+                        resetForm();
+                        setAttachments([]);
+                        setReplyingTo(null);
+                        
+                        // Scroll to bottom
+                        setTimeout(() => {
+                            flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+                        }, 100);
                     }}
-                // enableReinitialize
                 >
                     {({ handleChange, handleBlur, handleSubmit, values, setFieldValue }) => (
                         <>
@@ -1077,7 +738,7 @@ const ChatInboxUi = (props: any) => {
                                             backgroundColor: COLORS.white,
                                             borderTopWidth: 1,
                                             borderTopColor: COLORS.grey,
-                                        } as any, // Type assertion
+                                        } as any,
                                         searchBar: {
                                             backgroundColor: COLORS.grey,
                                         } as any,
@@ -1085,9 +746,12 @@ const ChatInboxUi = (props: any) => {
                                 />
                             )}
 
-                            <View style={[chatInboxStyles.inputMainContainer, { backgroundColor: replyingTo || attachments.length > 0 ? COLORS.otherChatBgColor : COLORS.white }]}>
+                            <View style={[
+                                chatInboxStyles.inputMainContainer, 
+                                { backgroundColor: replyingTo || attachments.length > 0 ? COLORS.otherChatBgColor : COLORS.white }
+                            ]}>
                                 <View style={chatInboxStyles.inputContainer}>
-                                    {startRecording && (
+                                    {startRecording ? (
                                         <View style={chatInboxStyles.recordingContainer}>
                                             <TouchableOpacity onPress={handleDeleteRecording}>
                                                 <SVGIcons.deleteIcon width={20} height={20} />
@@ -1098,27 +762,29 @@ const ChatInboxUi = (props: any) => {
                                                 <Text style={chatInboxStyles.recordingText}>{recordingTime}</Text>
                                             </View>
                                         </View>
-                                    )}
-                                    {!startRecording && (
+                                    ) : (
                                         <View style={chatInboxStyles.emojiContainer}>
                                             <TouchableOpacity onPress={toggleEmojiKeyboard}>
                                                 <SVGIcons.emoji />
                                             </TouchableOpacity>
                                             <TextInput
+                                                ref={inputRef}
                                                 style={chatInboxStyles.input}
-                                                value={values?.textMsg}
-                                                // onChangeText={setNewMessage}
+                                                value={values.textMsg}
                                                 onChangeText={handleChange("textMsg")}
                                                 placeholder={replyingTo ? "Type a reply..." : "Type a message..."}
                                                 placeholderTextColor={COLORS.GreyedOut}
                                                 multiline
+                                                onBlur={handleBlur("textMsg")}
+                                                editable={!isBlocked}
                                             />
                                         </View>
                                     )}
+                                    
                                     <View style={chatInboxStyles.fileVoiceContainer}>
-                                        {!startRecording && (
+                                        {!startRecording && !isBlocked && (
                                             <>
-                                                <TouchableOpacity onPress={handleFileAttachment}>
+                                                <TouchableOpacity onPress={() => {/* Handle file attachment */}}>
                                                     <SVGIcons.fileAttach />
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={handleImageUpload}>
@@ -1126,39 +792,60 @@ const ChatInboxUi = (props: any) => {
                                                 </TouchableOpacity>
                                             </>
                                         )}
-                                        {(!lockRecording && values?.textMsg?.length === 0 && !startRecording && attachments.length === 0) && (
+                                        
+                                        {!lockRecording && values.textMsg.length === 0 && 
+                                          !startRecording && attachments.length === 0 && !isBlocked && (
                                             <TouchableOpacity onPress={handleVoicRecorder}>
                                                 <SVGIcons.chatVoice />
                                             </TouchableOpacity>
                                         )}
-                                        {lockRecording &&
+                                        
+                                        {lockRecording && (
                                             <>
                                                 <SVGIcons.LockIconAlt width={20} height={20} />
                                                 <TouchableOpacity
                                                     style={chatInboxStyles.btnContainer}
                                                     onPress={() => handleSubmit()}
-                                                // onPress={handleSubmit}
-                                                // onPress={handleSendMessage}
+                                                    disabled={isBlocked}
                                                 >
                                                     <SVGIcons.sendIcon stroke={COLORS.white} width={20} height={20} />
                                                 </TouchableOpacity>
                                             </>
-                                        }
-                                        {(values?.textMsg.length > 0 || attachments.length > 0) && (
+                                        )}
+                                        
+                                        {(values.textMsg.length > 0 || attachments.length > 0) && (
                                             <TouchableOpacity
                                                 style={chatInboxStyles.btnContainer}
                                                 onPress={() => handleSubmit()}
-                                            // onPress={handleSendMessage}
+                                                disabled={isBlocked}
                                             >
                                                 <SVGIcons.sendIcon stroke={COLORS.white} width={20} height={20} />
                                             </TouchableOpacity>
                                         )}
                                     </View>
                                 </View>
+                                
+                                {isBlocked && (
+                                    <View style={chatInboxStyles.blockedBanner}>
+                                        <SVGIcons.LockIcon width={16} height={16} />
+                                        <Text style={chatInboxStyles.blockedText}>
+                                            This conversation has been blocked
+                                        </Text>
+                                    </View>
+                                )}
+                                
+                                {!isConnected && (
+                                    <View style={chatInboxStyles.connectionBanner}>
+                                        <Text style={chatInboxStyles.connectionText}>
+                                            Connecting to chat server...
+                                        </Text>
+                                    </View>
+                                )}
                             </View>
                         </>
                     )}
                 </Formik>
+                
                 <ChatModal
                     visible={showModal}
                     isProgress={false}
@@ -1168,6 +855,7 @@ const ChatInboxUi = (props: any) => {
                     handleBlockUser={handleBlockUser}
                     handleDeleteChat={handleDeleteChat}
                 />
+                
                 <ConfirmationModal
                     visible={blockUser}
                     title='Block User?'
@@ -1176,6 +864,7 @@ const ChatInboxUi = (props: any) => {
                     onCancel={() => setBlockUser(false)}
                     Confirm={handleConfirmBlockUser}
                 />
+                
                 <ConfirmationModal
                     visible={deleteChat}
                     title='Delete Chat?'
@@ -1183,6 +872,7 @@ const ChatInboxUi = (props: any) => {
                     onCancel={() => setDeleteChat(false)}
                     Confirm={handleConfirmDeleteChat}
                 />
+                
                 <CustomImagePickerModal
                     onTakePhoto={takePhotoWithCamera}
                     onPickFromGallery={pickImageFromGallery}
@@ -1192,7 +882,7 @@ const ChatInboxUi = (props: any) => {
                 />
             </KeyboardAvoidingView>
         </SafeAreaView>
-    )
-}
+    );
+};
 
 export default ChatInboxUi;

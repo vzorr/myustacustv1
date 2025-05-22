@@ -6,6 +6,9 @@ import { notiiStyles } from './NotiiStyles';
 import ReUseableHeader from '../../../components/AppHeader/ReUseableHeader';
 import NotificationUi from './NotificationUi';
 
+import { notificationClient } from '../../../apiManager/Client';
+
+
 const NotiiData = [
     {
         id: 1,
@@ -39,6 +42,7 @@ const NotiiData = [
     }
 ];
 
+
 const NotificationContainer: React.FC<UserNavigationRootProps<"Notifications">> = (props) => {
     const [activeTab, setActiveTab] = useState<string>(NOTIFICATION_TABS.ACTIVITY);
     const [isLoading, setIsloading] = useState(true);
@@ -69,6 +73,52 @@ const NotificationContainer: React.FC<UserNavigationRootProps<"Notifications">> 
             />
         </View>
     );
+};
+
+
+// Inside your component
+const fetchNotifications = async () => {
+    setIsloading(true);
+    try {
+        const userToken = token ? token : userData?.token;
+        if (userToken) {
+            const response = await notificationClient(userToken).get('notifications');
+            
+            if (response.data?.code === 200) {
+                // Transform API response to our notification model
+                const formattedNotifications = response.data.result.map((item: any) => ({
+                    id: item.id,
+                    type: mapNotificationType(item.type),
+                    title: item.title,
+                    message: item.message,
+                    timestamp: item.createdAt,
+                    read: item.read,
+                    actionable: Boolean(item.linkTo),
+                    jobId: item.jobId,
+                    senderId: item.senderId,
+                    senderName: item.senderName,
+                    jobTitle: item.jobTitle
+                }));
+                
+                setNotifications(formattedNotifications);
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+    } finally {
+        setIsloading(false);
+    }
+};
+
+// Helper function to map API notification types to our enum
+const mapNotificationType = (type: string): NotificationType => {
+    switch (type) {
+        case 'application': return NotificationType.JOB_APPLICATION;
+        case 'message': return NotificationType.MESSAGE;
+        case 'contract': return NotificationType.CONTRACT;
+        case 'reminder': return NotificationType.REMINDER;
+        default: return NotificationType.SYSTEM;
+    }
 };
 
 export default NotificationContainer;

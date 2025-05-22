@@ -1,293 +1,281 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { Platform } from 'react-native'
+import React, { useContext, useState, useEffect, useCallback } from 'react'
+import { Platform, Alert } from 'react-native'
 import { UserNavigationRootProps } from '../../../../types/stacksParams'
 import ChatInboxUi from './ChatInboxUi'
 import { useSelector } from 'react-redux'
-import { ConversationContext } from '../../../../config/context/ConversationContext'
-import RNFS from 'react-native-fs';
-import moment from 'moment'
-import { MergeNewMessage } from './MergeNewMessage'
-import Toast from 'react-native-simple-toast';
-import { v4 as uuidv4 } from "uuid";
 import io from "socket.io-client";
-import { BASE_CHAT_SCOCKET_URL } from '../../../../apiManager/Client'
+import { BASE_SOCKET_URL } from '../../../../apiManager/Client'
+import { ChatService } from '../../../../apiManager/Client'
+import LoadingScreen from '../../../../components/Loader/LoadingScreen'
+import Toast from 'react-native-simple-toast'
+import moment from 'moment'
+import { v4 as uuidv4 } from "uuid";
 
 const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (props) => {
-    const chatData = props?.route?.params?.chatData
-    const [chatList, setChatList] = useState<any>([])
+    // Get chat data from route params
+    const chatData = props?.route?.params?.chatData;
+    const prefilledMessage = props?.route?.params?.prefilledMessage;
+    
+    // State management
+    const [messages, setMessages] = useState<any[]>([])
     const [loading, setLoading] = useState<boolean>(true)
-    const [currentIndex, setCurrentIndex] = useState<number>(1)
-    const [pageCount, setPageCount] = useState<number>(0)
-    const [isRefresh, setIsRefresh] = useState<boolean>(false)
-    const [isScroll, setIsScroll] = useState<boolean>(false)
-    const [token, setIsToken] = useState<string>("")
-    // const [userInfo, setUserInfo] = useState<any>();
-    const [videoFile, setVideoFile] = useState<any>();
+    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
+    const [refreshing, setRefreshing] = useState<boolean>(false)
+    const [page, setPage] = useState<number>(1)
+    const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(true)
+    const [socket, setSocket] = useState<any>(null)
+    const [isConnected, setIsConnected] = useState<boolean>(false)
+    const [isSending, setIsSending] = useState<boolean>(false)
+    
+    // User information from Redux store
     const { userData } = useSelector((state: any) => state?.userInfo)
     const { userProfile }: any = useSelector((state: any) => state?.userProfile)
-    const userInfo = userData
-    console.log("chatData", chatData)
-    // const socket: any = useContext(ConversationContext)
-    const { route, navigation } = props
-    const { otherUserId, jobId, jobTitle, userName, isOnline, isBlocked, isBlocker, chatDate } = route?.params?.chatData;
-    const socket = io(BASE_CHAT_SCOCKET_URL, {
-        transports: ['websocket'],
-        query: { userId: userInfo?.userId }
-    });
-    console.log('userInfo', socket)
+    const { token }: any = useSelector((state: any) => state?.accessToken)
+    
+    // Extract chat data parameters
+    const { otherUserId, jobId, jobTitle, userName, isOnline, isBlocked } = chatData;
+    
+    // Initialize socket connection
     useEffect(() => {
-        if (userInfo && userInfo.token) {
-            socket.emit("", userInfo.userId, (responseData: any, error: any) => {
-                if (error) {
-                } else {
+        if (userData?.userId) {
+            const socketInstance = io(BASE_SOCKET_URL, {
+                transports: ['websocket'],
+                query: { userId: userData.userId }
+            });
+            
+            socketInstance.on("connect", () => {
+                console.log("✅ Connected to Socket.IO server", socketInstance.id);
+                setIsConnected(true);
+                
+                // Join the chat room
+                socketInstance.emit("join_chat_room", {
+                    jobId,
+                    userId: userData.userId,
+                    receiverId: otherUserId
+                });
+                
+                // Request chat history
+                loadMessages(1, true);
+            });
+            
+            socketInstance.on("disconnect", () => {
+                console.log("❌ Disconnected from Socket.IO server");
+                setIsConnected(false);
+            });
+            
+            socketInstance.on("receive_message", (message) => {
+                console.log("📥 Message received:", message);
+                if (message.senderId !== userData.userId) {
+                    // Add the new message to state if it's from the other user
+                    setMessages(prev => [message, ...prev]);
                 }
             });
-            // socket.emit("", {
-            //     senderId: userInfo?.userId,
-            //     receiverId: chatData?.userId,
-            //     pageSize: 20,
-            //     pageNum: 1
-            // }, (responseData: any, error: any) => {
-            //     if (error) {
-            //     } else {
-            //     }
-
-            // });
-            // socket.on('', (res: any) => {
-            //     if (res) {
-            //         let response = JSON.parse(res)
-            //         setChatList(response?.chatMessages?.reverse())
-            //         setCurrentIndex(response?.currentPageIndex)
-            //         setPageCount(response?.pageCount)
-            //         setLoading(false)
-            //     }
-            // })
-        }
-        return () => {
-        }
-    }, [userInfo])
-
-    const chatHandle = async (values: any) => {
-        setIsScroll(false)
-        let videoFileName
-        const tempId = `temp-${Date.now()}`;
-        try {
-            let sendMessagePayload = {
-                receiverId: chatData?.otherUserId,
-                text: '',  // Add text directly
-                content: {
-                    text: '',
-                    images: [],
-                    audio: null,
-                    replyTo: null,
-                    attachments: []
-                },
-                type: '',
-                clientTempId: tempId
+            
+            socketInstance.on("message_sent", (confirmation) => {
+                console.log("✅ Message sent confirmation:", confirmation);
+                
+                // Update the temporary message with the confirmed one
+                setMessages(prev => prev.map(msg => 
+                    msg.clientTempId === confirmation.clientTempId 
+                        ? { ...confirmation, status: 'delivered' } 
+                        : msg
+                ));
+            });
+            
+            socketInstance.on("error", (error) => {
+                console.error("❌ Socket error:", error);
+                Toast.show("Connection error: " + error.message, Toast.LONG);
+            });
+            
+            setSocket(socketInstance);
+            
+            // Cleanup on unmount
+            return () => {
+                if (socketInstance) {
+                    socketInstance.emit("leave_chat_room", {
+                        jobId,
+                        userId: userData.userId,
+                        receiverId: otherUserId
+                    });
+                    socketInstance.disconnect();
+                }
             };
-            if (values.textMsg) {
-                sendMessagePayload = {
-                    ...sendMessagePayload,
-                    text: values.textMsg,
-                    type: 'text',
-                    content: {
-                        ...sendMessagePayload.content,
-                        text: values.textMsg
-                    }
-                };
+        }
+    }, [userData?.userId]);
+    
+    // Load messages function
+    const loadMessages = useCallback(async (pageNumber = 1, isInitial = false) => {
+        if (isInitial) setLoading(true);
+        else if (pageNumber > 1) setIsLoadingMore(true);
+        else setRefreshing(true);
+        
+        try {
+            const userToken = token || userData?.token;
+            if (!userToken) {
+                throw new Error("Authentication token is required");
             }
-            //   let sendMessagePayload = {
-            //     messageId: uuidv4(),
-            //     clientTempId: 'temp-' + Math.random().toString(36).substr(2, 5),
-            //     jobId: chatData?.jobId || '', // or use productId if that's equivalent
-            //     jobTitle: chatData?.jobTitle || '',
-            //     userName: userInfo?.firstName || '',
-            //     phone: "+923096222666",
-            //     userId: userInfo?.userId || '',
-            //     receiverId: chatData?.otherUserId || '',
-            //     isOnline: chatData?.isOnline || false,
-            //     isBlocked: chatData?.isBlocked || false,
-            //     ChatDate: new Date().toISOString(),
-            //     messageImages: [],
-            //     audioFile: '',
-            //     message: '',
-            //     replyToMessageId: null,
-            //     editedAt: null,
-            //     deleted: false,
-            //     isSystemMessage: false,
-            //     attachments: [],
-            //     messageType: '',
-            // };
-
-
-            console.log("sendMessahePayload", sendMessagePayload)
-            // else if (values.imageFile) {
-            //     const imageBinaryData = await RNFS.readFile(values.imageFile.path, 'base64');
-            //     let imageType
-            //     imageType = values.imageFile.mime.split("/")
-            //     imageType = imageType[1]
-            //     let fileName = values.imageFile.modificationDate + "." + imageType
-            //     let chatMessageData = [{
-            //         dataExtension: imageType,
-            //         dataFileName: fileName,
-            //         dataBytes: imageBinaryData
-            //     }]
-            //     sendMessagePayload = {
-            //         ...sendMessagePayload,
-            //         chatMessageData: chatMessageData,
-            //         chatMessageTypeId: 3,
-            //     }
-
-            // }
-            // else if (values.audioFile) {
-            //     let random = moment().unix()
-            //     const imageBinaryData = await RNFS.readFile(values.audioFile, 'base64');
-
-            //     let fileName = `${random}.m4a`
-            //     let chatMessageData = [{
-            //         dataExtension: 'm4a',
-            //         dataFileName: fileName,
-            //         dataBytes: imageBinaryData
-            //     }]
-            //     sendMessagePayload = {
-            //         ...sendMessagePayload,
-            //         chatMessageData: chatMessageData,
-            //         chatMessageTypeId: 2,
-            //     }
-            // }
-
-            socket.emit("send_message", sendMessagePayload, (responseData: any, error: any) => {
-                console.log("sendMsg", responseData, error)
+            
+            const response = await ChatService.getClient(userToken).get(
+                `chats/history`, {
+                    params: {
+                        jobId,
+                        receiverId: otherUserId,
+                        page: pageNumber,
+                        limit: 20
+                    }
+                }
+            );
+            
+            if (response.data?.code !== 200) {
+                throw new Error(response.data?.message || "Failed to load messages");
+            }
+            
+            const newMessages = response.data.result.data || [];
+            setHasMoreMessages(response.data.result.hasNextPage);
+            
+            // Update state based on page number
+            if (pageNumber === 1) {
+                setMessages(newMessages);
+            } else {
+                setMessages(prev => [...prev, ...newMessages]);
+            }
+            
+            setPage(pageNumber);
+        } catch (error) {
+            console.error("Error loading messages:", error);
+            Toast.show("Failed to load messages", Toast.SHORT);
+        } finally {
+            setLoading(false);
+            setIsLoadingMore(false);
+            setRefreshing(false);
+        }
+    }, [jobId, otherUserId, token, userData]);
+    
+    // Load more messages when user scrolls to the top
+    const handleLoadMore = () => {
+        if (!isLoadingMore && hasMoreMessages) {
+            loadMessages(page + 1);
+        }
+    };
+    
+    // Pull to refresh
+    const handleRefresh = () => {
+        if (!refreshing) {
+            loadMessages(1);
+        }
+    };
+    
+    // Handle sending message
+    const handleSendMessage = async (values: any) => {
+        if (isSending) return;
+        
+        // Early validation
+        if (!values.textMsg && !values.imageFile && !values.audioFile) {
+            Toast.show("Can't send an empty message", Toast.SHORT);
+            return;
+        }
+        
+        if (!socket || !isConnected) {
+            Toast.show("Not connected to chat server", Toast.SHORT);
+            return;
+        }
+        
+        setIsSending(true);
+        
+        try {
+            // Create a temporary message ID
+            const tempId = `temp-${Date.now()}`;
+            
+            // Create the message payload
+            const messagePayload: any = {
+                clientTempId: tempId,
+                receiverId: otherUserId,
+                jobId,
+                jobTitle,
+                userId: userData.userId,
+                userName: `${userProfile?.firstName || userData?.firstName} ${userProfile?.lastName || userData?.lastName}`,
+                timestamp: new Date().toISOString(),
+                status: 'sending',
+                type: ''
+            };
+            
+            // Handle text messages
+            if (values.textMsg) {
+                messagePayload.textMsg = values.textMsg;
+                messagePayload.type = 'text';
+            }
+            
+            // TODO: Handle image messages
+            if (values.imageFile) {
+                // Image handling logic
+                // This would typically involve uploading the image first,
+                // then sending the URL in the message
+            }
+            
+            // TODO: Handle audio messages
+            if (values.audioFile) {
+                // Audio handling logic
+            }
+            
+            // Add the temporary message to the state
+            const tempMessage = {
+                ...messagePayload,
+                senderId: userData.userId,
+                status: 'sending',
+                isTemporary: true
+            };
+            
+            setMessages(prev => [tempMessage, ...prev]);
+            
+            // Send the message through socket
+            socket.emit("send_message", messagePayload, (response: any, error: any) => {
                 if (error) {
+                    console.error("Error sending message:", error);
+                    Toast.show("Failed to send message", Toast.SHORT);
+                    
+                    // Mark the message as failed
+                    setMessages(prev => prev.map(msg => 
+                        msg.clientTempId === tempId 
+                            ? { ...msg, status: 'failed' } 
+                            : msg
+                    ));
                 } else {
+                    console.log("Message sent successfully:", response);
                 }
             });
-            // if (values.videoFile?.path) {
-            //     try {
-            //         const downloadDest = `${RNFS.DocumentDirectoryPath}/${videoFileName}`;
-            //         let res = await RNFS.copyFile(values.videoFile?.path, downloadDest)
-            //     } catch (error) {
-            //         console.error('Error copying file:', error);
-            //     }
-
-            // }
-            let mergeArray = MergeNewMessage(chatList, values, userInfo, chatData, videoFileName)
-            setChatList(mergeArray)
         } catch (error) {
-            console.log("errror", error)
-
+            console.error("Error in handleSendMessage:", error);
+            Toast.show("An error occurred while sending the message", Toast.SHORT);
+        } finally {
+            setIsSending(false);
         }
+    };
+    
+    // Try to resend a failed message
+    const handleResendMessage = (message: any) => {
+        if (!socket || !isConnected) {
+            Toast.show("Not connected to chat server", Toast.SHORT);
+            return;
+        }
+        
+        // Remove the failed message and send it again
+        setMessages(prev => prev.filter(msg => msg.clientTempId !== message.clientTempId));
+        
+        // Create a new values object for the message
+        const values = {
+            textMsg: message.textMsg || '',
+            imageFile: message.imageFile || null,
+            audioFile: message.audioFile || null
+        };
+        
+        handleSendMessage(values);
+    };
+    
+    // If still loading, show loading screen
+    if (loading) {
+        return <LoadingScreen />;
     }
-     const handleNewMessage = (message:any) => {
-      console.log('📥 Raw new message:', JSON.stringify(message, null, 2));
-      
-      // Don't process our own messages - they're already in the state
-    //   if (message.senderId === userInfo.id) {
-    //     console.log('📥 Ignoring own message');
-    //     return;
-    //   }
-      
-    //   // Only process messages intended for current user
-    //   if (message.receiverId !== userInfo.id) {
-    //     console.log('📥 Message not for current user');
-    //     return;
-    //   }
-      
-      // Extract text from various possible formats
-      let messageText = '';
-      
-      // Try different paths to find the text
-      if (message.content) {
-        if (typeof message.content === 'string') {
-          messageText = message.content;
-        } else if (typeof message.content === 'object') {
-          messageText = message.content.text || JSON.stringify(message.content);
-        }
-      } else if (message.text) {
-        messageText = message.text;
-      } else if (message.message) {
-        messageText = message.message;
-      } else {
-        // If no text found, log the entire message structure
-        console.warn('⚠️ No text found in message, using fallback');
-        messageText = '[Message content not found]';
-      }
-      
-      console.log('📥 Extracted message text:', messageText);
-      
-      const newMessage = {
-        id: message.messageId || message.id || message._id || `msg-${Date.now()}`,
-        text: messageText,
-        senderId: message.senderId,
-        receiverId: message.receiverId,
-        timestamp: new Date(message.timestamp || message.createdAt || Date.now()),
-        status: 'delivered',
-        content: message.content,
-        serverConfirmed: true
-      };
-      
-      console.log('📥 Adding message to state:', newMessage);
-      setChatList((prev:any) => [...prev, newMessage]);
-      
-      // Update conversation last message
-    //   setConversations(prev => prev.map(conv => {
-    //     if (conv.user.id === message.senderId) {
-    //       console.log('📥 Updating conversation:', conv.user.name);
-    //       return {
-    //         ...conv,
-    //         lastMessage: {
-    //           text: messageText,
-    //           timestamp: newMessage.timestamp,
-    //           isFromMe: false
-    //         },
-    //         unreadCount: conv.id === activeConversation ? 0 : conv.unreadCount + 1,
-    //         serverConversationId: message.conversationId
-    //       };
-    //     }
-    //     return conv;
-    //   }));
-    };
-
-    // Handle message sent confirmation
-    const handleMessageSent = (data:any) => {
-      console.log('📨 Message sent confirmation:', JSON.stringify(data, null, 2));
-      
-      // Update message status, don't create a new message
-      setChatList((prev:any) => prev.map((msg:any) => {
-        if (msg.tempId === data.clientTempId) {
-          return {
-            ...msg,
-            id: data.messageId,
-            status: 'delivered', // Set to delivered
-            timestamp: new Date(data.timestamp),
-            serverConfirmed: true
-          };
-        }
-        return msg;
-      }));
-      
-      // Update conversation's server ID if provided
-    //   if (data.conversationId) {
-    //     setConversations(prev => prev.map(conv => {
-    //       if (conv.user.id === data.receiverId) {
-    //         return { ...conv, serverConversationId: data.conversationId };
-    //       }
-    //       return conv;
-    //     }));
-    //   }
-    };
-    useEffect(() => {
-        socket.on('new_message', handleNewMessage);
-        socket.on('message_sent', handleMessageSent);
-        // socket.on('receive_message', (res: any) => {
-        //     console.log("resssssss", res)
-        //     if (res) {
-        //         setChatList([...chatList, ...[res]])
-        //         setLoading(false)
-        //         setChatResponse(res)
-        //     }
-        // })
-    }, [chatList])
+    
     return (
         <ChatInboxUi
             userId={otherUserId}
@@ -296,13 +284,18 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
             userName={userName}
             isOnline={isOnline}
             isBlocked={isBlocked}
-            isBlocker={isBlocker}
-            chatDate={chatDate}
-            navigation={navigation}
-            chatHandle={chatHandle}
-            messages={chatList}
-            loggedInUserId={userInfo?.userId}
+            navigation={props.navigation}
+            messages={messages}
+            loggedInUserId={userData?.userId}
             userProfile={userProfile}
+            onSendMessage={handleSendMessage}
+            onLoadMore={handleLoadMore}
+            onRefresh={handleRefresh}
+            refreshing={refreshing}
+            isLoadingMore={isLoadingMore}
+            onResendMessage={handleResendMessage}
+            isConnected={isConnected}
+            prefilledMessage={prefilledMessage}
         />
     )
 }
