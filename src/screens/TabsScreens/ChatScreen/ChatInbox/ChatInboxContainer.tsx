@@ -66,42 +66,61 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
         return () => {
         }
     }, [userInfo])
+
     const chatHandle = async (values: any) => {
-        console.log("valuesssss", values)
         setIsScroll(false)
         let videoFileName
-  
+        const tempId = `temp-${Date.now()}`;
         try {
             let sendMessagePayload = {
-                messageId: uuidv4(),
-                clientTempId: 'temp-' + Math.random().toString(36).substr(2, 5),
-                jobId: chatData?.jobId || '', // or use productId if that's equivalent
-                jobTitle: chatData?.jobTitle || '',
-                userName: userInfo?.firstName || '',
-                phone: "+923096222666",
-                userId: userInfo?.userId || '',
-                receiverId: chatData?.otherUserId || '',
-                isOnline: chatData?.isOnline || false,
-                isBlocked: chatData?.isBlocked || false,
-                ChatDate: new Date().toISOString(),
-                messageImages: [],
-                audioFile: '',
-                message: '',
-                replyToMessageId: null,
-                editedAt: null,
-                deleted: false,
-                isSystemMessage: false,
-                attachments: [],
-                messageType: '',
+                receiverId: chatData?.otherUserId,
+                text: '',  // Add text directly
+                content: {
+                    text: '',
+                    images: [],
+                    audio: null,
+                    replyTo: null,
+                    attachments: []
+                },
+                type: '',
+                clientTempId: tempId
             };
             if (values.textMsg) {
                 sendMessagePayload = {
                     ...sendMessagePayload,
-                    message: values.textMsg,
-                    messageType: 'text',
-                }
+                    text: values.textMsg,
+                    type: 'text',
+                    content: {
+                        ...sendMessagePayload.content,
+                        text: values.textMsg
+                    }
+                };
             }
-            console.log("indexindexindexindex", sendMessagePayload)
+            //   let sendMessagePayload = {
+            //     messageId: uuidv4(),
+            //     clientTempId: 'temp-' + Math.random().toString(36).substr(2, 5),
+            //     jobId: chatData?.jobId || '', // or use productId if that's equivalent
+            //     jobTitle: chatData?.jobTitle || '',
+            //     userName: userInfo?.firstName || '',
+            //     phone: "+923096222666",
+            //     userId: userInfo?.userId || '',
+            //     receiverId: chatData?.otherUserId || '',
+            //     isOnline: chatData?.isOnline || false,
+            //     isBlocked: chatData?.isBlocked || false,
+            //     ChatDate: new Date().toISOString(),
+            //     messageImages: [],
+            //     audioFile: '',
+            //     message: '',
+            //     replyToMessageId: null,
+            //     editedAt: null,
+            //     deleted: false,
+            //     isSystemMessage: false,
+            //     attachments: [],
+            //     messageType: '',
+            // };
+
+
+            console.log("sendMessahePayload", sendMessagePayload)
             // else if (values.imageFile) {
             //     const imageBinaryData = await RNFS.readFile(values.imageFile.path, 'base64');
             //     let imageType
@@ -159,13 +178,115 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
 
         }
     }
+     const handleNewMessage = (message:any) => {
+      console.log('📥 Raw new message:', JSON.stringify(message, null, 2));
+      
+      // Don't process our own messages - they're already in the state
+    //   if (message.senderId === userInfo.id) {
+    //     console.log('📥 Ignoring own message');
+    //     return;
+    //   }
+      
+    //   // Only process messages intended for current user
+    //   if (message.receiverId !== userInfo.id) {
+    //     console.log('📥 Message not for current user');
+    //     return;
+    //   }
+      
+      // Extract text from various possible formats
+      let messageText = '';
+      
+      // Try different paths to find the text
+      if (message.content) {
+        if (typeof message.content === 'string') {
+          messageText = message.content;
+        } else if (typeof message.content === 'object') {
+          messageText = message.content.text || JSON.stringify(message.content);
+        }
+      } else if (message.text) {
+        messageText = message.text;
+      } else if (message.message) {
+        messageText = message.message;
+      } else {
+        // If no text found, log the entire message structure
+        console.warn('⚠️ No text found in message, using fallback');
+        messageText = '[Message content not found]';
+      }
+      
+      console.log('📥 Extracted message text:', messageText);
+      
+      const newMessage = {
+        id: message.messageId || message.id || message._id || `msg-${Date.now()}`,
+        text: messageText,
+        senderId: message.senderId,
+        receiverId: message.receiverId,
+        timestamp: new Date(message.timestamp || message.createdAt || Date.now()),
+        status: 'delivered',
+        content: message.content,
+        serverConfirmed: true
+      };
+      
+      console.log('📥 Adding message to state:', newMessage);
+      setChatList((prev:any) => [...prev, newMessage]);
+      
+      // Update conversation last message
+    //   setConversations(prev => prev.map(conv => {
+    //     if (conv.user.id === message.senderId) {
+    //       console.log('📥 Updating conversation:', conv.user.name);
+    //       return {
+    //         ...conv,
+    //         lastMessage: {
+    //           text: messageText,
+    //           timestamp: newMessage.timestamp,
+    //           isFromMe: false
+    //         },
+    //         unreadCount: conv.id === activeConversation ? 0 : conv.unreadCount + 1,
+    //         serverConversationId: message.conversationId
+    //       };
+    //     }
+    //     return conv;
+    //   }));
+    };
+
+    // Handle message sent confirmation
+    const handleMessageSent = (data:any) => {
+      console.log('📨 Message sent confirmation:', JSON.stringify(data, null, 2));
+      
+      // Update message status, don't create a new message
+      setChatList((prev:any) => prev.map((msg:any) => {
+        if (msg.tempId === data.clientTempId) {
+          return {
+            ...msg,
+            id: data.messageId,
+            status: 'delivered', // Set to delivered
+            timestamp: new Date(data.timestamp),
+            serverConfirmed: true
+          };
+        }
+        return msg;
+      }));
+      
+      // Update conversation's server ID if provided
+    //   if (data.conversationId) {
+    //     setConversations(prev => prev.map(conv => {
+    //       if (conv.user.id === data.receiverId) {
+    //         return { ...conv, serverConversationId: data.conversationId };
+    //       }
+    //       return conv;
+    //     }));
+    //   }
+    };
     useEffect(() => {
-        socket.on('receive_message', (res: any) => {
-            if (res) {
-                setChatList([...chatList, ...[res]])
-                setLoading(false)
-            }
-        })
+        socket.on('new_message', handleNewMessage);
+        socket.on('message_sent', handleMessageSent);
+        // socket.on('receive_message', (res: any) => {
+        //     console.log("resssssss", res)
+        //     if (res) {
+        //         setChatList([...chatList, ...[res]])
+        //         setLoading(false)
+        //         setChatResponse(res)
+        //     }
+        // })
     }, [chatList])
     return (
         <ChatInboxUi
