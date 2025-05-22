@@ -38,6 +38,9 @@ const MainStack = () => {
 }, []);
     useEffect(() => {
         NotificationPermission();
+        
+        console.log("userData?.token" + userData?.token);
+
         if (userData?.token) {
             registerDevice()
             messaging()
@@ -55,7 +58,7 @@ const MainStack = () => {
                             appVersion: DeviceInfo.getVersion()
                         };
 
-                        // console.log("deviceInfo", deviceInfo)
+                        console.log("deviceInfo", deviceInfo)
                         try {
                             let res = await notificationClient(userData?.token).post('auth/register-device', deviceInfo)
                             dispatch(setFireBaseToken(fcmToken));
