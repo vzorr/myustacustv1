@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import ProfessionDetailHeading from './ProfessionDetailHeading'
 import { COLORS, fontSize } from '../../../../config/themes/theme'
@@ -8,10 +8,11 @@ import { SVGIcons } from '../../../../config/constants/svg'
 import LineSeparator from '../../../../components/LineSeparator/LineSeparator'
 import Heading from '../../../../components/Heading/Heading'
 import UstaProfileCard from '../../../../components/UstaProfileCard/UstaProfileCard'
+import UstaProfileHorizentalCard from '../../../../components/UstaProfileHorizentalCard/UstaProfileHorizentalCard'
 
 const ProfessionDetailScreenUi = () => {
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <View>
                 <ProfessionDetailHeading
                     iconName='ApplianceIcon'
@@ -46,9 +47,14 @@ const ProfessionDetailScreenUi = () => {
                     headingText='All Plumbers'
                     style={{ fontSize: fontSize[16] }}
                 />
-                <UstaProfileCard />
+                <UstaProfileHorizentalCard
+                    onPress={() => { }}
+                    ustaName='John Doe'
+                    rating={4.9}
+                    distance={3}
+                />
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
