@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "npx react-native run-android --port 8088 --deviceId emulator-5556",
+    "android": "npx react-native run-android --port 8088",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
