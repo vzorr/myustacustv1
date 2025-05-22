@@ -2,6 +2,137 @@ import { StyleSheet } from "react-native";
 import { COLORS, FONTS, fontSize } from "../../../../config/themes/theme";
 
 export const chatInboxStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  chatContainer: {
+    flex: 1,
+  },
+  messagesList: {
+    paddingHorizontal: 4,
+    paddingVertical: 8,
+    flexGrow: 1,
+  },
+  inputMainContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: COLORS.white,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.1)',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: COLORS.inputBorder,
+    borderRadius: 24,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    minHeight: 48,
+  },
+  attachmentButton: {
+    padding: 8,
+    marginRight: 4,
+  },
+  input: {
+    flex: 1,
+    fontSize: fontSize[14],
+    fontFamily: FONTS.interRegular,
+    color: COLORS.Navy,
+    maxHeight: 100,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  sendButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: COLORS.Navy,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+  },
+  voiceButton: {
+    padding: 8,
+    marginLeft: 4,
+  },
+  replyBar: {
+    backgroundColor: COLORS.otherChatBgColor,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.1)',
+  },
+  replyContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  replyLine: {
+    width: 3,
+    height: 40,
+    backgroundColor: COLORS.Navy,
+    marginRight: 12,
+  },
+  replyText: {
+    flex: 1,
+  },
+  replyLabel: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.Navy200,
+    marginBottom: 2,
+  },
+  replyMessage: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interRegular,
+    color: COLORS.Navy,
+  },
+  typingIndicator: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  typingText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interRegular,
+    color: COLORS.GreyedOut,
+    fontStyle: 'italic',
+  },
+  connectionBanner: {
+    backgroundColor: COLORS.Navy200,
+    paddingVertical: 8,
+    alignItems: 'center',
+  },
+  connectionText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.white,
+  },
+  blockedBanner: {
+    backgroundColor: COLORS.ErrorRed,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  blockedText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.white,
+    marginLeft: 8,
+  },
+});
+
+
+
+/*import { StyleSheet } from "react-native";
+import { COLORS, FONTS, fontSize } from "../../../../config/themes/theme";
+
+export const chatInboxStyles = StyleSheet.create({
 
     emptyContainer: {
     flex: 1,
@@ -505,4 +636,8 @@ connectionText: {
         textAlign: 'center',
         marginTop: 4,
     },
+
+
 });
+*/
+

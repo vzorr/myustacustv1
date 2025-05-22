@@ -28,10 +28,12 @@ import UstaProfileScreen from '../../screens/UstaProfile/UstaProfileScreen';
 import UstaPortfolioDetailScreen from '../../screens/UstaProfile/UstaPortfolioDetailScreen';
 import ChatInboxContainer from '../../screens/TabsScreens/ChatScreen/ChatInbox/ChatInboxContainer';
 import NotificationDetailScreen from '../../screens/TabsScreens/Notifications/NotificationDetailScreen';
+
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
     const dispatch = useDispatch()
+    
     const getMetaData = async () => {
         try {
             let res = await client1().get('general/meta')
@@ -40,13 +42,14 @@ const NavStack: React.FC = () => {
             }
             dispatch(setMetaData(res?.data?.result))
         } catch (error) {
-            console.log("errorffffffff", JSON.stringify(error))
+            console.log("Error fetching metadata:", JSON.stringify(error))
         }
-
     }
+    
     useEffect(() => {
         getMetaData()
     }, [])
+    
     return (
         <Stack.Navigator
             screenOptions={{
@@ -74,10 +77,10 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="ChatInbox" component={ChatInboxContainer} />
             <Stack.Screen name="PostedJobDetailScreen" component={PostedJobDetailScreen} />
             <Stack.Screen name="NotificationDetail" component={NotificationDetailScreen} />
-            {/* <Stack.Screen name="ApplicationsList" component={ApplicationsList} /> */}
-            {/* <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} /> */}
-            {/* <Stack.Screen name="UstaProfile" component={UstaProfileScreen} />
-            <Stack.Screen name="UstaPortfolioDetail" component={UstaPortfolioDetailScreen} /> */}
+            <Stack.Screen name="ApplicationsList" component={ApplicationsList} />
+            <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} />
+            <Stack.Screen name="UstaProfile" component={UstaProfileScreen} />
+            <Stack.Screen name="UstaPortfolioDetail" component={UstaPortfolioDetailScreen} />
         </Stack.Navigator>
     )
 }
