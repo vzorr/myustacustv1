@@ -1,3 +1,45 @@
+// import { StackNavigationProp } from '@react-navigation/stack';
+// import { RouteProp } from "@react-navigation/native";
+
+// export type UserStackParamList = {
+//     Tabs: any;
+//     Home: undefined;
+//     PostJobScreen: any;
+//     SearchScreen: any;
+//     ChatList: any;
+//     ProfileScreen: any;
+//     PostJobPreview: any;
+//     SuccessMessageScreen: any;
+//     Splash: undefined;
+//     SignIn: any;
+//     SignUp: any;
+//     ForgotPassword: any;
+//     OtpVerfication: any;
+//     NewPassword: any;
+//     SuccessMessage: any;
+//     ChangePassword: any;
+//     AccountBasicInfo: any;
+//     LocationsAndPreferences: any;
+//     LocationScreen: any;
+//     NotificationPreferences: any;
+//     TermsAndConditions: any;
+//     LoadingScreen: any;
+//     JobsStatusSackNav: any;
+//     JobsStatusScreens: any;
+//     PostedJobDetailScreen: any;
+//     ApplicationsList: any;
+//     ApplicationDetail: any;
+//     UstaProfile: any;
+//     UstaPortfolio: any;
+//     UstaPortfolioDetail: any;
+//     ChatInbox: any;
+//     Notifications: any;
+//     ProfessionDetailScreen: any;
+// };
+
+// export type UserNavigationRootProps<T extends keyof UserStackParamList> = {
+//     route: RouteProp<UserStackParamList, T>;
+//     navigation: StackNavigationProp<UserStackParamList, T>;
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from "@react-navigation/native";
 
@@ -26,17 +68,18 @@ export type UserStackParamList = {
     LoadingScreen: any;
     JobsStatusSackNav: any;
     JobsStatusScreens: any;
+    ProfessionDetailScreen: any;
     PostedJobDetailScreen: { jobId: string | number };
     ApplicationsList: { jobId: string | number };
     ApplicationDetail: { proposalId: string | number };
-    UstaProfile: { 
-        otherUserId: string | number; 
-        jobId?: string | number; 
+    UstaProfile: {
+        otherUserId: string | number;
+        jobId?: string | number;
     };
     UstaPortfolio: any;
-    UstaPortfolioDetail: { 
-        portfolioId: string | number; 
-        jobId?: string | number; 
+    UstaPortfolioDetail: {
+        portfolioId: string | number;
+        jobId?: string | number;
     };
     ChatInbox: {
         chatData: {

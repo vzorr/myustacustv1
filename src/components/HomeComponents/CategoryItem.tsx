@@ -7,15 +7,17 @@ import { SVGIcons } from '../../config/constants/svg'
 interface CategoryItemProps {
     iconName: keyof typeof SVGIcons
     label: string
+    handleOnPress?: () => void
+    isActive?: any
 }
 
-const CategoryItem: React.FC<CategoryItemProps> = ({ iconName, label }) => {
+const CategoryItem: React.FC<CategoryItemProps> = ({ iconName, label, handleOnPress, isActive }) => {
     const IconComponent = iconName ? SVGIcons[iconName] : null
 
     return (
-        <TouchableOpacity style={styles.categoryItem}>
-            {IconComponent ? <IconComponent /> : null}
-            <Text style={styles.categoryLabel}>{label}</Text>
+        <TouchableOpacity style={[styles.categoryItem, isActive && styles.activeCategoryItem]} onPress={handleOnPress}>
+            {IconComponent ? <IconComponent stroke={isActive ? COLORS.white : ""} /> : null}
+            <Text style={[styles.categoryLabel, isActive && styles.activeCategoryLabel]}>{label}</Text>
         </TouchableOpacity>
     )
 }
@@ -34,6 +36,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: COLORS.inputBorder,
         gap: 8,
+        backgroundColor: COLORS.white,
     },
     categoryLabel: {
         fontSize: fontSize[14],
@@ -41,5 +44,11 @@ const styles = StyleSheet.create({
         fontWeight: 500,
         color: COLORS.Navy,
         textAlign: 'center',
+    },
+    activeCategoryItem: {
+        backgroundColor: COLORS.Navy,
+    },
+    activeCategoryLabel: {
+        color: COLORS.white,
     },
 })

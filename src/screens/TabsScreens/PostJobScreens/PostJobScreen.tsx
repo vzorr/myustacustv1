@@ -603,7 +603,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 style={{ fontSize: fontSize[16] }}
                             />
                         </View>
-                        {EditPostJob === "EditPostJob" ? (
+                        {imagesCount > 0 ? (
                             <View style={{ gap: 8 }}>
                                 <ScrollView
                                     horizontal
