@@ -9,12 +9,54 @@ import ProfessionCard from '../../../components/HomeComponents/ProfessionCard'
 import CategoryItem from '../../../components/HomeComponents/CategoryItem'
 import Heading from '../../../components/Heading/Heading'
 import { IMostVisitedProfession, IExploreProfession, ITopCategory, mostVisitedProfessionsData, exploreProfessionsData, topCategoriesData } from '../../../utils/mockData'
+import ProfessionsCategoriesList from './ProfessionsCategoriesList'
 
 const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
     const { route, navigation } = props
+    const [selectedCategoryId, setSelectedCategoryId] = React.useState<string | null>(null);
+    const selectedCategory = topCategoriesData.find(item => item.id === selectedCategoryId);
     const ViewPostedJobs = () => {
         navigation.navigate("JobsStatusScreens")
     }
+    const handleProfessionHeading = () => {
+        navigation.navigate("ProfessionDetailScreen")
+    }
+
+    const renderTopCategoryItem = ({ item }: { item: ITopCategory }) => (
+        <CategoryItem
+            iconName={item.iconName as keyof typeof SVGIcons}
+            label={item.label}
+            handleOnPress={() => {
+                console.log("Category Pressed", item.label);
+                setSelectedCategoryId(prev => (prev === item.id ? null : item.id)); // Toggle
+            }}
+            isActive={selectedCategoryId === item.id}
+        />
+    );
+    //when the category is pressed, display the selected category ui else display the renderScreenContent 
+    // const renderSelectedCategoryUI = () => {
+    //     const selectedCategory = topCategoriesData.find(item => item.id === selectedCategoryId);
+    //     if (selectedCategory) {
+    //         return (
+    //             <View style={styles.sectionContainer}>
+    //                 <Heading
+    //                     headingText={selectedCategory.label}
+    //                     style={{ fontSize: fontSize[20] }}
+    //                     containerStyle={{ marginBottom: 10 }} />
+    //                 {selectedCategory.professions.map((item: IMostVisitedProfession) => (
+    //                     <ProfessionCard
+    //                         key={item.id}
+    //                         title={item.title}
+    //                         count={item.count}
+    //                         icon={<Image source={item.image} style={item.imageStyle === 'drywall' ? styles.dryWalImage : styles.professionImage} />}
+    //                         suffixText={item.suffixText}
+    //                     />
+    //                 ))}
+    //             </View>
+    //         );
+    //     }
+    // };
+
 
     const renderScreenContent = () => (
         <View style={styles.sectionContainer}>
@@ -60,13 +102,6 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
     )
     const screenData = [{ id: '1' }];
 
-    const renderTopCategoryItem = ({ item }: { item: ITopCategory }) => (
-        <CategoryItem
-            iconName={item.iconName as keyof typeof SVGIcons}
-            label={item.label}
-        />
-    );
-
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
@@ -93,13 +128,19 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
                     contentContainerStyle={styles.categoriesContainer}
                 />
             </View>
-            <FlatList
-                data={screenData}
-                keyExtractor={item => item.id}
-                renderItem={() => renderScreenContent()}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ flexGrow: 1, paddingBottom: 50 }}
-            />
+            {selectedCategoryId ?
+                <ProfessionsCategoriesList
+                    handleProfessionHeading={handleProfessionHeading}
+                />
+                :
+                <FlatList
+                    data={screenData}
+                    keyExtractor={item => item.id}
+                    renderItem={() => renderScreenContent()}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ flexGrow: 1, paddingBottom: 50 }}
+                />
+            }
         </SafeAreaView>
     )
 }
