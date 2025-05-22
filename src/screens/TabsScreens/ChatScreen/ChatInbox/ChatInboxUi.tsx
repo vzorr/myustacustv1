@@ -60,6 +60,7 @@ interface ChatInboxUiProps {
     isLoadingMore: boolean;
     onResendMessage: (message: any) => void;
     isConnected: boolean;
+    prefilledMessage?: string;
 }
 
 const ChatInboxUi: React.FC<ChatInboxUiProps> = (props) => {

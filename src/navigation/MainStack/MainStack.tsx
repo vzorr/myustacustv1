@@ -1,18 +1,25 @@
-import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
-import { NavigationContainer, CommonActions } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
-import notifee, { AndroidImportance, AndroidStyle, EventType } from '@notifee/react-native';
 import NavStack from '../NavStack/NavStack';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { setFireBaseToken } from '../../stores/reducer/FireBaseTokeReducer';
-
 import DeviceInfo from 'react-native-device-info';
-import { client, client1, notificationClient } from '../../apiManager/Client';
+import { notificationClient } from '../../apiManager/Client';
+import { useNotificationHandler } from '../../hooks/useNotificationHandler';
+
+// Component that has access to navigation context
+const NavigationContent: React.FC = () => {
+  // Now the hook has access to NavigationContainer
+  useNotificationHandler();
+  
+  return <NavStack />;
+};
+
 const MainStack = () => {
     const navigationRef = useRef<any>(null);
-    // const [token, setToken] = useState<string>('');
     const [appStateVisible, setAppStateVisible] = useState(AppState.currentState);
     const appState = useRef(AppState.currentState);
     const dispatch = useDispatch();
@@ -21,32 +28,22 @@ const MainStack = () => {
     const ANDROID_POST_NOTIFICATIONS = 'android.permission.POST_NOTIFICATIONS' as any;
     const deviceId = `${Platform.OS}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-    // console.log("fireBaseToken", fireBaseToken)
-    console.log("uuuuuuuuuuuuuuuuuuuuuuuuu", userData?.token)
-
+    console.log("userData?.token", userData?.token);
 
     const registerDevice = async () => {
         await messaging().registerDeviceForRemoteMessages();
     };
-    useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-        console.log("FCM Foreground Message:", remoteMessage);
-        await onNotifeeMessageReceived(remoteMessage);
-    });
 
-    return unsubscribe;
-}, []);
+    // Main setup for device registration and permissions
     useEffect(() => {
         NotificationPermission();
         
-        console.log("userData?.token" + userData?.token);
-
         if (userData?.token) {
-            registerDevice()
+            registerDevice();
             messaging()
                 .getToken()
                 .then(async (fcmToken) => {
-                    console.log("fcmToken", fcmToken)
+                    console.log("fcmToken", fcmToken);
                     if (fcmToken && fcmToken !== fireBaseToken) {
                         const deviceInfo: any = {
                             token: fcmToken,
@@ -58,31 +55,27 @@ const MainStack = () => {
                             appVersion: DeviceInfo.getVersion()
                         };
 
-                        console.log("deviceInfo", deviceInfo)
+                        console.log("deviceInfo", deviceInfo);
                         try {
-                            let res = await notificationClient(userData?.token).post('auth/register-device', deviceInfo)
+                            let res = await notificationClient(userData?.token).post('auth/register-device', deviceInfo);
                             dispatch(setFireBaseToken(fcmToken));
-                            console.log("ressssss", res)
+                            console.log("Device registration response:", res);
                             console.log('Device token registered successfully:', { deviceId });
-
                         } catch (error) {
-                            console.log("devicesssssserror", error)
+                            console.log("Device registration error:", error);
                         }
-
                     }
                 }).catch((err) => {
                     console.log('Failed to register device token:', JSON.stringify(err?.message, null, 2));
                 });
         }
-
-        messaging().setBackgroundMessageHandler(onNotifeeMessageReceived);
     }, [userData]);
 
     const requestNotificationPermission = async () => {
         if (Platform.OS === 'android' && Platform.Version >= 33) {
             return await request(ANDROID_POST_NOTIFICATIONS);
         }
-        return RESULTS.GRANTED; // assume granted for older Android
+        return RESULTS.GRANTED;
     };
 
     const checkNotificationPermission = async () => {
@@ -103,124 +96,11 @@ const MainStack = () => {
         }
     };
 
-    const onNotifeeMessageReceived = async (message: any) => {
-        console.log("messagessss", message)
-        const channelId = await notifee.createChannel({
-            id: 'default',
-            name: 'General Notifications',
-            importance: AndroidImportance.HIGH,
-        });
-        notifee.displayNotification({
-            title: 'user',
-            body: `user is posted a job`,
-            android: {
-                channelId: '16ddd',
-            },
-        });
-        // const style =
-        //     message?.data?.type === '1'
-        //         ? { type: AndroidStyle.BIGPICTURE, picture: message.data.imgURI }
-        //         : { type: AndroidStyle.BIGTEXT, text: message.data.body };
-
-        // await notifee.displayNotification({
-        //     id: message.messageId,
-        //     title: message.data.title,
-        //     body: message.data.body,
-        //     data: message.data,
-        //     android: {
-        //         channelId,
-        //         importance: AndroidImportance.HIGH,
-        //         pressAction: { id: 'default' },
-        //     },
-        // });
-    };
-    //  title: notification.title,
-    //       message: notification.body,
-    //       playSound: true,
-    //       soundName: this.getNotificationSound(data.type),
-    //       data: data,
-    //       userInfo: data,
-    //       id: data.messageId || Date.now().toString(),
-    //       // iOS specific
-    //       category: data.type,
-    //       // Android specific
-    //       smallIcon: 'ic_notification',
-    //       largeIcon: 'ic_launcher',
-    //       bigText: notification.body,
-    //       subText: this.getNotificationSubtext(data),
-    //       color: '#007AFF',
-    //       vibrate: true,
-    //       vibration: 300,
-    //       priority: 'high',
-    //       visibility: 'private',
-    const handleClickedNotification = (notification: any) => {
-        const { type, productName, senderName, senderId } = notification?.data || {};
-
-        if (type) {
-            switch (type) {
-                case '1':
-                case '2':
-                case '3':
-                case '44':
-                case '43':
-                case '45':
-                    navigateTo('Tabs', { activeTab: 4 });
-                    break;
-                case '23':
-                    navigateTo('SellAndEarn');
-                    break;
-                case '46':
-                    navigateTo('OffersOnMyAds');
-                    break;
-                case '42':
-                    navigateTo('Tabs', { screen: 'Ads', params: { deal: 'Deals' } });
-                    break;
-                case '32':
-                    navigateTo('UsedMobileDetailPage', { mobileId: productName });
-                    break;
-                default:
-                    navigateTo('Tabs');
-            }
-        } else if (senderName) {
-            navigateTo('ChatInbox', {
-                chatData: {
-                    userId: senderId,
-                    userName: senderName,
-                    isOnline: true,
-                    isBlocked: false,
-                    isBlocker: false,
-                },
-            });
-        } else {
-            navigateTo('Tabs');
-        }
-    };
-
-    const navigateTo = (route: string, params: any = {}) => {
-        navigationRef.current?.dispatch(CommonActions.navigate({ name: route, params }));
-    };
-
-
-    useEffect(() => {
-        notifee.onForegroundEvent(({ type, detail }) => {
-            if (type === EventType.PRESS) {
-                handleClickedNotification(detail.notification);
-            }
-        });
-
-        notifee.onBackgroundEvent(async ({ type, detail }) => {
-            if (type === EventType.PRESS) {
-                handleClickedNotification(detail.notification);
-            }
-        });
-    }, []);
-
-
     return (
         <NavigationContainer ref={navigationRef}>
-            <NavStack />
+            <NavigationContent />
         </NavigationContainer>
     );
 };
 
-export default MainStack
+export default MainStack;

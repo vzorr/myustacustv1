@@ -13,7 +13,8 @@ import { v4 as uuidv4 } from "uuid";
 
 const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (props) => {
     // Get chat data from route params
-    const chatData = props?.route?.params?.chatData
+    const chatData = props?.route?.params?.chatData;
+    const prefilledMessage = props?.route?.params?.prefilledMessage;
     
     // State management
     const [messages, setMessages] = useState<any[]>([])
@@ -294,6 +295,7 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
             isLoadingMore={isLoadingMore}
             onResendMessage={handleResendMessage}
             isConnected={isConnected}
+            prefilledMessage={prefilledMessage}
         />
     )
 }
