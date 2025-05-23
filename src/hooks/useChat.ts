@@ -13,7 +13,7 @@ interface UseChatProps {
 
 export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
 
-    const [conversationId, setConversationId] = useState('')
+  const [conversationId, setConversationId] = useState('')
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -22,30 +22,31 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
 
   const { userData } = useSelector((state: any) => state?.userInfo);
   const { token } = useSelector((state: any) => state?.accessToken);
+
   const conversationCreated = async () => {
     try {
       let payload = {
-        participantIds: receiverId, // The usta user wants to chat with
+        participantIds: receiverId,
         jobId: roomId,
         jobTitle: jobTitle
       }
-    let res = await ChatService.getClient(userData?.token).post('conversations',payload)
-    const converId = res?.data?.conversation?.id
-    setConversationId(converId)
-      
+      let res = await ChatService.getClient(userData?.token).post('conversations', payload)
+      const converId = res?.data?.conversation?.id
+      setConversationId(converId)
+
     } catch (error) {
-      
+
     }
-}
+  }
+
   useEffect(() => {
     const initializeChat = async () => {
       try {
         const userToken = token || userData?.token;
         if (!userToken || !userData?.userId) return;
 
-        await chatService.initialize(userData.userId,'customer', userToken);
-        // await chatService.joinRoom(roomId, receiverId);
-        
+        await chatService.initialize(userData.userId, 'customer', userToken);
+
         const roomMessages = chatService.getMessages(roomId);
         setMessages(roomMessages);
         setLoading(false);
@@ -63,7 +64,6 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
     };
   }, [roomId, receiverId, token, userData]);
 
-  // Set up event listeners
   useEffect(() => {
     const unsubscribeMessage = chatService.onMessage((message) => {
       if (message.roomId === roomId) {
@@ -85,8 +85,7 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
     const unsubscribeTyping = chatService.onTyping((userId, isTyping) => {
       if (userId !== userData?.userId) {
         setTyping(prev => ({ ...prev, [userId]: isTyping }));
-        
-        // Clear typing status after 3 seconds
+
         if (isTyping) {
           setTimeout(() => {
             setTyping(prev => ({ ...prev, [userId]: false }));
@@ -102,18 +101,16 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
     };
   }, [roomId, userData?.userId]);
 
-  // Send text message
   const sendMessage = useCallback(async (content: string, replyTo?: string) => {
     if (!content.trim() || sending) return;
 
     setSending(true);
     try {
       await chatService.sendMessage(roomId, content.trim(), receiverId, replyTo);
-      
-      // Update local messages
+
       const updatedMessages = chatService.getMessages(roomId);
       setMessages(updatedMessages);
-      
+
     } catch (error) {
       console.error('Failed to send message:', error);
       Toast.show('Failed to send message', Toast.SHORT);
@@ -122,17 +119,16 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
     }
   }, [roomId, receiverId, sending]);
 
-  // Send attachment
   const sendAttachment = useCallback(async (file: any, type: AttachmentType) => {
     if (sending) return;
 
     setSending(true);
     try {
       await chatService.sendAttachment(roomId, file, type, receiverId);
-      
+
       const updatedMessages = chatService.getMessages(roomId);
       setMessages(updatedMessages);
-      
+
     } catch (error) {
       console.error('Failed to send attachment:', error);
       Toast.show('Failed to send attachment', Toast.SHORT);
@@ -141,7 +137,6 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
     }
   }, [roomId, receiverId, sending]);
 
-  // Load more messages
   const loadMore = useCallback(async () => {
     try {
       const currentPage = Math.ceil(messages.length / 20) + 1;
@@ -152,7 +147,6 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
     }
   }, [roomId, messages.length]);
 
-  // Mark as read
   const markAsRead = useCallback(async () => {
     try {
       await chatService.markAsRead(roomId, receiverId);
@@ -161,7 +155,6 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
     }
   }, [roomId, receiverId]);
 
-  // Send typing status
   const sendTypingStatus = useCallback((isTyping: boolean) => {
     chatService.sendTypingStatus(roomId, receiverId, isTyping);
   }, [roomId, receiverId]);

@@ -26,11 +26,10 @@ class ChatService {
     this.token = token;
     
     chatApiService.setToken(token);
-    await socketService.connect(token);
-    
+    await socketService.connect(userId, token); // ✅ FIXED: pass token in auth
+
     this.isInitialized = true;
-    
-    // Store initialization data for recovery
+
     await AsyncStorage.setItem('chat_init', JSON.stringify({
       userId,
       userRole,
@@ -52,7 +51,7 @@ class ChatService {
     if (this.currentUserRole !== 'customer') {
       throw new Error('Only customers can initiate chats');
     }
-    
+
     const result = await chatApiService.initializeChat(jobId, ustaId);
     return result.conversationId;
   }
@@ -103,18 +102,17 @@ class ChatService {
   async loadMessages(conversationId: string, page: number = 1): Promise<Message[]> {
     try {
       const result = await chatApiService.getMessages(conversationId, page);
-      
+
       if (page === 1) {
         this.messages.set(conversationId, result.messages);
       } else {
         const existing = this.messages.get(conversationId) || [];
-        // Avoid duplicates
         const newMessages = result.messages.filter(
           msg => !existing.find(e => e.id === msg.id)
         );
         this.messages.set(conversationId, [...existing, ...newMessages]);
       }
-      
+
       return this.messages.get(conversationId) || [];
     } catch (error) {
       console.error('Error loading messages:', error);
@@ -123,9 +121,9 @@ class ChatService {
   }
 
   async sendMessage(
-    conversationId: string, 
-    content: string, 
-    receiverId: string, 
+    conversationId: string,
+    content: string,
+    receiverId: string,
     replyTo?: string
   ): Promise<void> {
     if (!this.currentUserId) throw new Error('User not initialized');
@@ -141,10 +139,9 @@ class ChatService {
       status: MessageStatus.SENDING,
       replyTo,
       roomId: conversationId,
-      jobId: undefined // Will be set by backend
+      jobId: undefined
     };
 
-    // Add to local messages immediately for optimistic UI
     const roomMessages = this.messages.get(conversationId) || [];
     roomMessages.unshift(message);
     this.messages.set(conversationId, roomMessages);
@@ -160,31 +157,29 @@ class ChatService {
   }
 
   async sendAttachment(
-    conversationId: string, 
-    file: any, 
-    type: AttachmentType, 
+    conversationId: string,
+    file: any,
+    type: AttachmentType,
     receiverId: string
   ): Promise<void> {
     if (!this.currentUserId) throw new Error('User not initialized');
 
     try {
-      // Upload file first
       const attachment = await chatApiService.uploadFile(file, type);
-      
+
       const message: Message = {
         id: `temp-${Date.now()}-${Math.random()}`,
         senderId: this.currentUserId,
         receiverId,
         content: attachment.name || '',
         timestamp: new Date().toISOString(),
-        type:  MessageType.TEXT,
+        type: MessageType.TEXT,
         status: MessageStatus.SENDING,
         attachments: [attachment],
         roomId: conversationId,
         jobId: undefined
       };
 
-      // Add to local messages
       const roomMessages = this.messages.get(conversationId) || [];
       roomMessages.unshift(message);
       this.messages.set(conversationId, roomMessages);
@@ -232,16 +227,12 @@ class ChatService {
   // Event listeners
   onMessage(callback: MessageCallback): () => void {
     return socketService.on('message_received', (message: Message) => {
-      // Add to local store
       const roomMessages = this.messages.get(message.roomId) || [];
-      
-      // Check if message already exists (avoid duplicates)
       const exists = roomMessages.find(m => m.id === message.id);
       if (!exists) {
         roomMessages.unshift(message);
         this.messages.set(message.roomId, roomMessages);
       }
-      
       callback(message);
     });
   }
@@ -296,16 +287,14 @@ class ChatService {
       if (!initData) return false;
 
       const { userId, userRole, token, timestamp } = JSON.parse(initData);
-      
-      // Check if session is still valid (24 hours)
+
       if (Date.now() - timestamp > 24 * 60 * 60 * 1000) {
         await AsyncStorage.removeItem('chat_init');
         return false;
       }
 
       await this.initialize(userId, userRole, token);
-      
-      // Recover current conversation if any
+
       const currentConv = await AsyncStorage.getItem('current_conversation');
       if (currentConv) {
         // await this.joinConversation(currentConv);
