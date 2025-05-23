@@ -88,10 +88,11 @@ class ChatApiService {
       }
       throw new Error(response.data?.message || 'Failed to fetch chat rooms');
     } catch (error) {
-      console.error('Error fetching chat rooms:', error);
+      console.error('Error fetching chat rooms:', JSON.stringify(error, null, 2));
       throw error;
     }
   }
+
 
   // File upload - Updated endpoint
   async uploadFile(file: any, type: AttachmentType): Promise<Attachment> {

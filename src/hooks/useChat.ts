@@ -1,9 +1,10 @@
+import { ConversationContext } from './../config/context/ConversationContext';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { chatService } from '../services/ChatService';
 import { Message, ChatRoom, AttachmentType } from '../types/chat';
 import Toast from 'react-native-simple-toast';
-import { ChatService } from '../apiManager/Client';
+import { chatClient, ChatService } from '../apiManager/Client';
 
 interface UseChatProps {
   roomId: any;
@@ -22,7 +23,7 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
 
   const { userData } = useSelector((state: any) => state?.userInfo);
   const { token } = useSelector((state: any) => state?.accessToken);
-
+console.log("userDtaa", userData)
   const conversationCreated = async () => {
     try {
       let payload = {
@@ -38,7 +39,45 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
 
     }
   }
+  const getChatHistory = async () => {
+    try {
+      // /api/v1/messages/history/user/:userId
+      const response = await chatClient(userData?.token).get(
+        `messages/history/user/${receiverId}`
+      );
+      console.log("response.data", response.data)
+      if (response.data?.success) {
 
+      }
+      throw new Error(response.data?.message || 'Failed to fetch chat rooms');
+    } catch (error) {
+      console.error('Error fetching chat rooms:', JSON.stringify(error, null, 2));
+      throw error;
+    }
+  }
+  // async getUseHistory(page: number = 1, limit: number = 20): Promise<{
+  //   rooms: ChatRoom[];
+  //   hasMore: boolean;
+  // }> {
+  //   try {
+  //     // /api/v1/messages/history/user/:userId
+  //     const offset = (page - 1) * limit;
+  //     const response = await chatClient(this.token).get(
+  //       `messages/history/user/${}`
+  //     );
+
+  //     if (response.data?.success) {
+  //       return {
+  //         rooms: (response.data.conversations || []).map(this.transformChatRoom),
+  //         hasMore: response.data.hasMore || false
+  //       };
+  //     }
+  //     throw new Error(response.data?.message || 'Failed to fetch chat rooms');
+  //   } catch (error) {
+  //     console.error('Error fetching chat rooms:', JSON.stringify(error, null, 2));
+  //     throw error;
+  //   }
+  // }
   useEffect(() => {
     const initializeChat = async () => {
       try {
@@ -49,6 +88,9 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
         await chatService.initialize(userData.userId, 'customer', userToken);
 
         const roomMessages = chatService.getMessages(roomId);
+        await getChatHistory()
+        // const conId = await chatService.getChatRooms()
+        // console.log("conId", conId)
         setMessages(roomMessages);
         setLoading(false);
       } catch (error) {

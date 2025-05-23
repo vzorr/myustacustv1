@@ -35,7 +35,7 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
 
 useEffect(() => {
   if (!loading && connected) {
-    markAsRead();
+    // markAsRead();
   }
 }, [loading, connected, markAsRead]);
 
