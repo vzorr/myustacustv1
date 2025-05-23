@@ -24,7 +24,7 @@ class ChatService {
     this.currentUserId = userId;
     this.currentUserRole = userRole;
     this.token = token;
-    
+    console.log("initilize token", token)
     chatApiService.setToken(token);
     await socketService.connect(token);
     

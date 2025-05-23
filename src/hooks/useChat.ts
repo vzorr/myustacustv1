@@ -41,6 +41,7 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
     const initializeChat = async () => {
       try {
         const userToken = token || userData?.token;
+        console.log("userToken", userToken)
         if (!userToken || !userData?.userId) return;
 
         await chatService.initialize(userData.userId,'customer', userToken);

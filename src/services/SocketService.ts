@@ -34,6 +34,7 @@ class SocketService {
 
     return new Promise((resolve, reject) => {
       try {
+        console.log("this servrela url ", this.serverUrl)
         this.socket = io(this.serverUrl, {
           transports: ['websocket'],
           query: { userId },
@@ -139,7 +140,7 @@ class SocketService {
       replyToMessageId: message.replyTo
     };
     console.log("socketMessage", socketMessage)
-    // this.socket.emit('send_message', socketMessage);
+    this.socket.emit('send_message', socketMessage);
   }
 
   // Typing indicators
@@ -196,4 +197,4 @@ class SocketService {
   }
 }
 
-export const socketService = new SocketService(BASE_CHAT_URL);
+export const socketService = new SocketService(BASE_SOCKET_URL);
