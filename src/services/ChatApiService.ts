@@ -1,5 +1,5 @@
 import { chatClient, client } from '../apiManager/Client';
-import { Message, ChatRoom, Attachment, AttachmentType } from '../types/chat';
+import { Message, ChatConversation, Attachment, AttachmentType } from '../types/chat';
 
 class ChatApiService {
   private token: string | null = null;
@@ -9,31 +9,7 @@ class ChatApiService {
     this.token = token;
   }
 
-  // Initialize chat with proper authentication
-  async initializeChat(jobId: string, ustaId: string): Promise<{
-    conversationId: string;
-    canInitiate: boolean;
-  }> {
-    try {
-      const response = await chatClient(this.token).post(`conversations/init`, {
-        jobId,
-        participantId: ustaId
-      });
-
-      if (response.data?.success) {
-        return {
-          conversationId: response.data.conversationId,
-          canInitiate: response.data.canInitiate
-        };
-      }
-      throw new Error(response.data?.message || 'Failed to initialize chat');
-    } catch (error) {
-      console.error('Error initializing chat:', error);
-      throw error;
-    }
-  }
-
-  // Messages - Updated to use backend routes
+  // Get messages for a conversation
   async getMessages(conversationId: string, page: number = 1, limit: number = 50): Promise<{
     messages: Message[];
     hasMore: boolean;
@@ -46,7 +22,7 @@ class ChatApiService {
 
       if (response.data?.success) {
         return {
-          messages: (response.data.messages || []).map(this.transformMessage),
+          messages: (response.data.messages || []).map(msg => this.transformMessage(msg)),
           hasMore: response.data.hasMore || false
         };
       }
@@ -57,6 +33,7 @@ class ChatApiService {
     }
   }
 
+  // Mark messages as read
   async markAsRead(conversationId: string, messageIds?: string[]): Promise<void> {
     try {
       await chatClient(this.token).post(`messages/read`, {
@@ -69,9 +46,10 @@ class ChatApiService {
     }
   }
 
-  // Chat rooms - Updated for job-based conversations
-  async getChatRooms(page: number = 1, limit: number = 20): Promise<{
-    rooms: ChatRoom[];
+  // Get all conversations for the current user
+  // Pass currentUserId as parameter instead of storing it
+  async getConversations(currentUserId: string, page: number = 1, limit: number = 20): Promise<{
+    conversations: ChatConversation[];
     hasMore: boolean;
   }> {
     try {
@@ -82,18 +60,20 @@ class ChatApiService {
 
       if (response.data?.success) {
         return {
-          rooms: (response.data.conversations || []).map(this.transformChatRoom),
+          conversations: (response.data.conversations || []).map(conv => 
+            this.transformConversation(conv, currentUserId)
+          ),
           hasMore: response.data.hasMore || false
         };
       }
-      throw new Error(response.data?.message || 'Failed to fetch chat rooms');
+      throw new Error(response.data?.message || 'Failed to fetch conversations');
     } catch (error) {
-      console.error('Error fetching chat rooms:', error);
+      console.error('Error fetching conversations:', error);
       throw error;
     }
   }
 
-  // File upload - Updated endpoint
+  // Upload file
   async uploadFile(file: any, type: AttachmentType): Promise<Attachment> {
     try {
       const formData = new FormData();
@@ -122,20 +102,7 @@ class ChatApiService {
     }
   }
 
-  // Check if user can initiate chat (customer only)
-  async canInitiateChat(jobId: string, ustaId: string): Promise<boolean> {
-    try {
-      const response = await chatClient(this.token).get(
-        `conversations/can-initiate?jobId=${jobId}&ustaId=${ustaId}`
-      );
-      return response.data?.canInitiate || false;
-    } catch (error) {
-      console.error('Error checking chat initiation permission:', error);
-      return false;
-    }
-  }
-
-  // Transform methods updated for backend response format
+  // Transform message from API format to app format
   private transformMessage(data: any): Message {
     return {
       id: data.id,
@@ -147,11 +114,12 @@ class ChatApiService {
       status: data.status || 'sent',
       replyTo: data.content?.replyTo,
       attachments: this.transformAttachments(data.content),
-      roomId: data.conversationId,
+      conversationId: data.conversationId,
       jobId: data.jobId
     };
   }
 
+  // Transform attachments
   private transformAttachments(content: any): Attachment[] {
     const attachments: Attachment[] = [];
     
@@ -192,9 +160,32 @@ class ChatApiService {
     return attachments;
   }
 
-  private transformChatRoom(data: any): ChatRoom {
+  // Transform conversation from API format to app format
+  // Now accepts currentUserId as parameter
+  private transformConversation(data: any, currentUserId: string): ChatConversation {
     // Find the other participant
-    const otherParticipant = data.participants?.find((p: any) => p.id !== this.getCurrentUserId()) || {};
+    const otherParticipant = data.participants?.find((p: any) => p.id !== currentUserId) || {};
+    
+    // If no participants array, try to determine from lastMessage
+    if (!data.participants || data.participants.length === 0) {
+      // Fallback logic if participants array is missing
+      return {
+        id: data.id,
+        jobId: data.jobId,
+        jobTitle: data.jobTitle || '',
+        otherUser: {
+          id: data.otherUserId || '',
+          name: data.otherUserName || 'Unknown',
+          avatar: data.otherUserAvatar || '',
+          isOnline: data.otherUserOnline || false
+        },
+        lastMessage: data.lastMessage ? this.transformMessage(data.lastMessage) : undefined,
+        unreadCount: data.unreadCount || 0,
+        isBlocked: false,
+        updatedAt: data.lastMessageAt || data.updatedAt,
+        participants: []
+      };
+    }
     
     return {
       id: data.id,
@@ -212,11 +203,6 @@ class ChatApiService {
       updatedAt: data.lastMessageAt || data.updatedAt,
       participants: data.participants || []
     };
-  }
-
-  private getCurrentUserId(): string {
-    // This should be set from your auth context
-    return ''; // Implement based on your auth system
   }
 
   private getMimeType(type: AttachmentType): string {
