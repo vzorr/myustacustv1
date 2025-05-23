@@ -1,5 +1,7 @@
+
 import io, { Socket } from 'socket.io-client';
 import { Message, MessageStatus, MessageType } from '../types/chat';
+import { BASE_CHAT_URL, BASE_SOCKET_URL } from '../apiManager/Client';
 
 type SocketCallback = (...args: any[]) => void;
 
@@ -13,7 +15,7 @@ interface SocketEventMap {
   'socket_error': (error: any) => void;
 }
 
-export class socketService {
+class SocketService {
   private socket: Socket | null = null;
   private readonly serverUrl: string;
   private userId: string | null = null;
@@ -29,7 +31,7 @@ export class socketService {
     }
 
     this.userId = userId;
-    
+
     return new Promise((resolve, reject) => {
       try {
         this.socket = io(this.serverUrl, {
@@ -102,7 +104,7 @@ export class socketService {
   // Room management
   joinRoom(roomId: string, receiverId: string): void {
     if (!this.socket || !this.userId) return;
-    
+
     this.socket.emit('join_chat_room', {
       jobId: roomId,
       userId: this.userId,
@@ -112,7 +114,7 @@ export class socketService {
 
   leaveRoom(roomId: string, receiverId: string): void {
     if (!this.socket || !this.userId) return;
-    
+
     this.socket.emit('leave_chat_room', {
       jobId: roomId,
       userId: this.userId,
@@ -136,14 +138,14 @@ export class socketService {
       attachments: message.attachments || [],
       replyToMessageId: message.replyTo
     };
-
-    this.socket.emit('send_message', socketMessage);
+    console.log("socketMessage", socketMessage)
+    // this.socket.emit('send_message', socketMessage);
   }
 
   // Typing indicators
   sendTypingStatus(roomId: string, receiverId: string, isTyping: boolean): void {
     if (!this.socket || !this.userId) return;
-    
+
     this.socket.emit('typing', {
       jobId: roomId,
       userId: this.userId,
@@ -193,3 +195,5 @@ export class socketService {
     };
   }
 }
+
+export const socketService = new SocketService(BASE_CHAT_URL);

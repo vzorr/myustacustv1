@@ -61,7 +61,7 @@ const ChatInboxUi: React.FC<ChatInboxUiProps> = ({
   const inputRef = useRef<TextInput>(null);
 
   const handleSend = () => {
-    if (!inputText.trim() || sending || isBlocked) return;
+    // if (!inputText.trim() || sending || isBlocked) return;
 
     const content = inputText.trim();
     const replyTo = replyingTo?.id;
@@ -199,14 +199,14 @@ const ChatInboxUi: React.FC<ChatInboxUiProps> = ({
           placeholder={replyingTo ? "Reply..." : "Type a message..."}
           placeholderTextColor={COLORS.GreyedOut}
           multiline
-          editable={!isBlocked && connected}
+          // editable={isBlocked && connected}
         />
 
         {inputText.trim() ? (
           <TouchableOpacity 
             onPress={handleSend}
             style={chatInboxStyles.sendButton}
-            disabled={sending || isBlocked || !connected}
+            // disabled={sending || isBlocked || !connected}
           >
             <SVGIcons.sendIcon stroke={COLORS.white} width={20} height={20} />
           </TouchableOpacity>
@@ -214,7 +214,7 @@ const ChatInboxUi: React.FC<ChatInboxUiProps> = ({
           <TouchableOpacity 
             onPress={() => setIsRecording(true)}
             style={chatInboxStyles.voiceButton}
-            disabled={isBlocked || !connected}
+            // disabled={isBlocked || !connected}
           >
             <SVGIcons.chatVoice />
           </TouchableOpacity>

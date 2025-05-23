@@ -43,8 +43,8 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
         const userToken = token || userData?.token;
         if (!userToken || !userData?.userId) return;
 
-        await chatService.initialize(userData.userId, userToken);
-        await chatService.joinRoom(roomId, receiverId);
+        await chatService.initialize(userData.userId,'customer', userToken);
+        // await chatService.joinRoom(roomId, receiverId);
         
         const roomMessages = chatService.getMessages(roomId);
         setMessages(roomMessages);
@@ -59,7 +59,7 @@ export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
     initializeChat();
 
     return () => {
-      chatService.leaveRoom();
+      // chatService.leaveRoom();
     };
   }, [roomId, receiverId, token, userData]);
 

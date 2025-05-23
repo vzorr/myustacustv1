@@ -58,46 +58,46 @@ class ChatService {
   }
 
   // Cleanup
-  async cleanup(): Promise<void> {
-    if (this.currentConversationId) {
-      this.leaveConversation();
-    }
-    socketService.disconnect();
-    this.messages.clear();
-    this.isInitialized = false;
-    this.currentUserId = null;
-    this.currentUserRole = null;
-    this.token = null;
+  // async cleanup(): Promise<void> {
+  //   if (this.currentConversationId) {
+  //     this.leaveConversation();
+  //   }
+  //   socketService.disconnect();
+  //   this.messages.clear();
+  //   this.isInitialized = false;
+  //   this.currentUserId = null;
+  //   this.currentUserRole = null;
+  //   this.token = null;
     
-    await AsyncStorage.removeItem('chat_init');
-  }
+  //   await AsyncStorage.removeItem('chat_init');
+  // }
 
   // Conversation management
-  async joinConversation(conversationId: string): Promise<void> {
-    if (this.currentConversationId === conversationId) return;
+  // async joinConversation(conversationId: string): Promise<void> {
+  //   if (this.currentConversationId === conversationId) return;
 
-    if (this.currentConversationId) {
-      this.leaveConversation();
-    }
+  //   if (this.currentConversationId) {
+  //     this.leaveConversation();
+  //   }
 
-    this.currentConversationId = conversationId;
-    socketService.joinConversation(conversationId);
+  //   this.currentConversationId = conversationId;
+  //   socketService.joinConversation(conversationId);
     
-    // Load initial messages
-    await this.loadMessages(conversationId);
+  //   // Load initial messages
+  //   await this.loadMessages(conversationId);
     
-    // Store current conversation
-    await AsyncStorage.setItem('current_conversation', conversationId);
-  }
+  //   // Store current conversation
+  //   await AsyncStorage.setItem('current_conversation', conversationId);
+  // }
 
-  leaveConversation(): void {
-    if (!this.currentConversationId) return;
+  // leaveConversation(): void {
+  //   if (!this.currentConversationId) return;
     
-    socketService.leaveConversation(this.currentConversationId);
-    this.currentConversationId = null;
+  //   socketService.leaveConversation(this.currentConversationId);
+  //   this.currentConversationId = null;
     
-    AsyncStorage.removeItem('current_conversation');
-  }
+  //   AsyncStorage.removeItem('current_conversation');
+  // }
 
   // Messages
   async loadMessages(conversationId: string, page: number = 1): Promise<Message[]> {
@@ -177,7 +177,7 @@ class ChatService {
         receiverId,
         content: attachment.name || '',
         timestamp: new Date().toISOString(),
-        type: type as MessageType,
+        type:  MessageType.TEXT,
         status: MessageStatus.SENDING,
         attachments: [attachment],
         roomId: conversationId,
@@ -201,7 +201,7 @@ class ChatService {
     try {
       await chatApiService.markAsRead(conversationId, messageIds);
       if (messageIds) {
-        socketService.markAsRead(messageIds, conversationId);
+        // socketService.markAsRead(messageIds, conversationId);
       }
     } catch (error) {
       console.error('Error marking as read:', error);
@@ -308,7 +308,7 @@ class ChatService {
       // Recover current conversation if any
       const currentConv = await AsyncStorage.getItem('current_conversation');
       if (currentConv) {
-        await this.joinConversation(currentConv);
+        // await this.joinConversation(currentConv);
       }
 
       return true;

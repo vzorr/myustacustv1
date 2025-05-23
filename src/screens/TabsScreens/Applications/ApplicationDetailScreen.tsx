@@ -33,8 +33,8 @@ const ApplicationDetailScreen: React.FC<UserNavigationRootProps<"ApplicationDeta
                     jobTitle: appDetail?.job?.title,
                     userName: `${appDetail?.usta?.firstName} ${appDetail?.usta?.lastName}`,
                     isOnline: true,
-                    isBlocked: true,
-                    isBlocker: true,
+                    isBlocked: false,
+                    isBlocker: false,
                     profileImage: ""
                 }
             })
