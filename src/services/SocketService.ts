@@ -33,7 +33,7 @@ class SocketService {
 
     return new Promise((resolve, reject) => {
       try {
-        console.log("this servrela url ", this.serverUrl)
+        console.log("this servrela url ", this.serverUrl, token, userId)
         this.socket = io(this.serverUrl, {
           transports: ['websocket'],
           auth: { token }, // ✅ JWT token passed here

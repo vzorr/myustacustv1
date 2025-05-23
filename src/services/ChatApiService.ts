@@ -1,4 +1,4 @@
-import { client } from '../apiManager/Client';
+import { chatClient, client } from '../apiManager/Client';
 import { Message, ChatRoom, Attachment, AttachmentType } from '../types/chat';
 
 class ChatApiService {
@@ -15,7 +15,7 @@ class ChatApiService {
     canInitiate: boolean;
   }> {
     try {
-      const response = await client(this.token).post(`conversations/init`, {
+      const response = await chatClient(this.token).post(`conversations/init`, {
         jobId,
         participantId: ustaId
       });
@@ -40,8 +40,8 @@ class ChatApiService {
   }> {
     try {
       const offset = (page - 1) * limit;
-      const response = await client(this.token).get(
-        `${this.baseUrl}/messages/conversation/${conversationId}?limit=${limit}&offset=${offset}`
+      const response = await chatClient(this.token).get(
+        `messages/conversation/${conversationId}?limit=${limit}&offset=${offset}`
       );
 
       if (response.data?.success) {
@@ -59,7 +59,7 @@ class ChatApiService {
 
   async markAsRead(conversationId: string, messageIds?: string[]): Promise<void> {
     try {
-      await client(this.token).post(`${this.baseUrl}/messages/read`, {
+      await chatClient(this.token).post(`messages/read`, {
         conversationId,
         messageIds
       });
@@ -76,8 +76,8 @@ class ChatApiService {
   }> {
     try {
       const offset = (page - 1) * limit;
-      const response = await client(this.token).get(
-        `${this.baseUrl}/conversations?limit=${limit}&offset=${offset}`
+      const response = await chatClient(this.token).get(
+        `conversations?limit=${limit}&offset=${offset}`
       );
 
       if (response.data?.success) {
@@ -104,7 +104,7 @@ class ChatApiService {
       } as any);
       formData.append('type', type);
 
-      const response = await client(this.token).post('/upload', formData);
+      const response = await chatClient(this.token).post('/upload', formData);
 
       if (response.data?.success) {
         return {
@@ -125,8 +125,8 @@ class ChatApiService {
   // Check if user can initiate chat (customer only)
   async canInitiateChat(jobId: string, ustaId: string): Promise<boolean> {
     try {
-      const response = await client(this.token).get(
-        `${this.baseUrl}/conversations/can-initiate?jobId=${jobId}&ustaId=${ustaId}`
+      const response = await chatClient(this.token).get(
+        `conversations/can-initiate?jobId=${jobId}&ustaId=${ustaId}`
       );
       return response.data?.canInitiate || false;
     } catch (error) {

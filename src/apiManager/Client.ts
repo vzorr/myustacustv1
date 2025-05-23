@@ -118,6 +118,9 @@ export const ClientFormData = (token: string | null = null): AxiosInstance => {
 export const notificationClient = (token: string | null = null): AxiosInstance => {
   return createClient(BASE_NOTIFICATION_URL, token);
 };
+export const chatClient = (token: string | null = null): AxiosInstance => {
+  return createClient(BASE_CHAT_URL, token);
+};
 
 // Enhanced notification client with specialized functions
 export const NotificationService = {
