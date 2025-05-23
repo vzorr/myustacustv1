@@ -186,7 +186,7 @@ export const ChatService = {
    * @returns Configured axios instance
    */
   getClient: (token: string | null = null): AxiosInstance => {
-    return createClient(BASE_CHAT_URL, token);
+    return  createClient(BASE_CHAT_URL, token);
   },
   
   /**

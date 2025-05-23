@@ -3,13 +3,17 @@ import { useSelector } from 'react-redux';
 import { chatService } from '../services/ChatService';
 import { Message, ChatRoom, AttachmentType } from '../types/chat';
 import Toast from 'react-native-simple-toast';
+import { ChatService } from '../apiManager/Client';
 
 interface UseChatProps {
-  roomId: string;
-  receiverId: string;
+  roomId: any;
+  receiverId: any;
+  jobTitle: string
 }
 
-export const useChat = ({ roomId, receiverId }: UseChatProps) => {
+export const useChat = ({ roomId, receiverId, jobTitle }: UseChatProps) => {
+
+    const [conversationId, setConversationId] = useState('')
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -18,8 +22,21 @@ export const useChat = ({ roomId, receiverId }: UseChatProps) => {
 
   const { userData } = useSelector((state: any) => state?.userInfo);
   const { token } = useSelector((state: any) => state?.accessToken);
-
-  // Initialize chat service
+  const conversationCreated = async () => {
+    try {
+      let payload = {
+        participantIds: receiverId, // The usta user wants to chat with
+        jobId: roomId,
+        jobTitle: jobTitle
+      }
+    let res = await ChatService.getClient(userData?.token).post('conversations',payload)
+    const converId = res?.data?.conversation?.id
+    setConversationId(converId)
+      
+    } catch (error) {
+      
+    }
+}
   useEffect(() => {
     const initializeChat = async () => {
       try {
@@ -160,6 +177,7 @@ export const useChat = ({ roomId, receiverId }: UseChatProps) => {
     loadMore,
     markAsRead,
     sendTypingStatus,
-    isConnected: chatService.isConnected()
+    isConnected: chatService.isConnected(),
+    conversationId
   };
 };

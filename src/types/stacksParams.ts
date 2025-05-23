@@ -83,7 +83,7 @@ export type UserStackParamList = {
     };
     ChatInbox: {
         chatData: {
-            userId: string | number;
+            otherUserId: string | number;
             jobId: string | number;
             jobTitle: string;
             userName: string;
