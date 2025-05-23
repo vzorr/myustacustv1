@@ -13,7 +13,7 @@ interface SocketEventMap {
   'socket_error': (error: any) => void;
 }
 
-class SocketService {
+export class socketService {
   private socket: Socket | null = null;
   private readonly serverUrl: string;
   private userId: string | null = null;
