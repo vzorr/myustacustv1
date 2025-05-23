@@ -1,4 +1,3 @@
-
 import io, { Socket } from 'socket.io-client';
 import { Message, MessageStatus, MessageType } from '../types/chat';
 import { BASE_CHAT_URL, BASE_SOCKET_URL } from '../apiManager/Client';
@@ -25,7 +24,7 @@ class SocketService {
     this.serverUrl = serverUrl;
   }
 
-  async connect(userId: string): Promise<void> {
+  async connect(userId: string, token: string): Promise<void> {
     if (this.socket?.connected && this.userId === userId) {
       return Promise.resolve();
     }
@@ -37,6 +36,7 @@ class SocketService {
         console.log("this servrela url ", this.serverUrl)
         this.socket = io(this.serverUrl, {
           transports: ['websocket'],
+          auth: { token }, // ✅ JWT token passed here
           query: { userId },
           timeout: 10000,
           reconnection: true,
@@ -61,7 +61,6 @@ class SocketService {
           reject(error);
         });
 
-        // Message events
         this.socket.on('receive_message', (data) => {
           const message = this.transformMessage(data);
           this.emit('message_received', message);
@@ -102,7 +101,6 @@ class SocketService {
     return this.socket?.connected ?? false;
   }
 
-  // Room management
   joinRoom(roomId: string, receiverId: string): void {
     if (!this.socket || !this.userId) return;
 
@@ -123,7 +121,6 @@ class SocketService {
     });
   }
 
-  // Send message
   sendMessage(message: Message): void {
     if (!this.socket || !this.userId) return;
 
@@ -143,7 +140,6 @@ class SocketService {
     this.socket.emit('send_message', socketMessage);
   }
 
-  // Typing indicators
   sendTypingStatus(roomId: string, receiverId: string, isTyping: boolean): void {
     if (!this.socket || !this.userId) return;
 
@@ -155,14 +151,12 @@ class SocketService {
     });
   }
 
-  // Event listeners
   on(event: string, callback: SocketCallback): () => void {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
     }
     this.listeners.get(event)!.push(callback);
 
-    // Return unsubscribe function
     return () => {
       const callbacks = this.listeners.get(event);
       if (callbacks) {
