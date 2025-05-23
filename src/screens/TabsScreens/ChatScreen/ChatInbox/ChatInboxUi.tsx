@@ -14,9 +14,9 @@ import { COLORS } from '../../../../config/themes/theme';
 import { SVGIcons } from '../../../../config/constants/svg';
 import { chatInboxStyles } from './chatInboxStyles';
 import { Message, AttachmentType } from '../../../../types/chat';
-import MessageItem from './components/MessageItem';
-import AttachmentPicker from './components/AttachmentPicker';
-import AudioRecorder from './components/AudioRecorder';
+import MessageItem from './ChatComponents/MessageItem';
+import AttachmentPicker from './ChatComponents/AttachmentPicker';
+import AudioRecorder from './ChatComponents/AudioRecorder';
 
 interface ChatInboxUiProps {
   jobId: string;

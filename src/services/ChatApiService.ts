@@ -3,41 +3,65 @@ import { Message, ChatRoom, Attachment, AttachmentType } from '../types/chat';
 
 class ChatApiService {
   private token: string | null = null;
+  private baseUrl = '/api/v1';
 
   setToken(token: string): void {
     this.token = token;
   }
 
-  // Messages
-  async getMessages(roomId: string, page: number = 1, limit: number = 20): Promise<{
+  // Initialize chat with proper authentication
+  async initializeChat(jobId: string, ustaId: string): Promise<{
+    conversationId: string;
+    canInitiate: boolean;
+  }> {
+    try {
+      const response = await client(this.token).post(`${this.baseUrl}/conversations/init`, {
+        jobId,
+        participantId: ustaId
+      });
+
+      if (response.data?.success) {
+        return {
+          conversationId: response.data.conversationId,
+          canInitiate: response.data.canInitiate
+        };
+      }
+      throw new Error(response.data?.message || 'Failed to initialize chat');
+    } catch (error) {
+      console.error('Error initializing chat:', error);
+      throw error;
+    }
+  }
+
+  // Messages - Updated to use backend routes
+  async getMessages(conversationId: string, page: number = 1, limit: number = 50): Promise<{
     messages: Message[];
     hasMore: boolean;
   }> {
     try {
-      const response = await client(this.token).get('chats/history', {
-        params: { jobId: roomId, page, limit }
-      });
+      const offset = (page - 1) * limit;
+      const response = await client(this.token).get(
+        `${this.baseUrl}/messages/conversation/${conversationId}?limit=${limit}&offset=${offset}`
+      );
 
-      if (response.data?.code !== 200) {
-        throw new Error(response.data?.message || 'Failed to fetch messages');
+      if (response.data?.success) {
+        return {
+          messages: (response.data.messages || []).map(this.transformMessage),
+          hasMore: response.data.hasMore || false
+        };
       }
-
-      const data = response.data.result;
-      return {
-        messages: (data.data || []).map(this.transformMessage),
-        hasMore: data.hasNextPage || false
-      };
+      throw new Error(response.data?.message || 'Failed to fetch messages');
     } catch (error) {
       console.error('Error fetching messages:', error);
       throw error;
     }
   }
 
-  async markAsRead(roomId: string, userId: string): Promise<void> {
+  async markAsRead(conversationId: string, messageIds?: string[]): Promise<void> {
     try {
-      await client(this.token).post('chats/read', {
-        jobId: roomId,
-        senderId: userId
+      await client(this.token).post(`${this.baseUrl}/messages/read`, {
+        conversationId,
+        messageIds
       });
     } catch (error) {
       console.error('Error marking messages as read:', error);
@@ -45,32 +69,31 @@ class ChatApiService {
     }
   }
 
-  // Chat rooms
+  // Chat rooms - Updated for job-based conversations
   async getChatRooms(page: number = 1, limit: number = 20): Promise<{
     rooms: ChatRoom[];
     hasMore: boolean;
   }> {
     try {
-      const response = await client(this.token).get('chats/list', {
-        params: { page, limit }
-      });
+      const offset = (page - 1) * limit;
+      const response = await client(this.token).get(
+        `${this.baseUrl}/conversations?limit=${limit}&offset=${offset}`
+      );
 
-      if (response.data?.code !== 200) {
-        throw new Error(response.data?.message || 'Failed to fetch chat rooms');
+      if (response.data?.success) {
+        return {
+          rooms: (response.data.conversations || []).map(this.transformChatRoom),
+          hasMore: response.data.hasMore || false
+        };
       }
-
-      const data = response.data.result;
-      return {
-        rooms: (data.data || []).map(this.transformChatRoom),
-        hasMore: data.hasNextPage || false
-      };
+      throw new Error(response.data?.message || 'Failed to fetch chat rooms');
     } catch (error) {
       console.error('Error fetching chat rooms:', error);
       throw error;
     }
   }
 
-  // File upload
+  // File upload - Updated endpoint
   async uploadFile(file: any, type: AttachmentType): Promise<Attachment> {
     try {
       const formData = new FormData();
@@ -78,81 +101,124 @@ class ChatApiService {
         uri: file.uri,
         type: file.type || this.getMimeType(type),
         name: file.name || `${type}-${Date.now()}.${this.getFileExtension(type)}`
-      });
+      } as any);
       formData.append('type', type);
 
       const response = await client(this.token, {
         'Content-Type': 'multipart/form-data'
-      }).post('chats/upload', formData);
+      }).post('/upload', formData);
 
-      if (response.data?.code !== 200) {
-        throw new Error('Upload failed');
+      if (response.data?.success) {
+        return {
+          id: response.data.file.id,
+          type,
+          url: response.data.file.url,
+          name: file.name,
+          size: file.size
+        };
       }
-
-      return {
-        id: response.data.result.id,
-        type,
-        url: response.data.result.url,
-        name: file.name,
-        size: file.size
-      };
+      throw new Error('Upload failed');
     } catch (error) {
       console.error('Error uploading file:', error);
       throw error;
     }
   }
 
-  // User actions
-  async blockUser(userId: string): Promise<void> {
+  // Check if user can initiate chat (customer only)
+  async canInitiateChat(jobId: string, ustaId: string): Promise<boolean> {
     try {
-      await client(this.token).post(`users/${userId}/block`);
+      const response = await client(this.token).get(
+        `${this.baseUrl}/conversations/can-initiate?jobId=${jobId}&ustaId=${ustaId}`
+      );
+      return response.data?.canInitiate || false;
     } catch (error) {
-      console.error('Error blocking user:', error);
-      throw error;
+      console.error('Error checking chat initiation permission:', error);
+      return false;
     }
   }
 
-  async unblockUser(userId: string): Promise<void> {
-    try {
-      await client(this.token).post(`users/${userId}/unblock`);
-    } catch (error) {
-      console.error('Error unblocking user:', error);
-      throw error;
-    }
-  }
-
-  // Transform methods
+  // Transform methods updated for backend response format
   private transformMessage(data: any): Message {
     return {
-      id: data.messageId || data.id,
-      senderId: data.userId || data.senderId,
+      id: data.id,
+      senderId: data.senderId,
       receiverId: data.receiverId,
-      content: data.textMsg || data.message || data.content || '',
-      timestamp: data.ChatDate || data.timestamp || data.createdAt,
-      type: data.messageType || data.type,
-      status: data.status || 'delivered',
-      replyTo: data.replyToMessageId,
-      attachments: data.attachments || [],
-      roomId: data.jobId || data.roomId
+      content: data.content?.text || '',
+      timestamp: data.createdAt,
+      type: data.type || 'text',
+      status: data.status || 'sent',
+      replyTo: data.content?.replyTo,
+      attachments: this.transformAttachments(data.content),
+      roomId: data.conversationId,
+      jobId: data.jobId
     };
+  }
+
+  private transformAttachments(content: any): Attachment[] {
+    const attachments: Attachment[] = [];
+    
+    if (content?.images?.length) {
+      content.images.forEach((url: string, index: number) => {
+        attachments.push({
+          id: `img-${index}`,
+          type: AttachmentType.IMAGE,
+          url,
+          name: `image-${index}`,
+          size: 0
+        });
+      });
+    }
+    
+    if (content?.audio) {
+      attachments.push({
+        id: 'audio-0',
+        type: AttachmentType.AUDIO,
+        url: content.audio,
+        name: 'audio',
+        size: 0
+      });
+    }
+    
+    if (content?.attachments?.length) {
+      content.attachments.forEach((att: any) => {
+        attachments.push({
+          id: att.id || `file-${attachments.length}`,
+          type: AttachmentType.FILE,
+          url: att.url,
+          name: att.name,
+          size: att.size || 0
+        });
+      });
+    }
+    
+    return attachments;
   }
 
   private transformChatRoom(data: any): ChatRoom {
+    // Find the other participant
+    const otherParticipant = data.participants?.find((p: any) => p.id !== this.getCurrentUserId()) || {};
+    
     return {
-      id: data.jobId || data.id,
+      id: data.id,
       jobId: data.jobId,
       jobTitle: data.jobTitle || '',
       otherUser: {
-        id: data.otherUserId || data.userId,
-        name: data.otherUserName || data.userName,
-        avatar: data.otherUserAvatar || data.avatar,
-        isOnline: data.isOnline || false
+        id: otherParticipant.id || '',
+        name: otherParticipant.name || 'Unknown',
+        avatar: otherParticipant.avatar || '',
+        isOnline: otherParticipant.isOnline || false
       },
       lastMessage: data.lastMessage ? this.transformMessage(data.lastMessage) : undefined,
       unreadCount: data.unreadCount || 0,
-      isBlocked: data.isBlocked || false,
-      updatedAt: data.updatedAt || data.lastChatDate
+      isBlocked: false,
+      updatedAt: data.lastMessageAt || data.updatedAt,
+      participants: data.participants || []
     };
+  }
+
+  private getCurrentUserId(): string {
+    // This should be set from your auth context
+    return ''; // Implement based on your auth system
   }
 
   private getMimeType(type: AttachmentType): string {
