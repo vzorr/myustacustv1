@@ -15,7 +15,7 @@ class ChatApiService {
     canInitiate: boolean;
   }> {
     try {
-      const response = await client(this.token).post(`conversations/init`, {
+      const response = await client(this.token).post(`${this.baseUrl}/conversations/init`, {
         jobId,
         participantId: ustaId
       });

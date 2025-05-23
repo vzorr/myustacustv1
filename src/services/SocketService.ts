@@ -3,7 +3,17 @@ import { Message, MessageStatus, MessageType } from '../types/chat';
 
 type SocketCallback = (...args: any[]) => void;
 
-export class socketService {
+interface SocketEventMap {
+  'message_received': (msg: Message) => void;
+  'message_read': (messageId: string) => void;
+  'message_delivered': (messageId: string) => void;
+  'typing': (userId: string, isTyping: boolean) => void;
+  'user_status': (userId: string, isOnline: boolean) => void;
+  'connection_change': (connected: boolean) => void;
+  'socket_error': (error: any) => void;
+}
+
+class SocketService {
   private socket: Socket | null = null;
   private readonly serverUrl: string;
   private userId: string | null = null;
@@ -26,6 +36,9 @@ export class socketService {
           transports: ['websocket'],
           query: { userId },
           timeout: 10000,
+          reconnection: true,
+          reconnectionAttempts: 5,
+          reconnectionDelay: 2000
         });
 
         this.socket.on('connect', () => {
