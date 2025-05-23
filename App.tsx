@@ -1,23 +1,37 @@
 // =====================================================
-// FILE: src/App.tsx (Updated to include chat cleanup)
+// FILE: src/App.tsx (Fixed version)
 // =====================================================
 
-import React, { useEffect, useState } from 'react'
-import MainStack from './src/navigation/MainStack/MainStack'
+import React, { useEffect } from 'react';
+import MainStack from './src/navigation/MainStack/MainStack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Provider, useSelector } from 'react-redux'
+import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from './src/stores/Store/store';
 import { chatService } from './src/services/ChatService';
-import { AppState } from 'react-native';
+import { AppState, AppStateStatus } from 'react-native';
 
+// Main App Component
 const App: React.FC = () => {
   useEffect(() => {
-    // Handle app state changes for chat service
-    const handleAppStateChange = (nextAppState: string) => {
+    // Check for session recovery on app start
+    const initializeApp = async () => {
+      try {
+        const hasSession = await chatService.recoverSession();
+        console.log('🔍 Session recovery check:', hasSession ? 'Found' : 'Not found');
+      } catch (error) {
+        console.error('Error during app initialization:', error);
+      }
+    };
+
+    initializeApp();
+
+    // Handle app state changes
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' || nextAppState === 'inactive') {
-        // App is going to background, cleanup chat service
-        chatService.cleanup();
+        // App is going to background
+        console.log('📱 App going to background');
+        // Note: We're not disconnecting to maintain connection
       }
     };
 
@@ -26,7 +40,13 @@ const App: React.FC = () => {
     return () => {
       subscription?.remove();
       // Final cleanup when app unmounts
-      chatService.cleanup();
+      console.log('🔄 App unmounting, cleaning up chat service...');
+      // Use disconnect if available, otherwise use cleanup
+      if (typeof chatService.disconnect === 'function') {
+        chatService.disconnect();
+      } else if (typeof chatService.cleanup === 'function') {
+        chatService.cleanup();
+      }
     };
   }, []);
 
@@ -38,7 +58,7 @@ const App: React.FC = () => {
         </GestureHandlerRootView>
       </PersistGate>
     </Provider>
-  )
-}
+  );
+};
 
-export default App
+export default App;

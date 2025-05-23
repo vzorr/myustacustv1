@@ -33,6 +33,8 @@ interface ChatInboxUiProps {
   onLoadMore: () => void;
   onTyping: (isTyping: boolean) => void;
   navigation: any;
+  conversationId: any
+  currentUserId:any
 }
 
 const ChatInboxUi: React.FC<ChatInboxUiProps> = ({

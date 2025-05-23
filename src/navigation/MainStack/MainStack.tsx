@@ -9,11 +9,13 @@ import { setFireBaseToken } from '../../stores/reducer/FireBaseTokeReducer';
 import DeviceInfo from 'react-native-device-info';
 import { notificationClient } from '../../apiManager/Client';
 import { useNotificationHandler } from '../../hooks/useNotificationHandler';
+import { useChatInitialization } from '../../hooks/useChatInitialization'; // Add this
 
 // Component that has access to navigation context
 const NavigationContent: React.FC = () => {
   // Now the hook has access to NavigationContainer
   useNotificationHandler();
+  useChatInitialization(); // Just one line added!
   
   return <NavStack />;
 };
