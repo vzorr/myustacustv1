@@ -216,6 +216,7 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
                 if (userData?.token) {
                     let response = await client(userToken).get(`account/usta-profile/${otherUserId}`)
                     let res = response?.data
+                    console.log("res.....", res)
                     setIsloading(false)
                     if (res?.code !== 200) {
                         return
@@ -256,7 +257,7 @@ const UstaProfileScreen: React.FC<UserNavigationRootProps<"UstaProfile">> = (pro
             />
             <UstaPortfolioList data={otherUserData?.portfolios} handlePortfolio={handlePortfolio} />
             <Heading
-                headingText='WORK HISTORY'
+                headingText='REVIEWS'
                 style={{ fontSize: fontSize[16] }}
             />
             <WorkHistoryTabs
