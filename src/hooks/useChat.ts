@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { chatService } from '../services/ChatService';
 import { Message, AttachmentType, MessageStatus, MessageType } from '../types/chat';
 
-
 interface UseChatProps {
   jobId: string;
   receiverId: string;
@@ -135,7 +134,7 @@ export function useChat({
 
             // Mark as read
             //await chatService.markMessagesAsRead(existingConversationId);
-          } catch (err) {
+          } catch (err:any) {
             console.error('Failed to load messages:', err);
             if (mounted) {
               setMessages([]);

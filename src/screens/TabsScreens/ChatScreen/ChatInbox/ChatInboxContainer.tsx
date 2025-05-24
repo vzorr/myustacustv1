@@ -22,7 +22,7 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
     isBlocked,
     conversationId: existingConversationId 
   }: any = chatData;
-
+  
   // Initialize chat service if needed
   useEffect(() => {
     const checkChatService = async () => {

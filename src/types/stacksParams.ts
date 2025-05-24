@@ -96,6 +96,7 @@ export type UserStackParamList = {
             isBlocked: boolean;
             isBlocker?: boolean;
             profileImage?: string;
+            conversationId: string
         };
         prefilledMessage?: string;
     };

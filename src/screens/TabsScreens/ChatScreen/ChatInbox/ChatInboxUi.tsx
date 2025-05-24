@@ -33,6 +33,8 @@ interface ChatInboxUiProps {
   onLoadMore: () => void;
   onTyping: (isTyping: boolean) => void;
   navigation: any;
+  conversationId: any
+  currentUserId:any
 }
 
 const ChatInboxUi: React.FC<ChatInboxUiProps> = ({
@@ -245,7 +247,7 @@ const ChatInboxUi: React.FC<ChatInboxUiProps> = ({
           ref={flatListRef}
           data={messages}
           renderItem={renderMessage}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={chatInboxStyles.messagesList}
           showsVerticalScrollIndicator={false}
           inverted={true}

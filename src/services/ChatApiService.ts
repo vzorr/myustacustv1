@@ -15,6 +15,7 @@ class ChatApiService {
     hasMore: boolean;
   }> {
     try {
+      console.log("CONVERSATIONiD", conversationId)
       const offset = (page - 1) * limit;
       const response = await chatClient(this.token).get(
         `messages/conversation/${conversationId}?limit=${limit}&offset=${offset}`
@@ -22,7 +23,7 @@ class ChatApiService {
 
       if (response.data?.success) {
         return {
-          messages: (response.data.messages || []).map(msg => this.transformMessage(msg)),
+          messages: (response.data.messages || []).map((msg:any) => this.transformMessage(msg)),
           hasMore: response.data.hasMore || false
         };
       }
@@ -60,7 +61,7 @@ class ChatApiService {
 
       if (response.data?.success) {
         return {
-          conversations: (response.data.conversations || []).map(conv => 
+          conversations: (response.data.conversations || []).map((conv:any) => 
             this.transformConversation(conv, currentUserId)
           ),
           hasMore: response.data.hasMore || false
