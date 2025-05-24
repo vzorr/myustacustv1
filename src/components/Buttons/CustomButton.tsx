@@ -7,10 +7,11 @@ interface ButtonProps {
     onPress: () => void;
     style?: ViewStyle;
     textStyle?: TextStyle;
+    disabled?: boolean;
 }
 
-const CustomButton: React.FC<ButtonProps> = ({ title, onPress, style, textStyle }) => (
-    <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+const CustomButton: React.FC<ButtonProps> = ({ title, onPress, style, textStyle, disabled }) => (
+    <TouchableOpacity style={[styles.button, style]} onPress={onPress} disabled={disabled}>
         <Text style={[styles.buttonText, textStyle]}>{title}</Text>
     </TouchableOpacity>
 );

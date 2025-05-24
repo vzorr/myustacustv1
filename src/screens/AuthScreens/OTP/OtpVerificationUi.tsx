@@ -6,7 +6,7 @@ import { COLORS } from '../../../config/themes/theme';
 import AuthOverlay from '../../../components/AuthOverlay/AuthOverlay';
 
 const OtpVerificationUi = (props: any) => {
-    const { onSubmit, handleOtpChange, otp, inputs, errorMessage, navigation, verInfo, handleResendOTP } = props
+    const { onSubmit, handleOtpChange, otp, inputs, screenType, errorMessage, navigation, verInfo, handleResendOTP } = props
     const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
     useEffect(() => {
@@ -38,8 +38,8 @@ const OtpVerificationUi = (props: any) => {
             <AuthOverlay color={COLORS.authBgColor} />
             <KeyboardAvoidingView>
                 <View style={otpCodeStyle.otpContainer}>
-                    <View>
-                        <Text style={otpCodeStyle.title}>Check your email.</Text>
+                    <View style={{ width: '80%' }}>
+                        <Text style={otpCodeStyle.title}>{screenType === "EmailScreen" ? "Verify your new email." : screenType === "PhoneNumberScreen" ? "Verify your new phone number." : "Check your email"}</Text>
                     </View>
                     <View style={otpCodeStyle.subTitleContainer}>
                         <Text style={otpCodeStyle.subTitle}>We just sent a 4-digit code to {verInfo}. Please enter it below.</Text>

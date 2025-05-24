@@ -69,6 +69,11 @@ export type UserStackParamList = {
     JobsStatusSackNav: any;
     JobsStatusScreens: any;
     ProfessionDetailScreen: any;
+    EditProfile: any;
+    PhoneNumberScreen: any;
+    EmailScreen: any;
+    ChangeEmailAndNumber: any;
+    UpdatePassword: any;
     PostedJobDetailScreen: { jobId: string | number };
     ApplicationsList: { jobId: string | number };
     ApplicationDetail: { proposalId: string | number };

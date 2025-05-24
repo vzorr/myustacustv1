@@ -11,99 +11,108 @@ import { useSelector } from 'react-redux';
 import WorkHistoryCard from '../../../components/WorkHistoryCard/WorkHistoryCard';
 import { client } from '../../../apiManager/Client';
 import LoadingScreen from '../../../components/Loader/LoadingScreen';
+import { SVGIcons } from '../../../config/constants/svg';
 
 const ProfileScreen: React.FC<UserNavigationRootProps<"ProfileScreen">> = (props) => {
+    const { navigation } = props;
     // States
     const [activeTab, setActiveTab] = useState(WORK_HISTORY_TABS.FINISHED_JOBS);
     const [isLoading, setIsLoading] = useState(true);
     const [profileData, setProfileData] = useState<any>(null);
     const [workHistory, setWorkHistory] = useState<any[]>([]);
     const [activeJobs, setActiveJobs] = useState<any[]>([]);
-    
+
     // Get user data and auth token from Redux store
     const { userData }: any = useSelector((state: any) => state?.userInfo);
     const { token }: any = useSelector((state: any) => state?.accessToken);
-    
+    const handleEditButton = () => {
+        navigation.navigate("EditProfile")
+    };
+
     // Fetch user profile data from API
     // Using useCallback to memoize the function so it won't recreate on every render
     const fetchProfileData = useCallback(async () => {
         try {
             setIsLoading(true);
             const userToken = token ? token : userData?.token;
-            
+
             if (!userToken) {
                 console.log("No authentication token available");
                 setIsLoading(false);
                 return;
             }
-            
+
             // Get user profile data
             const profileResponse = await client(userToken).get('users/customerProfile');
-            
+
             if (profileResponse?.data?.code !== 200) {
                 console.log("Failed to fetch profile data");
                 setIsLoading(false);
                 return;
             }
-            
+
             setProfileData(profileResponse?.data?.result);
-            
+
             // Get work history data (finished jobs)
             const historyResponse = await client(userToken).get('jobs/user/completed');
-            
+
             if (historyResponse?.data?.code === 200 && historyResponse?.data?.result) {
                 setWorkHistory(historyResponse?.data?.result?.data || []);
             }
-            
+
             // Get active jobs
             const activeJobsResponse = await client(userToken).get('jobs/user/active');
-            
+
             if (activeJobsResponse?.data?.code === 200 && activeJobsResponse?.data?.result) {
                 setActiveJobs(activeJobsResponse?.data?.result?.data || []);
             }
-            
+
         } catch (error) {
             console.log("Error fetching profile data:", error);
         } finally {
             setIsLoading(false);
         }
     }, [token, userData?.token]); // Include token and userData?.token as dependencies
-    
+
     // Load data when component mounts
     useEffect(() => {
         fetchProfileData();
     }, [fetchProfileData]); // Now correctly include fetchProfileData as a dependency
-    
+
     // Handle menu press
     const handleMenuPress = () => {
         // Add menu handling logic here
     };
-    
+
     // Determine which jobs to display based on active tab
     const displayJobs = activeTab === WORK_HISTORY_TABS.FINISHED_JOBS ? workHistory : activeJobs;
-    
+
     const renderScreenContent = () => (
         <View style={styles.contentContainer}>
-            <View>
-                <Heading
-                    headingText='ABOUT ME'
-                    style={{ fontSize: fontSize[16] }}
-                />
+            <View style={{ gap: 8 }}>
+                <View style={styles.headingContainer}>
+                    <Heading
+                        headingText='ABOUT ME'
+                        style={{ fontSize: fontSize[16] }}
+                    />
+                    <TouchableOpacity style={styles.editIconContainer} onPress={handleEditButton}>
+                        <SVGIcons.editIcon width={16} height={16} stroke={COLORS.white} />
+                    </TouchableOpacity>
+                </View>
                 <SubHeading
                     subHeadingText={profileData?.aboutMe || 'A detail-oriented and communicative customer who values quality work and professionalism. Their clear expectations and collaborative approach make them a pleasure to work with on any project.'}
                 />
             </View>
-            
+
             <LineSeparator />
-            
-            <View style={{flex: 1}}>
+
+            <View style={{ flex: 1 }}>
                 <Heading
-                    headingText='WORK HISTORY'
+                    headingText='REVIEWS'
                     style={{ fontSize: fontSize[16] }}
                 />
-                
-                <View style={styles.tabsContainer}>
-                    <TouchableOpacity 
+                {/* <View style={styles.tabsContainer}>
+                    <TouchableOpacity
                         style={[
                             styles.tab,
                             activeTab === WORK_HISTORY_TABS.FINISHED_JOBS && styles.activeTab,
@@ -118,7 +127,7 @@ const ProfileScreen: React.FC<UserNavigationRootProps<"ProfileScreen">> = (props
                         </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={[
                             styles.tab,
                             activeTab === WORK_HISTORY_TABS.ACTIVE_JOBS && styles.activeTab,
@@ -132,8 +141,7 @@ const ProfileScreen: React.FC<UserNavigationRootProps<"ProfileScreen">> = (props
                             {WORK_HISTORY_TABS.ACTIVE_JOBS} ({activeJobs.length})
                         </Text>
                     </TouchableOpacity>
-                </View>
-                
+                </View> */}
                 {displayJobs.length > 0 ? (
                     <FlatList
                         data={displayJobs}
@@ -167,11 +175,11 @@ const ProfileScreen: React.FC<UserNavigationRootProps<"ProfileScreen">> = (props
             </View>
         </View>
     );
-    
+
     if (isLoading) {
         return <LoadingScreen />;
     }
-    
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
@@ -184,7 +192,7 @@ const ProfileScreen: React.FC<UserNavigationRootProps<"ProfileScreen">> = (props
                 showNotificationBadge={true}
                 badgeCount={profileData?.notifications?.unread || 0}
             />
-            
+
             <FlatList
                 data={[{ id: '1' }]} // Just need one item to render the content
                 keyExtractor={item => item.id}
@@ -208,6 +216,19 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         gap: 16,
+    },
+    headingContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    editIconContainer: {
+        width: 22,
+        height: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 11,
+        backgroundColor: COLORS.Navy,
     },
     tabsContainer: {
         flexDirection: 'row',
