@@ -37,6 +37,7 @@ const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
     const dispatch = useDispatch()
+    
     const getMetaData = async () => {
         try {
             let res = await client1().get('general/meta')
@@ -45,13 +46,14 @@ const NavStack: React.FC = () => {
             }
             dispatch(setMetaData(res?.data?.result))
         } catch (error) {
-            console.log("errorffffffff", JSON.stringify(error))
+            console.log("Error fetching metadata:", JSON.stringify(error))
         }
-
     }
+    
     useEffect(() => {
         getMetaData()
     }, [])
+    
     return (
         <Stack.Navigator
             screenOptions={{

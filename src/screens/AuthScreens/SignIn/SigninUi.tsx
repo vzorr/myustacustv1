@@ -143,9 +143,9 @@ const SignInScreen: React.FC<UserNavigationRootProps<"SignIn">> = (props) => {
                     keyboardShouldPersistTaps="handled"
                 >
                     <Formik
-                        initialValues={{
-                            emailOrPhone: '',
-                            password: ''
+                         initialValues={{
+                            emailOrPhone: 'amirsohail680@gmail.com',
+                            password: 'Password123@'
                         }}
                         onSubmit={async (values: any, { resetForm }) => {
                             setIsLoading(true);

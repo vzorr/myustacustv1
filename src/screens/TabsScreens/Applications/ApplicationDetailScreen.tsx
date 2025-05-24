@@ -27,14 +27,14 @@ const ApplicationDetailScreen: React.FC<UserNavigationRootProps<"ApplicationDeta
     const handleInterview = () => {
         props.navigation.navigate('ChatInbox',
             {
-                chatData: {
+                chatData:{
                     otherUserId: appDetail?.usta?.id,
                     jobId: appDetail?.job?.id,
                     jobTitle: appDetail?.job?.title,
                     userName: `${appDetail?.usta?.firstName} ${appDetail?.usta?.lastName}`,
                     isOnline: true,
-                    isBlocked: true,
-                    isBlocker: true,
+                    isBlocked: false,
+                    isBlocker: false,
                     profileImage: ""
                 }
             })

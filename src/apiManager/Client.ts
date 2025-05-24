@@ -6,7 +6,7 @@ import DeviceInfo from 'react-native-device-info';
 export const BASE_API_URL_STAGING = 'http://151.243.213.116:3000/api/';
 export const BASE_API_URL_PRODUCTION = 'http://151.243.213.116:3000/api/'; // Currently same as staging
 export const GOOGLE_PLACES_URL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-export const BASE_SOCKET_URL = 'http://151.243.213.116:5000/api/v1/'; // Fixed typo in variable name
+export const BASE_SOCKET_URL = 'http://151.243.213.116:5000'; // Fixed typo in variable name
 export const BASE_CHAT_URL = 'http://151.243.213.116:5000/api/v1/';
 export const BASE_NOTIFICATION_URL = 'http://151.243.213.116:5000/api/v1/';
 
@@ -118,6 +118,9 @@ export const ClientFormData = (token: string | null = null): AxiosInstance => {
 export const notificationClient = (token: string | null = null): AxiosInstance => {
   return createClient(BASE_NOTIFICATION_URL, token);
 };
+export const chatClient = (token: string | null = null): AxiosInstance => {
+  return createClient(BASE_CHAT_URL, token);
+};
 
 // Enhanced notification client with specialized functions
 export const NotificationService = {
@@ -186,7 +189,7 @@ export const ChatService = {
    * @returns Configured axios instance
    */
   getClient: (token: string | null = null): AxiosInstance => {
-    return createClient(BASE_CHAT_URL, token);
+    return  createClient(BASE_CHAT_URL, token);
   },
   
   /**

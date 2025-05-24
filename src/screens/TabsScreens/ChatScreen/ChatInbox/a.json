@@ -1,23 +1,8 @@
-  // Send a test message
-  const message = {
-    messageId: "8f3d7b1e-2cd4-472a-8dbf-9cbe560e2e75",
-    clientTempId: "temp-abc",
-    jobId: "8f3d7b1e-2cd4-472a-8dbf-9cbe560e2e75",
-    jobTitle: "Looking for an experienced electrician",
-    userName: "John Doe",
-    phone: "+923096222666",
-    userId: "8f3d7b1e-2cd4-472a-8dbf-9cbe560e2e75",
-    receiverId: "8f3d7b1e-2cd4-472a-8dbf-9cbe560e2e75",
-    isOnline: true,
-    isBlocked: false,
-    ChatDate: new Date().toISOString(),
-    messageType: "text",
-    messageImages: [],
-    audioFile: "",
-    textMsg: "Test message from client",
-    replyToMessageId: null,
-    editedAt: null,
-    deleted: false,
-    isSystemMessage: false,
-    attachments: []
-    };
+yusta-backend  | [2025-05-23 12:51:58] WARN: Route not found: /api/api/v1/messages/read
+1|myusta-backend  | HTTP POST /api/api/v1/messages/read Status: 404 - 6.261 ms
+1|myusta-backend  | [2025-05-23 12:51:58] WARN: Route not found: /api/api/v1/messages/conversation/f7ed5ad6-b313-4327-a5a1-44723c05dd2f?limit=50&offset=0
+1|myusta-backend  | HTTP GET /api/api/v1/messages/conversation/f7ed5ad6-b313-4327-a5a1-44723c05dd2f?limit=50&offset=0 Status: 404 - 1.139 ms
+2|chat-backend    | info: 📊 Socket.IO metrics {"connected":2,"metrics":{"authenticated":2,"connections":2,"rateLimited":0},"rooms":2,"timestamp":"2025-05-23T10:52:22.349Z"}
+1|myusta-backend  | [2025-05-23 12:53:17] WARN: Route not found: /api/api/v1/messages/read
+1|myusta-backend  | HTTP POST /api/api/v1/messages/read Status: 404 - 6.569 ms
+2|chat-backend    | info: 📊 Socket.IO metrics {"connected":2,"metrics":{"authenticated":2,"con
