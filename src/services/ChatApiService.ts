@@ -15,6 +15,7 @@ class ChatApiService {
     hasMore: boolean;
   }> {
     try {
+      console.log("CONVERSATIONiD", conversationId)
       const offset = (page - 1) * limit;
       const response = await chatClient(this.token).get(
         `messages/conversation/${conversationId}?limit=${limit}&offset=${offset}`

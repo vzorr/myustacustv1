@@ -4,30 +4,39 @@ import { UserNavigationRootProps } from '../../../../types/stacksParams';
 import { COLORS } from '../../../../config/themes/theme';
 import AppHeader from '../../../../components/AppHeader/AppHeader';
 import { useChatList } from '../../../../hooks/useChatList';
-import { ChatRoom } from '../../../../types/chat';
+// import { ChatRoom } from '../../../../types/chat';
 import ChatListCard from './ChatListCard';
 import LoadingScreen from '../../../../components/Loader/LoadingScreen';
+import { useSelector } from 'react-redux';
 
 const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = ({ navigation }) => {
   const { chatRooms, loading, refreshing, refresh } = useChatList();
+  const { userData } = useSelector((state: any) => state?.userInfo);
+  const currentUserId = userData?.userId
 
-  const handleChatPress = (room: ChatRoom) => {
+  const handleChatPress = (room: any) => {
+    const otherUser = room.participants.find((p: any) => p.id !== currentUserId);
     navigation.navigate("ChatInbox", {
       chatData: {
-        otherUserId: room.otherUser.id,
+        conversationId:  room.id,
+        otherUserId: otherUser?.id,
         jobId: room.jobId,
         jobTitle: room.jobTitle,
-        userName: room.otherUser.name,
-        isOnline: room.otherUser.isOnline,
-        isBlocked: room.isBlocked,
+        userName: otherUser?.name,
+        isOnline: otherUser?.isOnline,
+        isBlocked: false,
+        isBlocker: false,
+        profileImage: ""
       }
-    });
+    });;
+
   };
 
-  const renderChatRoom = ({ item }: { item: ChatRoom }) => (
+  const renderChatRoom = ({ item }: { item: any }) => (
     <ChatListCard
       room={item}
       onPress={() => handleChatPress(item)}
+      currentUserId={currentUserId}
     />
   );
 
@@ -47,7 +56,7 @@ const ChatListContainer: React.FC<UserNavigationRootProps<"ChatList">> = ({ navi
   return (
     <SafeAreaView style={styles.container}>
       <AppHeader
-        onMenuPress={() => {/* Handle menu */}}
+        onMenuPress={() => {/* Handle menu */ }}
         showNotificationBadge={true}
         badgeCount={0}
         isProfile={false}

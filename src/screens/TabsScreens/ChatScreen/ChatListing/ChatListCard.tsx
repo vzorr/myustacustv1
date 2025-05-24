@@ -1,16 +1,17 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import moment from 'moment';
-import { ChatRoom } from '../../../../types/chat';
+// import { ChatRoom } from '../../../../types/chat';
 import { COLORS, FONTS, fontSize } from '../../../../config/themes/theme';
 import { SVGIcons } from '../../../../config/constants/svg';
 
-interface ChatListCardProps {
-  room: ChatRoom;
-  onPress: () => void;
-}
+// interface ChatListCardProps {
+//   room: ChatRoom;
+//   onPress: () => void;
+// }
 
-const ChatListCard: React.FC<ChatListCardProps> = ({ room, onPress }) => {
+const ChatListCard = (props: any) => {
+  const { room, onPress, currentUserId } = props
   const formatDate = (dateString: string) => {
     const now = moment();
     const messageDate = moment(dateString);
@@ -30,10 +31,10 @@ const ChatListCard: React.FC<ChatListCardProps> = ({ room, onPress }) => {
 
   const getLastMessageText = () => {
     if (!room.lastMessage) return 'No messages yet';
-    
+
     switch (room.lastMessage.type) {
       case 'text':
-        return room.lastMessage.content;
+        return room.lastMessage?.content?.text;
       case 'image':
         return '📷 Photo';
       case 'audio':
@@ -44,7 +45,9 @@ const ChatListCard: React.FC<ChatListCardProps> = ({ room, onPress }) => {
         return room.lastMessage.content || 'Message';
     }
   };
+  // let otherUser = room?.participants && room?.participants[0]
 
+  const otherUser = room?.participants?.find((p: any) => p.id !== currentUserId);
   return (
     <TouchableOpacity
       style={styles.container}
@@ -55,13 +58,13 @@ const ChatListCard: React.FC<ChatListCardProps> = ({ room, onPress }) => {
         <Image
           style={styles.avatar}
           source={
-            room.otherUser.avatar
-              ? { uri: room.otherUser.avatar }
+            otherUser?.avatar
+              ? { uri: otherUser?.avatar }
               : require('../../../../assets/images/MostVisitedProfessions/Plumber.png')
           }
           resizeMode="cover"
         />
-        {room.otherUser.isOnline && <View style={styles.onlineIndicator} />}
+        {otherUser?.isOnline && <View style={styles.onlineIndicator} />}
       </View>
 
       <View style={styles.contentContainer}>
@@ -74,24 +77,24 @@ const ChatListCard: React.FC<ChatListCardProps> = ({ room, onPress }) => {
 
         <View style={styles.nameTimeContainer}>
           <Text style={styles.userName} numberOfLines={1}>
-            {room.otherUser.name}
+            {otherUser?.name}
           </Text>
           <Text style={styles.timestamp}>
-            {formatDate(room.updatedAt)}
+            {formatDate(room?.lastMessage?.updatedAt)}
           </Text>
         </View>
 
         <View style={styles.messageContainer}>
-          <Text 
+          <Text
             style={[
               styles.lastMessage,
               room.unreadCount > 0 && styles.unreadMessage
-            ]} 
+            ]}
             numberOfLines={1}
           >
             {getLastMessageText()}
           </Text>
-          
+
           {room.unreadCount > 0 && (
             <View style={styles.unreadBadge}>
               <Text style={styles.unreadCount}>

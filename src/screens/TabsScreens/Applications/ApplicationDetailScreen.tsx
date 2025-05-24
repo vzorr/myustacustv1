@@ -28,6 +28,7 @@ const ApplicationDetailScreen: React.FC<UserNavigationRootProps<"ApplicationDeta
         props.navigation.navigate('ChatInbox',
             {
                 chatData:{
+                    conversationId: "",
                     otherUserId: appDetail?.usta?.id,
                     jobId: appDetail?.job?.id,
                     jobTitle: appDetail?.job?.title,
