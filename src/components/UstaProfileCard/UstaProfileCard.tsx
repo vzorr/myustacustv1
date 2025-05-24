@@ -23,7 +23,7 @@ const UstaProfileCard = (props: any) => {
                         >
                             {ustaName}
                         </Text>
-                        <SVGIcons.badgeCheckIcon />
+                        <SVGIcons.badgeCheckIcon width={16} height={16} />
                     </View>
                     <View>
                         <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[12], color: COLORS.Navy200 }]}>{profession}</Text>
