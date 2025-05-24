@@ -1,8 +1,10 @@
 // ChatService.ts - Validated and fixed version
-import { Message, MessageStatus, AttachmentType, ChatConversation } from '../types/chat';
+import { Message, MessageStatus, AttachmentType, ChatConversation, MessageType } from '../types/chat';
+
 import { socketService } from './SocketService';
 import { chatApiService } from './ChatApiService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { v4 as uuidv4 } from 'uuid';
 
 class ChatService {
   private userId: string = '';
@@ -50,6 +52,9 @@ class ChatService {
 
   // Step 2: Start a new conversation (Customer only)
   async startConversation(jobId: string, ustaId: string): Promise<string> {
+
+    console.log ("inside - startConversation");
+
     // Only customers can start conversations
     if (this.userRole !== 'customer') {
       throw new Error('Only customers can start conversations');
@@ -99,10 +104,12 @@ class ChatService {
     if (!text.trim()) {
       throw new Error('Message cannot be empty');
     }
+    
+    console.log ("inside - sendTextMessage");
 
     // Create message object
     const message: Message = {
-      id: `temp-${Date.now()}-${Math.random()}`,
+      id: uuidv4(),
       senderId: this.userId,
       receiverId: receiverId,
       content: text.trim(),
@@ -119,6 +126,7 @@ class ChatService {
 
     try {
       // Send via WebSocket
+
       socketService.sendMessage(message);
       console.log('✅ Message sent');
     } catch (error) {
@@ -147,7 +155,7 @@ class ChatService {
 
       // Create message with attachment
       const message: Message = {
-        id: `temp-${Date.now()}-${Math.random()}`,
+        id: uuidv4(),
         senderId: this.userId,
         receiverId: receiverId,
         content: attachment.name || 'Attachment',
@@ -371,6 +379,7 @@ class ChatService {
     return socketService.on('socket_error', callback);
   }
 
+
   onAddedToConversation(callback: (conversation: any) => void): () => void {
     return socketService.on('added_to_conversation', callback);
   }
@@ -514,72 +523,177 @@ class ChatService {
   // Add these methods to your ChatService class:
 
   // Create conversation and send first message
+
   async createConversationAndSendMessage(
     jobId: string,
     receiverId: string,
     text: string,
     replyTo?: string
-  ): Promise<string> {
+): Promise<string> {
     try {
-      // Create message object without conversationId
-      const message: Message = {
-        id: `temp-${Date.now()}-${Math.random()}`,
-        senderId: this.userId,
-        receiverId: receiverId,
-        content: text.trim(),
-        timestamp: new Date().toISOString(),
-        type: MessageType.TEXT,
-        status: MessageStatus.SENDING,
-        replyTo,
-        conversationId: '', // Will be set by backend
-        jobId: jobId
-      };
+        console.log("🚀 ====== START createConversationAndSendMessage ======");
+        console.log("📋 Input params:", { jobId, receiverId, text: text.substring(0, 50) + '...', replyTo });
 
-      // Send via WebSocket with jobId instead of conversationId
-      const socketMessage = {
-        ...message,
-        jobId: jobId,
-        // Don't include conversationId for new conversations
-      };
+        const tempId = `temp-${Date.now()}-${Math.random()}`;
+        console.log('🎯 Generated tempId:', tempId);
 
-      // Send and wait for response with conversationId
-      return new Promise((resolve, reject) => {
-        // Listen for message sent confirmation
-        const unsubscribe = socketService.on('message_sent', (data: any) => {
-          if (data.tempId === message.id || data.clientTempId === message.id) {
-            unsubscribe();
-            
-            // Extract conversation ID from response
-            const conversationId = data.conversationId || data.roomId;
-            if (conversationId) {
-              // Update local message with conversation ID
-              this.addMessageLocally(conversationId, {
-                ...message,
-                id: data.messageId || data.id,
-                conversationId: conversationId,
-                status: MessageStatus.SENT
-              });
-              resolve(conversationId);
-            } else {
-              reject(new Error('No conversation ID returned'));
-            }
-          }
+        // Create message object
+        const messageId = uuidv4();
+        console.log('🆔 Generated messageId:', messageId);
+
+        const message: Message = {
+            id: messageId,
+            senderId: this.userId,
+            clientTempId:tempId,
+            receiverId,
+            content: text.trim(),
+            timestamp: new Date().toISOString(),
+            type: MessageType.TEXT,
+            status: MessageStatus.SENDING,
+            replyTo,
+            conversationId: '', // to be filled by backend
+            jobId
+        };
+
+        const socketMessage = {
+            ...message,
+            jobId
+        };
+
+        // 🔍 Log message being sent
+        console.log('📤 Socket message prepared:', {
+            messageId: socketMessage.id,
+            clientTempId: socketMessage.clientTempId,
+            jobId: socketMessage.jobId,
+            receiverId: socketMessage.receiverId,
+            hasContent: !!socketMessage.content,
+            contentLength: socketMessage.content.length
         });
 
-        // Send the message
-        socketService.sendMessage(socketMessage);
+        return new Promise((resolve, reject) => {
+            let listenerCalled = false;
+            let eventCount = 0;
 
-        // Timeout after 10 seconds
-        setTimeout(() => {
-          unsubscribe();
-          reject(new Error('Message send timeout'));
-        }, 10000);
-      });
+            console.log('🎧 Setting up message_sent listener for tempId:', tempId);
+            
+            const unsubscribe = socketService.on('message_sent', (...args: any[]) => {
+                eventCount++;
+                console.log(`📨 ==== message_sent event #${eventCount} received ====`);
+                console.log('📨 Number of arguments:', args.length);
+                console.log('📨 Argument types:', args.map(arg => typeof arg));
+                
+                if (args.length === 0) {
+                    console.error('❌ No arguments received in message_sent event!');
+                    return;
+                }
+
+                const data = args[0];
+                listenerCalled = true;
+
+                console.log('📥 Received data type:', typeof data);
+                console.log('📥 Received data:', JSON.stringify(data, null, 2));
+                
+                // Detailed matching debug
+                console.log('🔍 === MATCHING DEBUG ===');
+                console.log('🔍 Expected tempId:', tempId);
+                console.log('🔍 Type of expected tempId:', typeof tempId);
+                console.log('🔍 data.tempId:', data.tempId);
+                console.log('🔍 Type of data.tempId:', typeof data.tempId);
+                console.log('🔍 data.clientTempId:', data.clientTempId);
+                console.log('🔍 Type of data.clientTempId:', typeof data.clientTempId);
+                console.log('🔍 Exact match data.tempId === tempId:', data.tempId === tempId);
+                console.log('🔍 Exact match data.clientTempId === tempId:', data.clientTempId === tempId);
+
+                const isMatch = data.tempId === tempId || data.clientTempId === tempId;
+                console.log('🔍 Final match result:', isMatch);
+
+                if (isMatch) {
+                    console.log('✅ MATCH FOUND! Processing successful response');
+                    unsubscribe();
+
+                    const conversationId = data.conversationId || data.roomId;
+                    console.log('💬 Extracted conversationId:', conversationId);
+
+                    if (conversationId) {
+                        console.log('📝 Adding message to local store');
+                        this.addMessageLocally(conversationId, {
+                            ...message,
+                            id: data.messageId || data.id,
+                            conversationId,
+                            status: MessageStatus.SENT
+                        });
+                        console.log('✅ Resolving with conversationId:', conversationId);
+                        resolve(conversationId);
+                    } else {
+                        console.warn('⚠️ message_sent received but no conversationId:', data);
+                        reject(new Error('No conversation ID returned'));
+                    }
+                } else {
+                    console.warn('❌ NO MATCH - This event is for a different message');
+                    console.warn('❌ Mismatch details:', {
+                        expectedTempId: tempId,
+                        receivedTempId: data.tempId,
+                        receivedClientTempId: data.clientTempId,
+                        tempIdMatch: data.tempId === tempId,
+                        clientTempIdMatch: data.clientTempId === tempId
+                    });
+                }
+                console.log(`📨 ==== End of message_sent event #${eventCount} ====`);
+            });
+
+            console.log('🚀 Listener setup complete, now sending message');
+
+            // Emit message via socket
+            console.log('📤 Calling socketService.sendMessage with clientTempId:', socketMessage.clientTempId);
+            socketService.sendMessage(socketMessage);
+            console.log('📤 socketService.sendMessage called');
+
+            // ⏰ Timeout fallback
+            const timeoutHandle = setTimeout(() => {
+                console.error('⏰ ====== TIMEOUT REACHED ======');
+                console.error('⏰ Timeout details:', {
+                    tempId,
+                    listenerWasCalled: listenerCalled,
+                    eventsReceived: eventCount,
+                    timeoutDuration: '10 seconds'
+                });
+                unsubscribe();
+                reject(new Error('Message send timeout'));
+            }, 10000);
+
+            // Log every 2 seconds while waiting
+            const waitingInterval = setInterval(() => {
+                console.log('⏳ Still waiting for message_sent event...', {
+                    tempId,
+                    secondsElapsed: Math.floor((Date.now() - parseInt(tempId.split('-')[1])) / 1000),
+                    eventsReceivedSoFar: eventCount
+                });
+            }, 2000);
+
+            // Clean up interval when promise resolves/rejects
+            const originalResolve = resolve;
+            const originalReject = reject;
+            
+            resolve = (value) => {
+                clearInterval(waitingInterval);
+                clearTimeout(timeoutHandle);
+                console.log('✅ ====== SUCCESS - Promise resolved ======');
+                originalResolve(value);
+            };
+            
+            reject = (error) => {
+                clearInterval(waitingInterval);
+                clearTimeout(timeoutHandle);
+                console.log('❌ ====== FAILURE - Promise rejected ======');
+                originalReject(error);
+            };
+        });
     } catch (error) {
-      console.error('Failed to create conversation and send message:', error);
-      throw error;
+        console.error('❌ ====== EXCEPTION in createConversationAndSendMessage ======');
+        console.error('❌ Error details:', error);
+        throw error;
     }
-  }
+}
 
   // Create conversation and send first attachment
   async createConversationAndSendAttachment(
@@ -589,6 +703,8 @@ class ChatService {
     type: AttachmentType
   ): Promise<string> {
     try {
+
+      console.log ("inside createConversationAndSendAttachment");
       // First upload the file
       const attachment = await chatApiService.uploadFile(file, type);
 
@@ -609,6 +725,8 @@ class ChatService {
       // Send via WebSocket with jobId
       return new Promise((resolve, reject) => {
         const unsubscribe = socketService.on('message_sent', (data: any) => {
+          console.log (data.temp  +  "=" + message.id + "data.clientTempId" + data.clientTempId + "= " +  message.id);
+
           if (data.tempId === message.id || data.clientTempId === message.id) {
             unsubscribe();
             
