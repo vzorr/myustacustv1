@@ -9,8 +9,10 @@ import LineSeparator from '../../../../components/LineSeparator/LineSeparator'
 import Heading from '../../../../components/Heading/Heading'
 import UstaProfileCard from '../../../../components/UstaProfileCard/UstaProfileCard'
 import UstaProfileHorizentalCard from '../../../../components/UstaProfileHorizentalCard/UstaProfileHorizentalCard'
+import JobInvitaionModal from '../../../../components/ConfirmationModal/JobInvitationModal'
 
-const ProfessionDetailScreenUi = () => {
+const ProfessionDetailScreenUi = (props: any) => {
+    const { handleConfirmInvitation, handleInvite, jobs, showModal, setShowModal, showDropdown, setShowDropdown, selectedOption, setSelectedOption, handleDropdownToggle, navigation } = props
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View>
@@ -41,9 +43,10 @@ const ProfessionDetailScreenUi = () => {
                     style={{ fontSize: fontSize[16] }}
                 />
                 <UstaProfileCard
-                    handleInvite={() => { }}
+                    handleInvite={handleInvite}
                     handleProfile={() => { }}
                     ustaName='John Doe'
+                    profession={"Plumber"}
                     rating={4.9}
                     distance={3}
                     profileImage={require('../../../../assets/images/office.jpg')}
@@ -61,6 +64,18 @@ const ProfessionDetailScreenUi = () => {
                     distance={3}
                 />
             </View>
+            <JobInvitaionModal
+                visible={showModal}
+                onCancel={() => setShowModal(false)}
+                Confirm={handleConfirmInvitation}
+                selectedOption={selectedOption}
+                setSelectedOption={setSelectedOption}
+                showDropdown={showDropdown}
+                setShowDropdown={setShowDropdown}
+                handleDropdownToggle={handleDropdownToggle}
+                navigation={navigation}
+                jobList={jobs}
+            />
         </ScrollView>
     )
 }

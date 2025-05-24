@@ -22,7 +22,7 @@ const UstaProfileHorizentalCard = (props: any) => {
                             >
                                 {ustaName}
                             </Text>
-                            <SVGIcons.badgeCheckIcon />
+                            <SVGIcons.badgeCheckIcon width={16} height={16} />
                         </View>
                         <View style={styles.ratingAndLocationContainer}>
                             <View style={styles.ratingContainer}>

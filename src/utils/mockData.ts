@@ -108,4 +108,5 @@ export const topCategoriesData: ITopCategory[] = [
   { id: 'tc3', label: 'Carpenter', iconName: 'searchIcon' },
   { id: 'tc4', label: 'Painting', iconName: 'plusIcon' },
   { id: 'tc5', label: 'Roofing', iconName: 'searchIcon' },
+  { id: 'tc_other', label: 'Other', iconName: 'plusIcon' },
 ]; 

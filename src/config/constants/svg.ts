@@ -65,6 +65,8 @@ import sendIcon from "../../assets/icons/bx-navigation.svg"
 import replayIcon from "../../assets/icons/bx-reply.svg"
 import ApplianceIcon from "../../assets/icons/professionicons/ApplianceTechnicians.svg"
 import filterIcon from "../../assets/icons/bx-filter.svg"
+import selectedBox from "../../assets/icons/multiple-choice-tick/multiple-choice-tick-selected.svg"
+import unSelectedBox from "../../assets/icons/multiple-choice-tick/multiple-choice-tick-unselected.svg";
 export const SVGIcons = {
     MyUstaLogo,
     MyUstaLogolight,
@@ -132,5 +134,7 @@ export const SVGIcons = {
     LockIcon,
     replayIcon,
     ApplianceIcon,
-    filterIcon
+    filterIcon,
+    selectedBox,
+    unSelectedBox,
 };
