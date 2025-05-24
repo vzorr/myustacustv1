@@ -6,7 +6,7 @@ import { reuseableTextStyles } from '../../styles/reuseableTextStyles'
 import ConfirmationButtons from '../Buttons/ConfirmationButtons'
 
 const UstaProfileCard = (props: any) => {
-    const { handleProfile, handleInvite } = props
+    const { handleProfile, handleInvite, profileImage, ustaName, profession, rating, distance } = props
     return (
         <View style={styles.container}>
             <View style={styles.contentContainer}>
@@ -21,21 +21,21 @@ const UstaProfileCard = (props: any) => {
                             numberOfLines={1}
                             ellipsizeMode="tail"
                         >
-                            Albano K.
+                            {ustaName}
                         </Text>
                         <SVGIcons.badgeCheckIcon />
                     </View>
                     <View>
-                        <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[12], color: COLORS.Navy200 }]}>Plumber</Text>
+                        <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[12], color: COLORS.Navy200 }]}>{profession}</Text>
                     </View>
                     <View style={styles.ratingAndLocationContainer}>
                         <View style={styles.ratingContainer}>
                             <SVGIcons.yellowStarIcon width={16} height={16} />
-                            <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[12], color: COLORS.Navy }]}>4.9</Text>
+                            <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[12], color: COLORS.Navy }]}>{rating}</Text>
                         </View>
                         <View style={styles.ratingContainer}>
                             <SVGIcons.locationIcon width={16} height={16} />
-                            <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[12], color: COLORS.Navy }]}>3 km away</Text>
+                            <Text style={[reuseableTextStyles.subTitle, { fontSize: fontSize[12], color: COLORS.Navy }]}>{distance} km away</Text>
                         </View>
                     </View>
                     <ConfirmationButtons

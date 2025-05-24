@@ -129,6 +129,13 @@ const ChatInboxContainer: React.FC<UserNavigationRootProps<"ChatInbox">> = (prop
     return <LoadingScreen />;
   }
 
+  console.log("📩 Passing messages to ChatInboxUI:", {
+  count: messages.length,
+  messageIds: messages.map(m => m.id),
+  senders: messages.map(m => m.senderId),
+  types: [...new Set(messages.map(m => m.type))], // unique types
+});
+
   return (
     <ChatInboxUi
       jobId={jobId}

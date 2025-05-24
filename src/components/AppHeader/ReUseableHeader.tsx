@@ -23,7 +23,7 @@ const ReUseableHeader = ({
 
     return (
         <View style={[styles.header, headerContainer]}>
-            <StatusBar backgroundColor={COLORS.UstaBlack} barStyle="light-content" />
+            <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
             <View style={styles.menuContainer}>
                 <TouchableOpacity style={styles.menuButton} onPress={handleBackArrow}>
                     <SVGIcons.BackArrow />

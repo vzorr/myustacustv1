@@ -133,7 +133,7 @@ export function useChat({
             }
 
             // Mark as read
-            await chatService.markMessagesAsRead(existingConversationId);
+            //await chatService.markMessagesAsRead(existingConversationId);
           } catch (err:any) {
             console.error('Failed to load messages:', err);
             if (mounted) {
@@ -205,7 +205,7 @@ export function useChat({
         
         // Mark as read if from other user
         if (newMessage.senderId === receiverId) {
-          chatService.markMessagesAsRead(newMessage.conversationId, [newMessage.id]);
+          //chatService.markMessagesAsRead(newMessage.conversationId, [newMessage.id]);
         }
       }
     });
@@ -414,7 +414,7 @@ export function useChat({
   const markAsRead = useCallback(async () => {
     if (conversationId && !conversationId.startsWith('temp-')) {
       try {
-        await chatService.markMessagesAsRead(conversationId);
+        //await chatService.markMessagesAsRead(conversationId);
       } catch (err) {
         console.error('Failed to mark as read:', err);
       }

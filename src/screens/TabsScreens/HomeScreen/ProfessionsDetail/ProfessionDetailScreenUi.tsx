@@ -40,7 +40,14 @@ const ProfessionDetailScreenUi = () => {
                     headingText='Top Plumbers'
                     style={{ fontSize: fontSize[16] }}
                 />
-                <UstaProfileCard />
+                <UstaProfileCard
+                    handleInvite={() => { }}
+                    handleProfile={() => { }}
+                    ustaName='John Doe'
+                    rating={4.9}
+                    distance={3}
+                    profileImage={require('../../../../assets/images/office.jpg')}
+                />
             </View>
             <View style={{ gap: 10 }}>
                 <Heading

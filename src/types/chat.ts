@@ -49,6 +49,8 @@ export interface Message {
   jobId?: string;
   isEdited?: boolean;
   editedAt?: string;
+  clientTempId: string;
+ 
 }
 
 export interface ChatUser {

@@ -16,11 +16,13 @@ interface SelectorProps {
     style?: ViewStyle;
     textStyle?: TextStyle;
     iconName?: keyof typeof SVGIcons;
+    isRightArrow?: boolean;
 }
 
-const ProfessionHeading: React.FC<SelectorProps> = ({
+const ReuseableHeading: React.FC<SelectorProps> = ({
     title,
     onPress,
+    isRightArrow = true,
     iconName,
     style,
     textStyle,
@@ -37,7 +39,9 @@ const ProfessionHeading: React.FC<SelectorProps> = ({
                     ellipsizeMode="tail"
                 >{title}</Text>
             </View>
-            <SVGIcons.rightArrow />
+            {isRightArrow && (
+                <SVGIcons.rightArrow />
+            )}
         </TouchableOpacity>
     );
 };
@@ -75,4 +79,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default ProfessionHeading;
+export default ReuseableHeading;

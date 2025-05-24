@@ -3,9 +3,9 @@ import React from 'react'
 import Heading from '../../../components/Heading/Heading'
 import { COLORS, fontSize } from '../../../config/themes/theme'
 import SubHeading from '../../../components/Heading/SubHeading'
-import ProfessionHeading from '../../../components/ProfessionHeading/ProfessionHeading'
 import CustomSearchInput from '../../../components/CustomSearchInput/CustomSearchInput'
 import LineSeparator from '../../../components/LineSeparator/LineSeparator'
+import ReuseableHeading from '../../../components/ReUseableHeading/ReuseableHeading'
 
 const ProfessionsCategoriesList = (props: any) => {
     const { handleProfessionHeading } = props
@@ -26,7 +26,7 @@ const ProfessionsCategoriesList = (props: any) => {
             />
             <LineSeparator />
             <View>
-                <ProfessionHeading
+                <ReuseableHeading
                     title='Plumber'
                     onPress={handleProfessionHeading}
                     iconName='emoji'

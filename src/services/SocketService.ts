@@ -1,5 +1,5 @@
 import io, { Socket } from 'socket.io-client';
-import { Message, MessageStatus, MessageType } from '../types/chat';
+import { Attachment, AttachmentType, Message, MessageStatus, MessageType } from '../types/chat';
 import { BASE_CHAT_URL, BASE_SOCKET_URL } from '../apiManager/Client';
 
 type SocketCallback = (...args: any[]) => void;
@@ -88,15 +88,15 @@ class SocketService {
     if (!this.socket) return;
 
     // Message events
-    this.socket.on('receive_message', (data) => {
-      console.log('📨 Message received:', data.messageId);
+    this.socket.on('new_message', (data) => {
+      console.log('📨 New Message received:', data.messageId);
       const message = this.transformIncomingMessage(data);
       this.emit('message_received', message);
     });
 
     this.socket.on('message_sent', (data) => {
-      console.log('✅ Message sent confirmation:', data.messageId);
-      this.emit('message_sent', data.messageId, data.conversationId);
+        console.log('✅ Message sent confirmation:', data);
+        this.emit('message_sent', data);  // Pass the full data object
     });
 
     this.socket.on('message_delivered', (data) => {
@@ -108,14 +108,14 @@ class SocketService {
       this.emit('message_status_update', data.messageId, MessageStatus.DELIVERED);
     });
 
-    this.socket.on('message_read', (data) => {
+    /*this.socket.on('message_read', (data) => {
       console.log('👁️ Message read:', data.messageId);
       this.emit('message_read', data.messageId);
-      
+     * 
       // Update message status
       this.emit('message_status_update', data.messageId, MessageStatus.READ);
     });
-
+    */
     this.socket.on('message_updated', (data) => {
       console.log('✏️ Message updated:', data.messageId);
       this.emit('message_updated', data.messageId, data.content);
@@ -132,7 +132,7 @@ class SocketService {
     });
 
     // User status events
-    this.socket.on('user_online_status', (data) => {
+    this.socket.on('user_online', (data) => {
       console.log('👤 User status:', data.userId, data.isOnline ? 'online' : 'offline');
       this.emit('user_status', data.userId, data.isOnline);
     });
@@ -177,7 +177,7 @@ class SocketService {
 
     const socketMessage = {
       messageId: message.id,
-      clientTempId: message.id,
+      clientTempId: message.clientTempId,
       conversationId: message.conversationId,
       jobId: message.jobId || message.conversationId, // Backward compatibility
       userId: this.userId,
@@ -190,7 +190,11 @@ class SocketService {
       status: message.status
     };
     
+
     console.log("📤 Sending message:", socketMessage.messageId);
+
+    console.log('🧾 Full socketMessage:', JSON.stringify(socketMessage, null, 2));
+
     this.socket.emit('send_message', socketMessage);
   }
 
@@ -251,21 +255,25 @@ class SocketService {
   }
 
   // Emit event to all listeners
-  private emit(event: string, ...args: any[]): void {
+private emit(event: string, ...args: any[]): void {
+    console.log(`🔊 Emitting internal event: ${event} with ${args.length} args`);
     const callbacks = this.listeners.get(event);
     if (callbacks) {
-      callbacks.forEach(callback => {
-        try {
-          callback(...args);
-        } catch (error) {
-          console.error(`❌ Error in ${event} listener:`, error);
-        }
-      });
+        console.log(`🔊 Found ${callbacks.length} listeners for ${event}`);
+        callbacks.forEach((callback, index) => {
+            try {
+                console.log(`🔊 Calling listener ${index + 1} for ${event}`);
+                callback(...args);
+            } catch (error) {
+                console.error(`❌ Error in ${event} listener:`, error);
+            }
+        });
+    } else {
+        console.log(`🔊 No listeners found for ${event}`);
     }
-  }
-
+}
   // Transform incoming message to app format
-  private transformIncomingMessage(data: any): Message {
+ /* private transformIncomingMessage(data: any): Message {
     return {
       id: data.messageId || data.id,
       senderId: data.userId || data.senderId,
@@ -281,7 +289,68 @@ class SocketService {
       isEdited: data.isEdited || false,
       editedAt: data.editedAt
     };
-  }
+  }*/
+
+    // Update attachment transformation
+private transformAttachments(content: any): Attachment[] {
+    if (!content) return [];
+    const attachments: Attachment[] = [];
+    
+    // Server stores these in content object
+    if (content.images?.length) {
+        content.images.forEach((url: string, index: number) => {
+            attachments.push({
+                id: `img-${index}`,
+                type: AttachmentType.IMAGE,
+                url,
+                name: `image-${index}`,
+                size: 0
+            });
+        });
+    }
+    
+    if (content.audio) {
+        attachments.push({
+            id: 'audio-0',
+            type: AttachmentType.AUDIO,
+            url: content.audio,
+            name: 'audio',
+            size: 0
+        });
+    }
+    
+    if (content.attachments?.length) {
+        content.attachments.forEach((att: any, index: number) => {
+            attachments.push({
+                id: att.id || `file-${index}`,
+                type: att.type || AttachmentType.FILE,
+                url: att.url,
+                name: att.name || `file-${index}`,
+                size: att.size || 0
+            });
+        });
+    }
+    
+    return attachments;
+}
+
+  private transformIncomingMessage(data: any): Message {
+    return {
+        id: data.id || data.messageId,  // Server sends 'id'
+        senderId: data.senderId || data.sender?.id,  // Server includes sender object
+        receiverId: data.receiverId,
+        content: data.content?.text || data.textMsg || '',  // Server sends content.text
+        timestamp: data.createdAt || data.timestamp,  // Server sends createdAt
+        type: data.type || MessageType.TEXT,  // Server sends 'type'
+        status: data.status || MessageStatus.DELIVERED,
+        replyTo: data.content?.replyTo || data.replyToMessageId,
+        attachments: this.transformAttachments(data.content),
+        conversationId: data.conversationId,
+        jobId: data.jobId,
+        isEdited: data.content?.edited || false,
+        editedAt: data.content?.editedAt
+    };
+}
 
   // Get socket ID
   getSocketId(): string | null {

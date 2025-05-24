@@ -66,7 +66,9 @@ const ChatInboxUi: React.FC<ChatInboxUiProps> = ({
     // if (!inputText.trim() || sending || isBlocked) return;
 
     const content = inputText.trim();
-    const replyTo = replyingTo?.id;
+    const replyTo = replyingTo?.replyTo;
+
+   // console.log ('sending message ' + replyingTo?.content + ' to ' + replyTo);
 
     onSendMessage(content, replyTo);
     setInputText('');
