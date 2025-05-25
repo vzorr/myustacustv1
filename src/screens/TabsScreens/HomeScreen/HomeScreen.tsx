@@ -7,72 +7,97 @@ import AppHeader from '../../../components/AppHeader/AppHeader'
 import UstaHeading from '../../../components/UstaHeading/UstaHeading'
 import ProfessionCard from '../../../components/HomeComponents/ProfessionCard'
 import CategoryItem from '../../../components/HomeComponents/CategoryItem'
-
+import Heading from '../../../components/Heading/Heading'
+import { IMostVisitedProfession, IExploreProfession, ITopCategory, mostVisitedProfessionsData, exploreProfessionsData, topCategoriesData } from '../../../utils/mockData'
+import ProfessionsCategoriesList from './ProfessionsCategoriesList'
 
 const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
     const { route, navigation } = props
+    const [selectedCategoryId, setSelectedCategoryId] = React.useState<string | null>(null);
+    const selectedCategory = topCategoriesData.find(item => item.id === selectedCategoryId);
     const ViewPostedJobs = () => {
         navigation.navigate("JobsStatusScreens")
     }
+    const handleProfessionHeading = () => {
+        navigation.navigate("ProfessionDetailScreen")
+    }
 
-    // const renderItem = ({ item }: { item: typeof professionData[0] }) => (
-    //     <View style={styles.sectionContainer}>
-    //         <Text style={styles.sectionTitle}>Most Visited Professions</Text>
-    //         <ProfessionCard
-    //             title={item.title}
-    //             count={item.count}
-    //             icon={<Image source={item.image} style={styles.professionImage} />}
-    //         />
-    //     </View>
-    // );
+    const renderTopCategoryItem = ({ item }: { item: ITopCategory }) => (
+        <CategoryItem
+            iconName={item.iconName as keyof typeof SVGIcons}
+            label={item.label}
+            handleOnPress={() => {
+                console.log("Category Pressed", item.label);
+                setSelectedCategoryId(prev => (prev === item.id ? null : item.id)); // Toggle
+            }}
+            isActive={selectedCategoryId === item.id}
+        />
+    );
+    //when the category is pressed, display the selected category ui else display the renderScreenContent 
+    // const renderSelectedCategoryUI = () => {
+    //     const selectedCategory = topCategoriesData.find(item => item.id === selectedCategoryId);
+    //     if (selectedCategory) {
+    //         return (
+    //             <View style={styles.sectionContainer}>
+    //                 <Heading
+    //                     headingText={selectedCategory.label}
+    //                     style={{ fontSize: fontSize[20] }}
+    //                     containerStyle={{ marginBottom: 10 }} />
+    //                 {selectedCategory.professions.map((item: IMostVisitedProfession) => (
+    //                     <ProfessionCard
+    //                         key={item.id}
+    //                         title={item.title}
+    //                         count={item.count}
+    //                         icon={<Image source={item.image} style={item.imageStyle === 'drywall' ? styles.dryWalImage : styles.professionImage} />}
+    //                         suffixText={item.suffixText}
+    //                     />
+    //                 ))}
+    //             </View>
+    //         );
+    //     }
+    // };
+
 
     const renderScreenContent = () => (
         <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Most Visited Professions</Text>
-            <ProfessionCard
-                title="Plumber"
-                count={253}
-                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Plumber.png')} style={styles.professionImage} />}
-                suffixText=" Plumbers"
-            />
+            <Heading
+                headingText='Most Visited Professions'
+                style={{ fontSize: fontSize[20] }}
+                containerStyle={{ marginBottom: 10 }} />
+            {mostVisitedProfessionsData.map((item: IMostVisitedProfession) => (
+                <ProfessionCard
+                    key={item.id}
+                    title={item.title}
+                    count={item.count}
+                    icon={<Image source={item.image} style={item.imageStyle === 'drywall' ? styles.dryWalImage : styles.professionImage} />}
+                    suffixText={item.suffixText}
+                />
+            ))}
 
-            <ProfessionCard
-                title="Dry Wall"
-                count={518}
-                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Drywall.png')} style={styles.dryWalImage} />}
-                suffixText=" Installers"
-            />
-
-            <ProfessionCard
-                title="Electrician"
-                count={427}
-                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-                suffixText=" Electricians"
-            />
-            <ProfessionCard
-                title="Carpenter"
-                count={315}
-                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-                suffixText=" Carpenters"
-            />
-            <ProfessionCard
-                title="Painter"
-                count={183}
-                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-                suffixText=" Painters"
-            />
-            <ProfessionCard
-                title="HVAC"
-                count={267}
-                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-                suffixText=" Technicians"
-            />
-            <ProfessionCard
-                title="Roofer"
-                count={142}
-                icon={<Image source={require('../../../assets/images/MostVisitedProfessions/Electrician.png')} style={styles.professionImage} />}
-                suffixText=" Professionals"
-            />
+            <Heading
+                headingText='Explore All Professions'
+                style={{ fontSize: fontSize[20] }}
+                containerStyle={{ marginBottom: 10, marginTop: 10 }} />
+            <View
+                style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'flex-start',
+                }}>
+                {exploreProfessionsData.map((item: IExploreProfession) => (
+                    <View style={{
+                        paddingHorizontal: 2,
+                        paddingVertical: 4,
+                    }}
+                        key={item.id}
+                    >
+                        <CategoryItem
+                            iconName={item.iconName as keyof typeof SVGIcons}
+                            label={item.label}
+                        />
+                    </View>
+                ))}
+            </View>
         </View>
     )
     const screenData = [{ id: '1' }];
@@ -82,7 +107,6 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
             <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
             <AppHeader
                 onMenuPress={() => { }}
-                onNotificationPress={() => { }}
                 showNotificationBadge={true}
                 badgeCount={0}
                 isProfile={false}
@@ -94,37 +118,29 @@ const HomeScreen: React.FC<UserNavigationRootProps<"Home">> = (props) => {
                 style={{ fontSize: fontSize[16] }}
             />
             {/* Categories */}
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.categoriesContainer}
-            >
-                <CategoryItem
-                    iconName="plusIcon"
-                    label="Plumbing"
+            <View>
+                <FlatList
+                    horizontal
+                    data={topCategoriesData}
+                    renderItem={renderTopCategoryItem}
+                    keyExtractor={item => item.id}
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.categoriesContainer}
                 />
-                <CategoryItem
-                    iconName="searchIcon"
-                    label="Electrical"
+            </View>
+            {selectedCategoryId ?
+                <ProfessionsCategoriesList
+                    handleProfessionHeading={handleProfessionHeading}
                 />
-                <CategoryItem
-                    iconName="searchIcon"
-                    label="Carpenter"
+                :
+                <FlatList
+                    data={screenData}
+                    keyExtractor={item => item.id}
+                    renderItem={() => renderScreenContent()}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ flexGrow: 1, paddingBottom: 50 }}
                 />
-            </ScrollView>
-            {/* <FlatList
-                data={professionData}
-                keyExtractor={(item) => item.id}
-                renderItem={renderItem}
-                contentContainerStyle={{ flexGrow: 1 }}
-            /> */}
-            <FlatList
-                data={screenData}
-                keyExtractor={item => item.id}
-                renderItem={() => renderScreenContent()}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ flexGrow: 1 }}
-            />
+            }
         </SafeAreaView>
     )
 }
@@ -135,18 +151,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.white,
-    },
-    header: {
-        backgroundColor: COLORS.Navy,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 12,
-        borderBottomStartRadius: 16,
-        borderBottomEndRadius: 16,
-        minHeight: 100
     },
     menuButton: {
         padding: 8,
@@ -178,31 +182,12 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollViewContent: {
-        paddingBottom: 80, // Add padding for bottom tab
+        paddingBottom: 80,
         paddingHorizontal: 20,
-        // paddingVertical: 16
     },
     categoriesContainer: {
-        padding: 16,
-        // paddingVertical: 20,
+        padding: 12,
         gap: 8,
-        marginBottom: 20
-    },
-    categoryItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: SIZES.wp(35),
-        height: SIZES.hp(6),
-        borderWidth: 1,
-        borderRadius: 36,
-        borderColor: COLORS.inputBorder,
-        gap: 8
-    },
-    categoryLabel: {
-        fontSize: 12,
-        color: COLORS.Navy,
-        textAlign: 'center',
     },
     sectionContainer: {
         paddingBottom: 80,

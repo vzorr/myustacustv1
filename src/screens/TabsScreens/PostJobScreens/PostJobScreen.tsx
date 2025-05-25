@@ -26,7 +26,7 @@ import { setPostJobReducer } from '../../../stores/reducer/PostJobReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import Toast from 'react-native-simple-toast'
 import VisibleLoader from '../../../components/Loader/VisibleLoader'
-import CustomImagePicker from '../../../components/ImagePicker/ImagePicker'
+import CustomImagePickerModal from '../../../components/ImagePickerModal/ImagePickerModal'
 
 // Define the ImagePicker result type
 interface ImagePickerResult {
@@ -96,8 +96,12 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
     const dispatch = useDispatch()
 
     const [region, setRegion] = useState<Region>({
-        latitude: postJob?.location && postJob?.location[0]?.latitude ?  postJob?.location[0]?.latitude : 42.0693,
-        longitude: postJob?.location && postJob?.location[0]?.longitude ? postJob?.location[0]?.longitude:   19.5126,
+        // latitude: postJob?.location && postJob?.location[0]?.latitude ? postJob?.location[0]?.latitude : 42.0693,
+        // longitude: postJob?.location && postJob?.location[0]?.longitude ? postJob?.location[0]?.longitude : 19.5126,
+        // latitudeDelta: 0.05,
+        // longitudeDelta: 0.05,
+        latitude: 42.0693,
+        longitude: 19.5126,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     });
@@ -124,18 +128,18 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         value: name.name
     }));
     const UKLocations = userProfile?.locations
-    // [
-    //     { key: '1', value: 'London' },
-    //     { key: '2', value: 'Manchester' },
-    //     { key: '3', value: 'Birmingham' },
-    //     { key: '4', value: 'Liverpool' },
-    //     { key: '5', value: 'Edinburgh' },
-    //     { key: '6', value: 'Glasgow' },
-    //     { key: '7', value: 'Bristol' },
-    //     { key: '8', value: 'Leeds' },
-    //     { key: '9', value: 'Cardiff' },
-    //     { key: '10', value: 'Belfast' },
-    // ]
+    const StaticLocation = [
+        { key: '1', value: 'London' },
+        { key: '2', value: 'Manchester' },
+        { key: '3', value: 'Birmingham' },
+        { key: '4', value: 'Liverpool' },
+        { key: '5', value: 'Edinburgh' },
+        { key: '6', value: 'Glasgow' },
+        { key: '7', value: 'Bristol' },
+        { key: '8', value: 'Leeds' },
+        { key: '9', value: 'Cardiff' },
+        { key: '10', value: 'Belfast' },
+    ]
     const areaType = [
         { key: '1', value: 'Room' },
         { key: '2', value: 'Bathroom' },
@@ -244,7 +248,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         if (mapRef.current && region.latitude && region.longitude) {
             const lat = Number(region.latitude);
             const lng = Number(region.longitude);
-    
+
             if (!isNaN(lat) && !isNaN(lng)) {
                 mapRef.current.animateToRegion({
                     latitude: lat,
@@ -347,7 +351,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
         const handleSelectImage = (index: number) => {
             setSelectedIndex(index); // only update selected index manually
         };
-   
+
         const handleDeleteImage = (indexToDelete: number) => {
             if (!Array.isArray(values.images)) return;
 
@@ -384,7 +388,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                 category: selectedCategories,
                 dateCreated: new Date().toISOString()
             }
-    
+
             dispatch(setPostJobReducer(updateValue))
             navigation.navigate("LocationScreen", { screenName: "postJob" })
         }
@@ -599,7 +603,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                                 style={{ fontSize: fontSize[16] }}
                             />
                         </View>
-                        {EditPostJob === "EditPostJob" ? (
+                        {imagesCount > 0 ? (
                             <View style={{ gap: 8 }}>
                                 <ScrollView
                                     horizontal
@@ -696,7 +700,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             </View>
                         )}
                         <View style={{ paddingHorizontal: 20, gap: 10 }}>
-                            <CustomImagePicker
+                            <CustomImagePickerModal
                                 onTakePhoto={takePhotoWithCamera}
                                 onPickFromGallery={pickImageFromGallery}
                                 handleCancel={handleCancelModal}
@@ -844,6 +848,7 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                             <View style={{ gap: 8 }}>
                                 <CustomDropDown
                                     data={UKLocations}
+                                    // data={StaticLocation}
                                     placeholder="Select Location"
                                     selectedItems={selectLocation}
                                     onSelectionChange={setSelectLocation}
@@ -990,7 +995,6 @@ const PostJobScreen: React.FC<UserNavigationRootProps<"PostJobScreen">> = (props
                     <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
                     <AppHeader
                         onMenuPress={() => { }}
-                        onNotificationPress={() => { }}
                         showNotificationBadge={true}
                         badgeCount={0}
                         isProfile={true}

@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native'
 
 type HeaderProps = {
     onMenuPress?: () => void
-    onNotificationPress?: () => void
     handleEditJobPost?: () => void
     iconName?: keyof typeof SVGIcons;
     imageUrl?: string
@@ -29,7 +28,6 @@ type HeaderProps = {
 
 const AppHeader = ({
     onMenuPress,
-    onNotificationPress,
     showNotificationBadge = true,
     imageUrl,
     userName,
@@ -51,9 +49,13 @@ const AppHeader = ({
     const handleHomeLogo = () => {
         navigation.navigate("Home")
     }
+    const onNotificationPress = () => {
+        navigation.navigate('Notifications')
+    }
 
     return (
         <View style={[styles.header, headerContainer]}>
+            <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
             <View style={styles.menuContainer}>
                 <TouchableOpacity style={styles.menuButton} onPress={onMenuPress}>
                     <SVGIcons.menuIcon />

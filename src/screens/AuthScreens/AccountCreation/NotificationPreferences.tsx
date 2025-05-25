@@ -30,18 +30,16 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
 
     const { metaData }: any = useSelector((state: any) => state?.metaData)
     const { postJob }: any = useSelector((state: any) => state?.postJob)
-    console.log("postJob", postJob)
     let previewValue = postJob
     const [isLoading, setIsLoading] = useState(false)
     const dispatch = useDispatch()
 
     const { token }: any = useSelector((state: any) => state?.accessToken)
-    console.log("tokeeeeee", token)
     const notiiType = [
         { key: '1', value: 'App' },
         { key: '2', value: 'Email' },
         { key: '3', value: 'SMS' },
-    ];
+    ]
 
     const handleTermAndCondition = () => {
         const updateLocationData = {
@@ -65,9 +63,7 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                 return
             }
             let payload = await postJobValue(previewValue, metaData?.categories)
-            console.log('Base64 Image:', payload);
             const response = await client(token).post("jobs", payload);
-            console.log('Response:', response.data);
             setIsLoading(false)
             dispatch(setPostJobReducer({}))
         } catch (error: any) {
@@ -75,10 +71,8 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
             console.log('Error:', error.response?.data || error.message);
         }
     }
-    console.log(accountCreation?.notificationViaApp)
     const handleCompleteSetup = async () => {
         setIsLoading(true)
-        console.log("handle Completeee")
         if (accountCreation?.termsAndConditions) {
             try {
                 const selectedCategories = metaData?.categories?.filter((category: any) => accountCreation?.category.includes(category.name))
@@ -109,7 +103,6 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                     notificationViaApp: accountCreation?.notificationViaApp,
                     termsAndConditions: accountCreation?.termsAndConditions
                 }
-                console.log('Payload:', JSON.stringify(payload, null, 2));
                 const response = await client(token).post("account/customer-creation", payload);
                 setIsLoading(false)
                 dispatch(setAccountCreation({}))
@@ -117,7 +110,6 @@ const NotificationPreferences: React.FC<UserNavigationRootProps<"NotificationPre
                 if (previewValue?.images.length > 0) {
                     await handlePostJob()
                 }
-                console.log('Response:', response.data);
             } catch (error: any) {
                 setIsLoading(false)
                 console.log('Error:', error.response?.data || error.message);

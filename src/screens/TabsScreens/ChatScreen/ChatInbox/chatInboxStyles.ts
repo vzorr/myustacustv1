@@ -2,6 +2,219 @@ import { StyleSheet } from "react-native";
 import { COLORS, FONTS, fontSize } from "../../../../config/themes/theme";
 
 export const chatInboxStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  chatContainer: {
+    flex: 1,
+  },
+  messagesList: {
+    paddingHorizontal: 4,
+    paddingVertical: 8,
+    flexGrow: 1,
+  },
+  inputMainContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: COLORS.white,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.1)',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: COLORS.inputBorder,
+    borderRadius: 24,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    minHeight: 48,
+  },
+  attachmentButton: {
+    padding: 8,
+    marginRight: 4,
+  },
+  input: {
+    flex: 1,
+    fontSize: fontSize[14],
+    fontFamily: FONTS.interRegular,
+    color: COLORS.Navy,
+    maxHeight: 100,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  sendButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: COLORS.Navy,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+  },
+  voiceButton: {
+    padding: 8,
+    marginLeft: 4,
+  },
+  replyBar: {
+    backgroundColor: COLORS.otherChatBgColor,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.1)',
+  },
+  replyContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  replyLine: {
+    width: 3,
+    height: 40,
+    backgroundColor: COLORS.Navy,
+    marginRight: 12,
+  },
+  replyText: {
+    flex: 1,
+  },
+  replyLabel: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.Navy200,
+    marginBottom: 2,
+  },
+  replyMessage: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interRegular,
+    color: COLORS.Navy,
+  },
+  typingIndicator: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  typingText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interRegular,
+    color: COLORS.GreyedOut,
+    fontStyle: 'italic',
+  },
+  connectionBanner: {
+    backgroundColor: COLORS.Navy200,
+    paddingVertical: 8,
+    alignItems: 'center',
+  },
+  connectionText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.white,
+  },
+  blockedBanner: {
+    backgroundColor: COLORS.ErrorRed,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  blockedText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.white,
+    marginLeft: 8,
+  },
+});
+
+
+
+/*import { StyleSheet } from "react-native";
+import { COLORS, FONTS, fontSize } from "../../../../config/themes/theme";
+
+export const chatInboxStyles = StyleSheet.create({
+
+    emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+},
+emptyText: {
+    fontSize: fontSize[14],
+    fontFamily: FONTS.interRegular,
+    color: COLORS.Navy200,
+    textAlign: 'center',
+},
+loadingMoreContainer: {
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+},
+loadingMoreText: {
+    marginLeft: 8,
+    fontSize: fontSize[12],
+    color: COLORS.Navy200,
+},
+failedMessageContainer: {
+    alignSelf: 'center',
+    marginVertical: 8,
+    padding: 8,
+    backgroundColor: 'rgba(253, 76, 79, 0.1)',
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+},
+failedMessageText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interRegular,
+    color: COLORS.ErrorRed,
+},
+resendButton: {
+    marginLeft: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: COLORS.Yellow,
+    borderRadius: 4,
+},
+resendButtonText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.Navy,
+},
+blockedBanner: {
+    backgroundColor: COLORS.ErrorRed,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+},
+blockedText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.white,
+    marginLeft: 8,
+},
+connectionBanner: {
+    backgroundColor: COLORS.Navy200,
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+},
+connectionText: {
+    fontSize: fontSize[12],
+    fontFamily: FONTS.interMedium,
+    color: COLORS.white,
+},
+
     container: {
         flex: 1,
         backgroundColor: COLORS.white,
@@ -17,7 +230,7 @@ export const chatInboxStyles = StyleSheet.create({
     messageRow: {
         flexDirection: 'row',
         alignItems: 'flex-end',
-        marginBottom: 10,
+        marginBottom: 8,
     },
     currentUserRow: {
         justifyContent: 'flex-end',
@@ -82,7 +295,7 @@ export const chatInboxStyles = StyleSheet.create({
     inputMainContainer: {
         paddingHorizontal: 20,
         paddingBottom: 20,
-        paddingTop: 10,
+        // paddingTop: 10,
         backgroundColor: COLORS.white,
     },
     inputContainer: {
@@ -180,75 +393,76 @@ export const chatInboxStyles = StyleSheet.create({
         color: COLORS.Navy,
     },
     replyPreviewContainer: {
-        padding: 8,
+        padding: 4,
         borderRadius: 6,
-        marginBottom: 8,
+        marginBottom: 4,
     },
     currentUserReplyPreview: {
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        backgroundColor: COLORS.Navy200
     },
     otherUserReplyPreview: {
-        backgroundColor: 'rgba(0,0,0,0.05)',
+        backgroundColor: COLORS.white
     },
     replyPreviewContent: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     replyPreviewLine: {
-        width: 3,
-        height: 30,
-        borderRadius: 2,
+        width: 4,
+        height: 40,
+        borderRadius: 22,
         marginRight: 8,
     },
     currentUserReplyPreviewLine: {
-        backgroundColor: COLORS.white,
+        backgroundColor: COLORS.Navy100,
     },
     otherUserReplyPreviewLine: {
-        backgroundColor: COLORS.Navy,
+        backgroundColor: COLORS.Navy100,
     },
     replyPreviewTextContainer: {
         flex: 1,
+        justifyContent: 'center'
     },
     replyPreviewSender: {
         fontSize: fontSize[12],
         fontWeight: 'bold',
-        marginBottom: 2,
+        // marginBottom: 2,
     },
     currentUserReplyPreviewSender: {
         color: COLORS.white,
     },
     otherUserReplyPreviewSender: {
-        color: COLORS.Navy,
+        color: COLORS.Navy200,
     },
     replyPreviewText: {
         fontSize: fontSize[12],
     },
     currentUserReplyPreviewText: {
-        color: 'rgba(255,255,255,0.7)',
+        color: COLORS.lightWhite,
     },
     otherUserReplyPreviewText: {
-        color: COLORS.GreyedOut,
+        color: COLORS.Navy200,
     },
     replyBar: {
-        paddingHorizontal: 15,
-        paddingVertical: 8,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16,
-        backgroundColor: COLORS.otherChatBgColor
+        backgroundColor: COLORS.otherChatBgColor,
     },
     replyBarContent: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 8
+        // marginBottom: 8
     },
     replyBarLine: {
         width: 4,
-        height: 50,
+        height: 41,
         borderRadius: 2,
-        marginRight: 10
+        marginRight: 8
     },
     currentUserReplyLine: {
-        backgroundColor: COLORS.Navy,
+        backgroundColor: COLORS.Navy100,
     },
     otherUserReplyLine: {
         backgroundColor: COLORS.Navy100,
@@ -257,7 +471,7 @@ export const chatInboxStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingVertical: 8
+        paddingVertical: 10
     },
     replyBarTitle: {
         fontSize: fontSize[12],
@@ -285,7 +499,8 @@ export const chatInboxStyles = StyleSheet.create({
         flex: 1,
         backgroundColor: COLORS.white,
         borderRadius: 12,
-        padding: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
         borderBottomLeftRadius: 0,
     },
     replyBarMessage: {
@@ -300,11 +515,24 @@ export const chatInboxStyles = StyleSheet.create({
         marginTop: 2,
         alignSelf: 'flex-end',
     },
-    attachmentImage: {
+    imageGridContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginBottom: 4,
+        gap: 8
+    },
+    singleImageItem: {
         width: 200,
         height: 200,
+    },
+    multiImageItem: {
+        width: 124,
+        height: 124,
+    },
+    attachmentImage: {
+        width: '100%',
+        height: '100%',
         borderRadius: 8,
-        marginBottom: 8,
     },
     fileAttachmentContainer: {
         flexDirection: 'row',
@@ -335,19 +563,41 @@ export const chatInboxStyles = StyleSheet.create({
     attachmentsPreviewContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        paddingHorizontal: 16,
-        paddingTop: 8,
-        backgroundColor: COLORS.white,
+        gap: 10,
+        paddingHorizontal: 20,
+        paddingTop: 20,
+        paddingBottom: 10,
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
+        backgroundColor: COLORS.otherChatBgColor,
     },
     attachmentPreview: {
-        marginRight: 8,
-        marginBottom: 8,
+        borderRadius: 8,
+        overflow: 'hidden',
+        width: 72,
+        height: 72,
         position: 'relative',
     },
     previewImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 4,
+        width: '100%',
+        height: '100%',
+        borderRadius: 8,
+    },
+    removeAttachmentButton: {
+        position: 'absolute',
+        top: 4,
+        right: 4,
+        backgroundColor: COLORS.white,
+        borderRadius: 10,
+        width: 20,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: COLORS.Navy,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        elevation: 2,
     },
     previewFile: {
         width: 80,
@@ -375,30 +625,10 @@ export const chatInboxStyles = StyleSheet.create({
         marginTop: 4,
         fontSize: fontSize[12],
     },
-    removeAttachmentButton: {
-        position: 'absolute',
-        top: 4,
-        right: 4,
-        backgroundColor: COLORS.white,
-        borderRadius: 10,
-        width: 20,
-        height: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: COLORS.Black,
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.2,
-        shadowRadius: 1,
-        elevation: 2,
-    },
     multiImageContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-    },
-    multiImageItem: {
-        width: '100%',
-        marginBottom: 8,
     },
     imageCounterText: {
         fontSize: 10,
@@ -406,4 +636,8 @@ export const chatInboxStyles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 4,
     },
+
+
 });
+*/
+

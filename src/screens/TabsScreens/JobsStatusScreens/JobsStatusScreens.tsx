@@ -14,7 +14,6 @@ const JobsStatusScreens: React.FC<UserNavigationRootProps<"JobsStatusScreens">> 
         <View style={statusScreensStyles.container}>
             <AppHeader
                 onMenuPress={() => { }}
-                onNotificationPress={() => { }}
                 showNotificationBadge={true}
                 badgeCount={5}
                 isProfile={false}

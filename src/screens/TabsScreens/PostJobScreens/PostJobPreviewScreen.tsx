@@ -36,9 +36,9 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     const dispatch = useDispatch()
     const { postJob }: any = useSelector((state: any) => state?.postJob)
     const previewValue = useMemo(() => postJob, [postJob]);
-   const [region, setRegion] = useState<Region>({
-        latitude: previewValue?.location && previewValue?.location[0]?.latitude ?  previewValue?.location[0]?.latitude : 42.0693,
-        longitude: previewValue?.location && previewValue?.location[0]?.longitude ? previewValue?.location[0]?.longitude:   19.5126,
+    const [region, setRegion] = useState<Region>({
+        latitude: previewValue?.location && previewValue?.location[0]?.latitude ? Number(previewValue.location[0].latitude) : 42.0693,
+        longitude: previewValue?.location && previewValue?.location[0]?.longitude ? Number(previewValue.location[0].longitude) : 19.5126,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     });
@@ -46,7 +46,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
 
     // Use the location from postJob if available, otherwise use default location
     const initialRegion = useMemo(() => ({
-        latitude: previewValue?.location&& previewValue?.location[0]?.latitude || 42.0693,
+        latitude: previewValue?.location && previewValue?.location[0]?.latitude || 42.0693,
         longitude: previewValue?.location && previewValue?.location[0]?.longitude || 19.5126,
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
@@ -59,14 +59,15 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
         dispatch(setPostJobReducer({}))
         navigation.navigate('Tabs')
     }
-    useEffect(()=>{
-        setRegion({
-            latitude: previewValue?.location&& previewValue?.location[0]?.latitude || 42.0693,
-            longitude: previewValue?.location && previewValue?.location[0]?.longitude || 19.5126,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-        })
-    },[previewValue?.location])
+
+    // useEffect(()=>{
+    //     setRegion({
+    //         latitude: previewValue?.location&& previewValue?.location[0]?.latitude || 42.0693,
+    //         longitude: previewValue?.location && previewValue?.location[0]?.longitude || 19.5126,
+    //         latitudeDelta: 0.05,
+    //         longitudeDelta: 0.05,
+    //     })
+    // },[previewValue?.location])
     const handleMapReady = () => {
         if (previewValue?.location.length > 0 && mapRef.current) {
             mapRef.current.animateToRegion({
@@ -209,7 +210,7 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
                     <LineSeparator />
                     <AccountHeader
                         title='LOCATION'
-                        subTitle={previewValue?.location&&previewValue?.location[0]?.address}
+                        subTitle={previewValue?.location && previewValue?.location[0]?.address}
                         titleStyle={{ fontSize: fontSize[16] }}
                         containerStyle={{ marginTop: -3, gap: 2 }}
                     />
@@ -257,13 +258,12 @@ const PostJobPreviewScreen: React.FC<UserNavigationRootProps<"PostJobPreview">> 
     ), [previewValue, handleDiscard, handlePostJob, region]);
 
     const screenData = useMemo(() => [{ id: '1' }], []);
-const timeAgo = getCustomTimeAgo(previewValue?.dateCreated)
+    const timeAgo = getCustomTimeAgo(previewValue?.dateCreated)
     return (
         <View style={{ backgroundColor: COLORS.white, flex: 1 }}>
             <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
             <AppHeader
                 onMenuPress={() => { }}
-                onNotificationPress={() => { }}
                 showNotificationBadge={true}
                 badgeCount={5}
                 isProfile={false}

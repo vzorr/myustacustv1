@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (props) => {
     const verInfo = props.route.params?.verification
     const type = props.route.params?.type
+    const screenTypeEmailOrNumber = props.route.params?.screenType
     const emailorPhoneNo = props.route.params?.phoneOrEmail
     const verifiedToken = props.route.params?.token
     const dispatch = useDispatch()
@@ -41,7 +42,13 @@ const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (
                     setIsLoading(true)
                     const response = await client(verifiedToken).post(`auth/signup-verify`, payload);
                     console.log("responseeeee", response?.data)
-                    navigation.replace("SuccessMessage", { screenType: "OtpVerfication" })
+                    if (screenTypeEmailOrNumber === "EmailScreen") {
+                        navigation.replace("EmailScreen", { emailorPhoneNo: verInfo, code: fullCode })
+                    } else if (screenTypeEmailOrNumber === "PhoneNumberScreen") {
+                        navigation.replace("PhoneNumberScreen", { emailorPhoneNo: verInfo, code: fullCode })
+                    } else {
+                        navigation.replace("SuccessMessage", { screenType: "OtpVerfication" })
+                    }
                     dispatch(setUserInfo(response?.data?.result))
                     Toast.show('otp is verified', Toast.SHORT);
                     setIsLoading(false)
@@ -143,6 +150,7 @@ const OtpVerficationContainer: FC<UserNavigationRootProps<"OtpVerfication">> = (
                 navigation={navigation}
                 verInfo={emailorPhoneNo}
                 handleResendOTP={handleResendOTP}
+                screenType={screenTypeEmailOrNumber}
             />
             {isLoading &&
                 <VisibleLoader />

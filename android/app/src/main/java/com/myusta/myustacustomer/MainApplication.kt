@@ -1,4 +1,4 @@
-package com.myustacustomer
+package com.myusta.myustacustomer
 
 import android.app.Application
 import com.facebook.react.PackageList
@@ -11,6 +11,7 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
+import com.myusta.myustacustomer.BuildConfig
 
 class MainApplication : Application(), ReactApplication {
 

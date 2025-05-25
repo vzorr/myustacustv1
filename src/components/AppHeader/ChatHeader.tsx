@@ -31,6 +31,7 @@ const ChatHeader = ({
 
     return (
         <View style={[styles.header, headerContainer]}>
+            <StatusBar backgroundColor={COLORS.Navy} barStyle="light-content" />
             <View style={styles.menuContainer}>
                 <TouchableOpacity onPress={handleBack}>
                     <SVGIcons.BackArrow width={32} height={32} />
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-        backgroundColor: "#335372",
+        backgroundColor: COLORS.Navy200,
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 8

@@ -27,10 +27,17 @@ import ApplicationDetailScreen from '../../screens/TabsScreens/Applications/Appl
 import UstaProfileScreen from '../../screens/UstaProfile/UstaProfileScreen';
 import UstaPortfolioDetailScreen from '../../screens/UstaProfile/UstaPortfolioDetailScreen';
 import ChatInboxContainer from '../../screens/TabsScreens/ChatScreen/ChatInbox/ChatInboxContainer';
+import NotificationDetailScreen from '../../screens/TabsScreens/Notifications/NotificationDetailScreen';
+import EditProfileContainer from '../../screens/TabsScreens/EditProfileScreen/EditProfileContainer';
+import PhoneNumberScreen from '../../screens/TabsScreens/EditProfileScreen/PhoneNumberScreen';
+import UpdatePassword from '../../screens/TabsScreens/EditProfileScreen/UpdatePassword';
+import EmailScreen from '../../screens/TabsScreens/EditProfileScreen/EmailScreen';
+import ChangeEmailAndNumber from '../../screens/TabsScreens/EditProfileScreen/ChangeEmailAndNumber';
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
 const NavStack: React.FC = () => {
     const dispatch = useDispatch()
+    
     const getMetaData = async () => {
         try {
             let res = await client1().get('general/meta')
@@ -39,19 +46,20 @@ const NavStack: React.FC = () => {
             }
             dispatch(setMetaData(res?.data?.result))
         } catch (error) {
-            console.log("errorffffffff", JSON.stringify(error))
+            console.log("Error fetching metadata:", JSON.stringify(error))
         }
-
     }
+    
     useEffect(() => {
         getMetaData()
     }, [])
+    
     return (
         <Stack.Navigator
             screenOptions={{
                 headerShown: false
             }}
-            initialRouteName='Splash'
+            initialRouteName='Tabs'
         >
             <Stack.Screen name="Tabs" component={TabStack} />
             <Stack.Screen name="Splash" component={SplashScreen} />
@@ -72,10 +80,15 @@ const NavStack: React.FC = () => {
             <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
             <Stack.Screen name="ChatInbox" component={ChatInboxContainer} />
             <Stack.Screen name="PostedJobDetailScreen" component={PostedJobDetailScreen} />
-            {/* <Stack.Screen name="ApplicationsList" component={ApplicationsList} /> */}
-            {/* <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} /> */}
-            {/* <Stack.Screen name="UstaProfile" component={UstaProfileScreen} />
-            <Stack.Screen name="UstaPortfolioDetail" component={UstaPortfolioDetailScreen} /> */}
+            <Stack.Screen name="NotificationDetail" component={NotificationDetailScreen} />
+            <Stack.Screen name="EditProfile" component={EditProfileContainer} />
+            <Stack.Screen name="EmailScreen" component={EmailScreen} />
+            <Stack.Screen name="PhoneNumberScreen" component={PhoneNumberScreen} />
+            <Stack.Screen name="UpdatePassword" component={UpdatePassword} />
+            <Stack.Screen name="ChangeEmailAndNumber" component={ChangeEmailAndNumber} />
+            {/* <Stack.Screen name="ApplicationDetail" component={ApplicationDetailScreen} />
+            <Stack.Screen name="UstaProfile" component={UstaProfileScreen} /> */}
+            {/* <Stack.Screen name="UstaPortfolioDetail" component={UstaPortfolioDetailScreen} /> */}
         </Stack.Navigator>
     )
 }
